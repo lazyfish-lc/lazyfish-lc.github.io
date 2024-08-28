@@ -4,6 +4,7 @@
     <title>北航CO pre Logisim部分 斐波那契数列挑战思路引导</title>
     <url>/2024/08/27/CO-pre-Logisim-challenge/</url>
     <content><![CDATA[<p>你好！本文章为测试博客用的文章，但是里面的内容确实可以帮到大家！</p>
+<p>出于学术诚信考虑，本文章<strong>不包含</strong>本题目的完整答案，仅提供思路分析和设计上初步的引导，感谢理解！</p>
 <h1>题意简述</h1>
 <p>这个题的大意就是，在输入端给定一个32bit的无符号数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span>，计算出斐波那契数列的第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 项的最后32bit并输出。</p>
 <p>其中：</p>
