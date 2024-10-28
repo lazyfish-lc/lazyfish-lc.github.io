@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>北航CO 2024 P3课上部分题目回忆与分析 | Lazyfish &amp; chilly_river</title><meta name="author" content="Lazyfish"><meta name="copyright" content="Lazyfish"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="你好！本文章为该博客的第3篇文章！ 本文章是对课上部分的题目回忆，不保证回忆内容一定正确，请各位注意甄别！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，谢谢支持！ P3课上题目回忆 三题为互相独立的添加指令题。（懒得写RTL了） 第一题添加指令为 cwp，I型指令。具体操作为，将 imm 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 imm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="北航CO 2024 P3课上部分题目回忆与分析">
+<meta property="og:url" content="http://lazyfish-lc.github.io/2024/10/28/BUAA-CO-P3-test/index.html">
+<meta property="og:site_name" content="Lazyfish &amp; chilly_river">
+<meta property="og:description" content="你好！本文章为该博客的第3篇文章！ 本文章是对课上部分的题目回忆，不保证回忆内容一定正确，请各位注意甄别！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，谢谢支持！ P3课上题目回忆 三题为互相独立的添加指令题。（懒得写RTL了） 第一题添加指令为 cwp，I型指令。具体操作为，将 imm 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 imm">
+<meta property="og:locale">
+<meta property="og:image" content="http://lazyfish-lc.github.io/img/deep_sea.png">
+<meta property="article:published_time" content="2024-10-28T13:26:38.000Z">
+<meta property="article:modified_time" content="2024-10-28T14:41:32.224Z">
+<meta property="article:author" content="Lazyfish">
+<meta property="article:tag" content="BUAA">
+<meta property="article:tag" content="计算机组成原理">
+<meta property="article:tag" content="Logisim">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lazyfish-lc.github.io/img/deep_sea.png"><link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/67375982"><link rel="canonical" href="http://lazyfish-lc.github.io/2024/10/28/BUAA-CO-P3-test/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":3,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '北航CO 2024 P3课上部分题目回忆与分析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-10-28 22:41:32'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/deep_sea.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Lazyfish &amp; chilly_river"><img class="site-icon" src="https://avatars.githubusercontent.com/u/67375982"/><span class="site-name">Lazyfish &amp; chilly_river</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">北航CO 2024 P3课上部分题目回忆与分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-10-28T13:26:38.000Z" title="Created 2024-10-28 21:26:38">2024-10-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-10-28T14:41:32.224Z" title="Updated 2024-10-28 22:41:32">2024-10-28</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>4mins</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title="北航CO 2024 P3课上部分题目回忆与分析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">Comments:</span><a href="/2024/10/28/BUAA-CO-P3-test/#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>你好！本文章为该博客的第3篇文章！</p>
+<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P3课上题目回忆</h1>
+<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
+<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
+<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
+<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
+<h1>对CPU电路连接的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
+<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
+<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
+</ul>
+<h1>题目分析</h1>
+<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
+<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
+<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+</ul>
+<h2 id="cwp">cwp</h2>
+<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
+<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
+<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
+</ul>
+<h2 id="bgc">bgc</h2>
+<p>需要修改的模块有控制器，分支控制器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
+<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
+</ul>
+<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
+<h2 id="lwso">lwso</h2>
+<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
+<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
+</ul>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
+<h1>反思课下设计模块的问题</h1>
+<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
+<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
+<p>所以这几个独立的产生控制信号的部分要去掉。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io">Lazyfish</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io/2024/10/28/BUAA-CO-P3-test/">http://lazyfish-lc.github.io/2024/10/28/BUAA-CO-P3-test/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/BUAA/">BUAA</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">计算机组成原理</a><a class="post-meta__tags" href="/tags/Logisim/">Logisim</a></div><div class="post_share"><div class="social-share" data-image="/img/deep_sea.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导"><img class="cover" src="/img/deep_sea.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">北航CO 2024 P2课下部分思路引导</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-15</div><div class="title">北航CO 2024 P2课下部分思路引导</div></div></a></div><div><a href="/2024/09/03/Single-Cycle-CPU-Build-Notes/" title="单周期CPU搭建的细节记录"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-03</div><div class="title">单周期CPU搭建的细节记录</div></div></a></div><div><a href="/2024/08/27/CO-pre-Logisim-challenge/" title="北航CO pre Logisim部分 斐波那契数列挑战思路引导"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-27</div><div class="title">北航CO pre Logisim部分 斐波那契数列挑战思路引导</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Lazyfish</div><div class="author-info__description">The way through past, present and future.</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lazyfish-lc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">你好！这里是懒鱼！有建议的话请务必在“关于”页中提出！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">P3课上题目回忆</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">对CPU电路连接的几点建议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BA%86%E9%98%B2%E6%AD%A2%E5%A4%A7%E5%AE%B6%E7%9C%8B%E4%B8%8D%E6%87%82%E6%89%80%E4%BB%A5%E6%8A%8A%E6%88%91%E8%AF%BE%E4%B8%8B%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%A8%A1%E5%9D%97%E6%94%BE%E4%B8%8A%E6%9D%A5"><span class="toc-number">3.1.</span> <span class="toc-text">为了防止大家看不懂所以把我课下设计的模块放上来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cwp"><span class="toc-number">3.2.</span> <span class="toc-text">cwp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bgc"><span class="toc-number">3.3.</span> <span class="toc-text">bgc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lwso"><span class="toc-number">3.4.</span> <span class="toc-text">lwso</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">反思课下设计模块的问题</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P3课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析">北航CO 2024 P3课上部分题目回忆与分析</a><time datetime="2024-10-28T13:26:38.000Z" title="Created 2024-10-28 21:26:38">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P2课下部分思路引导"/></a><div class="content"><a class="title" href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导">北航CO 2024 P2课下部分思路引导</a><time datetime="2024-10-15T07:18:07.000Z" title="Created 2024-10-15 15:18:07">2024-10-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/09/03/Single-Cycle-CPU-Build-Notes/" title="单周期CPU搭建的细节记录"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单周期CPU搭建的细节记录"/></a><div class="content"><a class="title" href="/2024/09/03/Single-Cycle-CPU-Build-Notes/" title="单周期CPU搭建的细节记录">单周期CPU搭建的细节记录</a><time datetime="2024-09-03T10:51:17.000Z" title="Created 2024-09-03 18:51:17">2024-09-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/08/27/CO-pre-Logisim-challenge/" title="北航CO pre Logisim部分 斐波那契数列挑战思路引导"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO pre Logisim部分 斐波那契数列挑战思路引导"/></a><div class="content"><a class="title" href="/2024/08/27/CO-pre-Logisim-challenge/" title="北航CO pre Logisim部分 斐波那契数列挑战思路引导">北航CO pre Logisim部分 斐波那契数列挑战思路引导</a><time datetime="2024-08-27T14:01:25.000Z" title="Created 2024-08-27 22:01:25">2024-08-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/08/25/hello/" title="问好。"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="问好。"/></a><div class="content"><a class="title" href="/2024/08/25/hello/" title="问好。">问好。</a><time datetime="2024-08-25T09:41:38.000Z" title="Created 2024-08-25 17:41:38">2024-08-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By Lazyfish</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    GLOBAL_CONFIG_SITE.isPost && getCount()
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
