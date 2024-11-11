@@ -87,6 +87,82 @@
       </tags>
   </entry>
   <entry>
+    <title>北航CO 2024 P4课上部分题目回忆与分析</title>
+    <url>/2024/11/04/BUAA-CO-P4-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第6篇文章！</p>
+<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P4课上题目回忆</h1>
+<p>三题仍然为互相独立的添加指令题。（懒得写RTL了）</p>
+<p>第一题添加指令为 <code>eam</code>，R型指令。具体操作为，取出 <code>GPR[rs]</code> 的<strong>低16位</strong>，作为一个<strong>有符号数</strong>对17取模，结果必须为<strong>0~16</strong>的某一个非负数，结果为一个16位的数。之后，若 <code>GPR[rt]</code> 的最高位为1，则将该运算结果零扩展至32位，否则将该运算结果<strong>一扩展</strong>至32位，将结果存至 <code>GPR[rd]</code> 中。</p>
+<p>第二题添加指令为 <code>cptl</code>，<strong>I型指令</strong>（注意，这个<strong>不是J型指令</strong>，跳转方式和<code>beq</code>类似）。具体操作为，若 <code>GPR[rs]</code> 的低18位的二进制表示中存在连续6个1，则将PC+4存于 <code>GPR[rt]</code> 中，否则将PC+4存于 <code>GPR[31]</code> 中。之后，把PC的值<strong>无条件修改</strong>为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>C</mi><mo>+</mo><mn>4</mn><mo>+</mo><mtext>sign_ext</mtext><mo stretchy="false">(</mo><mi>o</mi><mi>f</mi><mi>f</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>&lt;</mo><mo>&lt;</mo><mn>2</mn><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mn>0</mn><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">PC+4+\text{sign\_ext}(offset&lt;&lt;2 || 0^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">PC</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">sign_ext</span></span><span class="mopen">(</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">2∣∣</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<p>第三题添加指令为 <code>olw</code>，I型指令。具体操作为，从DM中读取起始地址为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>P</mi><msub><mi>R</mi><mrow><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>+</mo><mtext>sign_ext</mtext><mo stretchy="false">(</mo><mi>o</mi><mi>f</mi><mi>f</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>&lt;</mo><mo>&lt;</mo><mn>2</mn><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mn>0</mn><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">GPR_{base}+\text{sign\_ext}(offset&lt;&lt;2 || 0^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">GP</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ba</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">sign_ext</span></span><span class="mopen">(</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">2∣∣</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的一整个字，若该结果为单调不降的数（若该数某位出现了1，则其更低位只会出现1），则将该结果写入 <code>GPR[rt]</code> 中，否则什么也不写入。</p>
+<h1>对CPU模块编写的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用，这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
+<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
+<li>实现时务必注意IM和DM的数据大小。</li>
+</ul>
+<h1>题目分析</h1>
+<p>三题的恶心方式各有千秋。</p>
+<p>第一题不涉及爆改数据通路，但运算较为复杂，且对截断后的<strong>有符号数</strong>取模至<strong>非负数</strong>的操作对于很多同学来说是生疏的（虽然实现思路应该在程序设计基础课就有所涉及），所以写起来比较困难。</p>
+<p>第二题也不涉及爆改数据通路，主要麻烦的点在于“连续6个1”的判断，以及一些同学看到<strong>无条件跳转</strong>就会想到<strong>J型指令</strong>，从而解码时就产生错误，这个尤其需要注意。如果说这题有没有什么巧思的话，就是这玩意计算跳转地址的方式和 <code>beq</code> 较为接近，所以我们完全可以把其理解成一种<strong>必定跳转的分支类型指令</strong>。</p>
+<p>第三题个人认为是最不好搞的，因为涉及了新增数据通路，并且“向 <code>GPR[rt]</code> 写入 <code>GPR[rt]</code>”这个操作和“什么都不写入”并不等价，而几乎所有人在课下都不会想到从DM读出来的数据会影响GRF是否写入，所以<strong>不得不爆改数据通路</strong>。（实际上，如果合理利用评测机特性的话，向0号寄存器写入也是可以的，这样也可以不剧烈改变数据通路，就是不知道这是否符合出题人的本意了）</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>程序计数器（PC）：记录程序当前运行的指令所在存储器位置。</li>
+<li>指令存储器（IM）：根据PC的值，从ROM中读出指令。</li>
+<li>控制器（Controller）：确定CPU各模块写入使能和写入/运算数据源。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU立即数扩展（ALUExt）：确定ALU立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：根据ALU操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对ALU操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+</ul>
+<h2 id="eam">eam</h2>
+<p>需要修改的模块有控制器，ALU。</p>
+<p>具体来说：</p>
+<ul>
+<li>
+<p>（控制器）该指令将使得GRF写入值，写入寄存器地址为rd，值为ALU产生的值，操作数1为 <code>GPR[rs]</code>，操作数2为 <code>GPR[rt]</code>。</p>
+</li>
+<li>
+<p>（ALU）该指令将产生一种新的运算。运算方式为，将操作数1截断为16位有符号数<code>oper1[15:0]</code>，之后计算该数对17取模后规约到非负数的结果，最后若 <code>oper2</code> 的最高位为1，则将该运算结果零扩展至32位，否则将该运算结果一扩展至32位，作为最终结果。具体操作如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">result = &#123;&#123;16&#123;oper2[31]&#125;&#125;, ($signed(oper1[15:0]) % $signed(16&#x27;d17) + $signed(16&#x27;d17)) % $signed(16&#x27;d17)&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="cptl">cptl</h2>
+<p>需要修改的模块有控制器，分支控制器，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将使得GRF写入值，写入寄存器的地址选择指定为该指令特有选择方式，值为PC+4。同时，该指令将使得PC被写入的值来自于分支控制器。</li>
+<li>（分支控制器）该指令将使得PC必定以分支跳转的模式跳转成功。</li>
+<li>（GRF写入地址选择器）该指令需要判断 <code>GPR[rs]</code> 的低18位的二进制表示中是否存在连续6个1（此部分可以直接枚举实现，也可以选择用always实现组合逻辑之后在块内用for循环解决），若存在则将写入地址指定为rt，否则指定为固定数31。</li>
+</ul>
+<h2 id="olw">olw</h2>
+<p>需要修改的模块有控制器。<strong>需要新增GRF写入信号控制器（GRF_WE_Controller）。</strong></p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将使得GRF<strong>可能写入值，具体是否写入由GRF写入信号控制器决定</strong>，写入GRF地址为 <code>rt</code>，写入GRF值来源为数据存储器。同时，该指令将读取内存中的值，内存地址由ALU决定，ALU操作数1为<code>GPR[base]</code>，操作数2为 <code>sign_ext(imm)</code>，运算操作为加法。</li>
+<li>（*GRF写入信号控制器）若当前执行指令不为olw，则直接将写入信号置为控制器得出的写入信号。否则，判断从数据存储器中读出的数字是否为单调不降的数（此部分可以用always实现组合逻辑之后在块内用for循环解决，不推荐用枚举实现），若是则把写入信号置为1，否则置为0。</li>
+<li>注意，由于新模块的加入，需要在主模块里加入该模块，并修改GRF写入信号的来源。</li>
+</ul>
+<h1>反思课下设计模块的问题</h1>
+<p>暂时没有，值得鼓励一下自己。</p>
+<p>如果不考虑P5的流水线改造处理的话，确实没有，毕竟谁能想到DM读出来的数能控制GRF的写入（</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Verilog</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北航CO 2024 P3课上部分题目回忆与分析</title>
     <url>/2024/10/28/BUAA-CO-P3-test/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
@@ -160,6 +236,101 @@
       </tags>
   </entry>
   <entry>
+    <title>北航CO 2024 P5课上部分题目回忆与分析</title>
+    <url>/2024/11/12/BUAA-CO-P5-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第7篇文章！</p>
+<p>本文章是对课上部分的题目回忆（这次真的只有部分，因为关于T3我能说很大一段），<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P5课上题目（T3）回忆</h1>
+<p>三题仍然为互相独立的添加指令题，但是这次我只写T3的回忆。</p>
+<p>准确来说，我只想写这次上机里有含金量的题，T1和T2T3相比有含金量的部分几乎为0，T2又只有一个清空延迟槽可以说道说道，于是我只想完整回忆T3，至于清空延迟槽，我会在写T3正解前先写一下大概内容。</p>
+<p>T3添加指令为 <code>lwoc</code>，I型指令。具体操作为，从DM中读取起始地址为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>P</mi><msub><mi>R</mi><mrow><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>+</mo><mtext>sign_ext</mtext><mo stretchy="false">(</mo><mi>o</mi><mi>f</mi><mi>f</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>&lt;</mo><mo>&lt;</mo><mn>2</mn><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mn>0</mn><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">GPR_{base}+\text{sign\_ext}(offset&lt;&lt;2 || 0^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">GP</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ba</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">sign_ext</span></span><span class="mopen">(</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">2∣∣</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的一整个字，若该结果小于无符号32位整数 <code>0x80000000</code>，则取该结果的低4位进行零扩展后作为写入 <code>GRF</code> 的地址，否则取指令中的 <code>rt</code> 为写入 <code>GRF</code> 的地址，写入数据均为该结果。</p>
+<h1>对CPU模块编写的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用（除转发和阻塞信号对各级流水线寄存器的控制外），这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>课下的时候控制信号请务必集成到控制器里（包括Tuse和Tnew），能不新开模块就别新开模块生成控制信号。</li>
+<li>转发和阻塞的判断请务必使用各类控制信号和rs/rt/写入地址等等进行判断，而不使用完整的指令在内部做判断。（除非你是临时加指令）</li>
+<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
+<li>实现时务必注意IM和DM的数据大小。</li>
+</ul>
+<h1>清空延迟槽</h1>
+<p>这一部分主要是对课程组未提及（或者提及了但是没细说导致我没看到）的内容进行补充。</p>
+<p>首先，我们说一下清空延迟槽是个啥意思。首先，你已经知道了在处理分支跳转类型的指令时，我们会把这条指令的后一条指令放入延迟槽中，并且在课下内容里这条指令一定会被执行。那么，假如我们新加入的指令里有不希望这条指令执行的情况呢？我们会选择把刚刚进入F级的这条指令从CPU扔出去。这就是清空延迟槽了。</p>
+<p>那么，我们应该如何把这条指令扔出去呢？</p>
+<p>实际上我们只需要做两件事：</p>
+<ul>
+<li>不让这条指令流到D级，而是让一个气泡流入D级，也就是发一个清空信号到F级到D级的流水寄存器。</li>
+<li>让D级进入一条新的指令，即维持PC继续变化。（其实这个不会被显式的做出来）</li>
+</ul>
+<p>结束了吗？还没完呢。</p>
+<p>实际上，有些指令是需要根据跳转条件的结果来决定是否清空延迟槽的，这就产生了一个问题：如果这条分支跳转指令被阻塞了，那么这个周期实际上没法判断延迟槽是否清空，所以此时我们肯定会保留延迟槽的指令，等到我们可以判断跳转条件是否成立的时候再做决断。</p>
+<p>所以，对于这种情况，我们需要额外判断一件事：仅当当前周期阻塞信号为0时，我们才尝试清空延迟槽。</p>
+<p>好了，这就是T2最有含金量的内容了。</p>
+<h1>LWOC 题目分析</h1>
+<p>想一步到位直接AC这题很困难（能预知未来的就别发话了），我会把自己A这题的过程分为三部分细说。</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>程序计数器（PC）：记录程序当前运行的指令所在存储器位置。</li>
+<li>指令存储器（IM）：根据PC的值，从ROM中读出指令。</li>
+<li>控制器（Controller）：确定CPU各模块写入使能和写入/运算数据源。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU立即数扩展（ALUExt）：确定ALU立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：根据ALU操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对ALU操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+<li>还有各级流水线寄存器，不过我似乎在这篇文章里没有用到。</li>
+</ul>
+<h2 id="如何做对这题（但是CPU跑不快）">如何做对这题（但是CPU跑不快）</h2>
+<p>首先，我们会发现一个很悲伤的事情：直到我们读出DM的数据之前，我们甚至都不知道自己要写哪个寄存器，那么当这条指令进入E级与M级中时，我们压根都不知道是否应该对之前的指令进行转发或者阻塞，仅在W级的时候才能知道这一点。</p>
+<p>所以一个很自然的想法就是，只要在E级或者M级出现了这条指令，那么我们就认为需要对D级进行阻塞。而具体W级的时候处理出具体写了哪个寄存器，那就在GRFAddrMux里加点逻辑就行了。</p>
+<p>如果你的课下实现正确，并且课上按照这个思路实现也没错，那么恭喜你！</p>
+<p>你做对了，但是你做错了。</p>
+<p>你AC了九个点，这题一共十个点，那个没过的点会说：你TLE了。</p>
+<h2 id="如何让CPU跑快（但是这题做不对）">如何让CPU跑快（但是这题做不对）</h2>
+<p>于是你会思考如何修改一下暴力阻塞，使之更聪明。</p>
+<p>原题目里其实强调了一件事情：</p>
+<blockquote>
+<p>由于是取该结果的低4位进行零扩展，所以此种条件下可能会被写入的寄存器只有 <code>GPR[0]</code> 到 <code>GPR[15]</code> 这16个寄存器。</p>
+</blockquote>
+<p>于是你大喜过望，这不就是在暗示你可能被写入的寄存器只有这16个外加一个 <code>rt</code> 嘛！</p>
+<p>也就是说，如果这条新指令出现在了E级或者M级，但是D级的指令并不涉及对以上涉及的寄存器的读入，那么我们依然是可以让这条新指令流入E级的。</p>
+<p>于是我们会修改控制阻塞信号的单元，把上一部分提到的暴力阻塞改成这种“这条指令出现在E级/M级且(D级某个要读的寄存器是 <code>GPR[0]-GPR[15]</code> 中的某一个或要读的寄存器是<code>GPR[rt]</code>)”的时候就阻塞。</p>
+<p>然后你把这个写法提交上去，再次恭喜你！</p>
+<p>那个TLE的点你过了，但是同时你实打实的WA了一堆点。</p>
+<p>而且你会发现，这些WA的点不约而同的指向了同一个问题：你尝试往 <code>$31</code> 写入一个值，而评测机希望的是往不知道哪个寄存器里写入一个什么值，总之不是 <code>$31</code> 就对了。</p>
+<h2 id="最终版本——问题还是阻塞条件！">最终版本——问题还是阻塞条件！</h2>
+<p>然后你就会联想到，会不会是一个 <code>jal</code> 跟一个 <code>lwoc</code> 就会触发这个问题呢？于是你写了一组样例，发现：</p>
+<p>还真是。</p>
+<p>并且具体表现是，你的阻塞信号莫名奇妙的变成了一个 <code>x</code>！</p>
+<p>好，把上面所有的主语“你”换成“我”就是我跟这道题缠斗了1h的结果。</p>
+<p>在我完成的CPU中，由于这条新指令在E级/M级时我并不能确定写入了哪个寄存器，所以我在把这个信息传入阻塞单元的时候，传入的实际结果是一串 <code>x</code>。（下面为了叙述方便，我只举E级的例子，M级同理）</p>
+<p>然而，在原先对E级的阻塞中，我并未考虑传入结果是 <code>x</code> 或者 <code>z</code> 的情况。这也就是说，如果我在此时判断D级要读的寄存器是否为E级要写入的寄存器，那么判断结果就会是单个 <code>x</code>，于是这个 <code>x</code> 就会一连串的传导到阻塞信号，并最终酿成大祸。</p>
+<p>解决方法……很简单。而且有两种。</p>
+<ol>
+<li>我们采用 <code>===</code> 替代 <code>==</code>。<code>===</code> 是Verilog中针对四态值的判断，会对 <code>x</code> 和 <code>z</code> 也正确的进行判等比较，而 <code>==</code> 在遇到比较内容为 <code>x</code> 和 <code>z</code> 的时候，会无脑产生一个 <code>x</code> 出来，最终导致上述结果的产生。</li>
+<li>（考场思路，不是很好，大家自行考量）我们选择在遇到这条特殊指令的时候，直接不采用课下写的阻塞的结果，转而新开一个判断条件得出阻塞结果。</li>
+</ol>
+<p>然后，你AC了。</p>
+<h1>反思课下设计模块的问题</h1>
+<p>三等号，目前能想到的只有这个了。</p>
+<h1>反思课上表现的问题</h1>
+<p>实际上，T1和T2我的表现都没啥大问题，加起来也就花了半小时。</p>
+<p>但是对于T3，我最大的问题是，没有对课上指令的优化做任何的心理预期（尽管我的设计里已经预留了一点改动空间，但是从上述错误来看，实际上这还是不够充分），从而在前几次WA的时候慌了神，甚至都不知道看报错信息和构造测试数据了。</p>
+<p>这种不好的心理状态直到第2发还是第3发WA的时候才结束，那会我刚刚把自己的心态稳住，让自己意识到“没必要那么急”。虽然那个时候已经是八点了。</p>
+<p>然而看报错信息的事情还是八点十几分才做的，这个需要改正。</p>
+<p>到熄灯时间了，我先睡了，有啥想到的明晚更新吧。没有的话，这句话也就撂在这里不管了。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Verilog</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北航2024面向对象程序先导课程心得</title>
     <url>/2024/10/31/BUAA-OOpre-2024/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第4篇文章！</p>
@@ -225,82 +396,6 @@
         <tag>面向对象程序先导</tag>
         <tag>OO</tag>
         <tag>OOpre</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>北航CO 2024 P4课上部分题目回忆与分析</title>
-    <url>/2024/11/04/BUAA-CO-P4-test/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第6篇文章！</p>
-<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>P4课上题目回忆</h1>
-<p>三题仍然为互相独立的添加指令题。（懒得写RTL了）</p>
-<p>第一题添加指令为 <code>eam</code>，R型指令。具体操作为，取出 <code>GPR[rs]</code> 的<strong>低16位</strong>，作为一个<strong>有符号数</strong>对17取模，结果必须为<strong>0~16</strong>的某一个非负数，结果为一个16位的数。之后，若 <code>GPR[rt]</code> 的最高位为1，则将该运算结果零扩展至32位，否则将该运算结果<strong>一扩展</strong>至32位，将结果存至 <code>GPR[rd]</code> 中。</p>
-<p>第二题添加指令为 <code>cptl</code>，<strong>I型指令</strong>（注意，这个<strong>不是J型指令</strong>，跳转方式和<code>beq</code>类似）。具体操作为，若 <code>GPR[rs]</code> 的低18位的二进制表示中存在连续6个1，则将PC+4存于 <code>GPR[rt]</code> 中，否则将PC+4存于 <code>GPR[31]</code> 中。之后，把PC的值<strong>无条件修改</strong>为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>C</mi><mo>+</mo><mn>4</mn><mo>+</mo><mtext>sign_ext</mtext><mo stretchy="false">(</mo><mi>o</mi><mi>f</mi><mi>f</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>&lt;</mo><mo>&lt;</mo><mn>2</mn><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mn>0</mn><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">PC+4+\text{sign\_ext}(offset&lt;&lt;2 || 0^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">PC</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">sign_ext</span></span><span class="mopen">(</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">2∣∣</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</p>
-<p>第三题添加指令为 <code>olw</code>，I型指令。具体操作为，从DM中读取起始地址为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>P</mi><msub><mi>R</mi><mrow><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>+</mo><mtext>sign_ext</mtext><mo stretchy="false">(</mo><mi>o</mi><mi>f</mi><mi>f</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>&lt;</mo><mo>&lt;</mo><mn>2</mn><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mn>0</mn><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">GPR_{base}+\text{sign\_ext}(offset&lt;&lt;2 || 0^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">GP</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ba</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">sign_ext</span></span><span class="mopen">(</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">2∣∣</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的一整个字，若该结果为单调不降的数（若该数某位出现了1，则其更低位只会出现1），则将该结果写入 <code>GPR[rt]</code> 中，否则什么也不写入。</p>
-<h1>对CPU模块编写的几点建议</h1>
-<ul>
-<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
-<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
-<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
-<li>实现时务必注意IM和DM的数据大小。</li>
-</ul>
-<h1>题目分析</h1>
-<p>三题的恶心方式各有千秋。</p>
-<p>第一题不涉及爆改数据通路，但运算较为复杂，且对截断后的<strong>有符号数</strong>取模至<strong>非负数</strong>的操作对于很多同学来说是生疏的（虽然实现思路应该在程序设计基础课就有所涉及），所以写起来比较困难。</p>
-<p>第二题也不涉及爆改数据通路，主要麻烦的点在于“连续6个1”的判断，以及一些同学看到<strong>无条件跳转</strong>就会想到<strong>J型指令</strong>，从而解码时就产生错误，这个尤其需要注意。如果说这题有没有什么巧思的话，就是这玩意计算跳转地址的方式和 <code>beq</code> 较为接近，所以我们完全可以把其理解成一种<strong>必定跳转的分支类型指令</strong>。</p>
-<p>第三题个人认为是最不好搞的，因为涉及了新增数据通路，并且“向 <code>GPR[rt]</code> 写入 <code>GPR[rt]</code>”这个操作和“什么都不写入”并不等价，而几乎所有人在课下都不会想到从DM读出来的数据会影响GRF是否写入，所以<strong>不得不爆改数据通路</strong>。（实际上，如果合理利用评测机特性的话，向0号寄存器写入也是可以的，这样也可以不剧烈改变数据通路，就是不知道这是否符合出题人的本意了）</p>
-<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
-<ul>
-<li>程序计数器（PC）：记录程序当前运行的指令所在存储器位置。</li>
-<li>指令存储器（IM）：根据PC的值，从ROM中读出指令。</li>
-<li>控制器（Controller）：确定CPU各模块写入使能和写入/运算数据源。</li>
-<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
-<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
-<li>ALU立即数扩展（ALUExt）：确定ALU立即数扩展方式，对立即数进行扩展。</li>
-<li>ALU运算数选择器（ALUMux）：根据ALU操作数源，选择ALU的操作数。</li>
-<li>算数逻辑单元（ALU）：对ALU操作数进行运算。</li>
-<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
-<li>数据内存（DM）：进行内存读写。</li>
-<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
-<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
-</ul>
-<h2 id="eam">eam</h2>
-<p>需要修改的模块有控制器，ALU。</p>
-<p>具体来说：</p>
-<ul>
-<li>
-<p>（控制器）该指令将使得GRF写入值，写入寄存器地址为rd，值为ALU产生的值，操作数1为 <code>GPR[rs]</code>，操作数2为 <code>GPR[rt]</code>。</p>
-</li>
-<li>
-<p>（ALU）该指令将产生一种新的运算。运算方式为，将操作数1截断为16位有符号数<code>oper1[15:0]</code>，之后计算该数对17取模后规约到非负数的结果，最后若 <code>oper2</code> 的最高位为1，则将该运算结果零扩展至32位，否则将该运算结果一扩展至32位，作为最终结果。具体操作如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">result = &#123;&#123;16&#123;oper2[31]&#125;&#125;, ($signed(oper1[15:0]) % $signed(16&#x27;d17) + $signed(16&#x27;d17)) % $signed(16&#x27;d17)&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="cptl">cptl</h2>
-<p>需要修改的模块有控制器，分支控制器，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将使得GRF写入值，写入寄存器的地址选择指定为该指令特有选择方式，值为PC+4。同时，该指令将使得PC被写入的值来自于分支控制器。</li>
-<li>（分支控制器）该指令将使得PC必定以分支跳转的模式跳转成功。</li>
-<li>（GRF写入地址选择器）该指令需要判断 <code>GPR[rs]</code> 的低18位的二进制表示中是否存在连续6个1（此部分可以直接枚举实现，也可以选择用always实现组合逻辑之后在块内用for循环解决），若存在则将写入地址指定为rt，否则指定为固定数31。</li>
-</ul>
-<h2 id="olw">olw</h2>
-<p>需要修改的模块有控制器。<strong>需要新增GRF写入信号控制器（GRF_WE_Controller）。</strong></p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将使得GRF<strong>可能写入值，具体是否写入由GRF写入信号控制器决定</strong>，写入GRF地址为 <code>rt</code>，写入GRF值来源为数据存储器。同时，该指令将读取内存中的值，内存地址由ALU决定，ALU操作数1为<code>GPR[base]</code>，操作数2为 <code>sign_ext(imm)</code>，运算操作为加法。</li>
-<li>（*GRF写入信号控制器）若当前执行指令不为olw，则直接将写入信号置为控制器得出的写入信号。否则，判断从数据存储器中读出的数字是否为单调不降的数（此部分可以用always实现组合逻辑之后在块内用for循环解决，不推荐用枚举实现），若是则把写入信号置为1，否则置为0。</li>
-<li>注意，由于新模块的加入，需要在主模块里加入该模块，并修改GRF写入信号的来源。</li>
-</ul>
-<h1>反思课下设计模块的问题</h1>
-<p>暂时没有，值得鼓励一下自己。</p>
-<p>如果不考虑P5的流水线改造处理的话，确实没有，毕竟谁能想到DM读出来的数能控制GRF的写入（</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>计算机组成原理</tag>
-        <tag>Verilog</tag>
       </tags>
   </entry>
   <entry>
@@ -533,68 +628,6 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <tags>
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ICPC 2024 成都站游记</title>
-    <url>/2024/11/01/ICPC-2024-Chengdu/</url>
-    <content><![CDATA[<p>你好，本文章为该博客的第5篇文章。</p>
-<p>本文章是<strong>一篇游记</strong>，大部分记录的是当时的所思所感，比较偏个人情绪。</p>
-<p>额外的，本文章大部分内容记录于比赛结束当天，在飞机上写的，最后一段于日后才补上。</p>
-<h2 id="？">？</h2>
-<p>我为什么要打算法竞赛？是热爱催生了功利，还是功利让我产生了热爱的错觉？</p>
-<p>作为一个喜欢悠闲的人，我为什么要给自己的时间表安排的这么满？是为了快点迎来理想的生活，还是环境让我遗忘了初衷？</p>
-<p>我无法回答这样的问题，我相信大多数人也无法回答类似这样的问题。我相信它们贯穿了我学业生活的始终，也贯穿了每个和我一样的，相当多计科学子学业生活的始终。</p>
-<p>但是不管这个问题回答的怎么样，我们仍然坐上了各自选择的无数个航班，起飞 ，降落。</p>
-<h2 id="成都。">成都。</h2>
-<p>除了河南话，山东话，最熟悉的应该就是四川话了，理应陌生，但异常亲切。</p>
-<p>烧烤，盒饭，火锅，比赛餐，如果我真的有机会细细品尝的话，应该都是好吃的。</p>
-<p>热身赛的慌乱，最后一份模板的未打印，DDL的迫近占走练习时间，一切预示着已经过去的未来。想得到周六晚上那份隐隐的不安，应该会成为现实。</p>
-<p>只是……来的还是有点残酷：</p>
-<h2 id="不是成都，只是赛场。">不是成都，只是赛场。</h2>
-<p>没有预想的异常的频发，却比异常更为刺痛人心。</p>
-<p>9:05。</p>
-<p>读题，构造，队友上机，验证，上机。队友上机。上机。</p>
-<p>10:05。</p>
-<p>4题完成。开I。按因子分解，修正队友思路，算出过多的区间，难以上机。</p>
-<p>11:05。</p>
-<p>经典的中期崩溃。实现推进遥遥无期，交替上机思路打断，一次TLE查点失去信心。</p>
-<p>12:05。</p>
-<p>完成I，为时已晚。</p>
-<p>12:35。</p>
-<p>队友第6题完成后，再次长时间上机冲刺E。但是……队友的思路只有一半。</p>
-<p>13:05。</p>
-<p>补足思路。但是并非诸葛，怎能算无遗策。</p>
-<p>13:30。</p>
-<p>完成初版，debug。树剖板子问题调了一会。队友尝试K让了一会。</p>
-<p>13:55。</p>
-<p>修复其他细节错误，第一组样例通过，第二组没过，换根出了问题，不是逆元，因为绕开了逆元。</p>
-<p>14:03。</p>
-<p>换根时候信息没继承，肯定是错答案。那我应该填什么上去呢？</p>
-<p>14:04。</p>
-<p>尝试所有能想到的极小改的方法，错误。</p>
-<p>14:05。</p>
-<p>再之后发生了什么我就不想记得了。</p>
-<p>最让人感到悲伤的是，我已经尽力了，这已经是我现在能保持的最好水平了。</p>
-<h2 id="北京。">北京。</h2>
-<p>两个pre的DDL，一个英语小测，一个CO上机，还有很多其他事情要做。</p>
-<p>哭不出来，也赶不下去，静静等待飞机降落。</p>
-<p>只是下了飞机之后，飞机上的橙汁味还留在嘴里。</p>
-<h2 id="从稍远的未来记录下来的，关于那一大堆DDL的后续">从稍远的未来记录下来的，关于那一大堆DDL的后续</h2>
-<p>周五了，终于想起来要补上这一段了。</p>
-<p>实际上从事后来看，这些DDL不是那么难赶，只是赶出来质量会很差而已。</p>
-<p>CO P3上机过了，八点就出来了。那天晚上，对未来的很多事情都松了一口气。</p>
-<p>更让人惊喜的是，就在周四从沙河回学院路的路上，我再次收到了一个月前早已准备了一次的文件。</p>
-<p>其实，银牌也不是那么差，对吧？</p>
-<h2 id="南京？">南京？</h2>
-<p>更强的对手，仍然是SUA命题，更不充分的准备时间。</p>
-<p>也许结果仍然如此，但是……还能如此就足够了。</p>
-<p>无论遇到了什么，都在朝着终会到来的那天向前。</p>
-]]></content>
-      <tags>
-        <tag>算法竞赛</tag>
-        <tag>ICPC</tag>
-        <tag>游记</tag>
       </tags>
   </entry>
   <entry>
@@ -878,6 +911,68 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <tags>
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ICPC 2024 成都站游记</title>
+    <url>/2024/11/01/ICPC-2024-Chengdu/</url>
+    <content><![CDATA[<p>你好，本文章为该博客的第5篇文章。</p>
+<p>本文章是<strong>一篇游记</strong>，大部分记录的是当时的所思所感，比较偏个人情绪。</p>
+<p>额外的，本文章大部分内容记录于比赛结束当天，在飞机上写的，最后一段于日后才补上。</p>
+<h2 id="？">？</h2>
+<p>我为什么要打算法竞赛？是热爱催生了功利，还是功利让我产生了热爱的错觉？</p>
+<p>作为一个喜欢悠闲的人，我为什么要给自己的时间表安排的这么满？是为了快点迎来理想的生活，还是环境让我遗忘了初衷？</p>
+<p>我无法回答这样的问题，我相信大多数人也无法回答类似这样的问题。我相信它们贯穿了我学业生活的始终，也贯穿了每个和我一样的，相当多计科学子学业生活的始终。</p>
+<p>但是不管这个问题回答的怎么样，我们仍然坐上了各自选择的无数个航班，起飞 ，降落。</p>
+<h2 id="成都。">成都。</h2>
+<p>除了河南话，山东话，最熟悉的应该就是四川话了，理应陌生，但异常亲切。</p>
+<p>烧烤，盒饭，火锅，比赛餐，如果我真的有机会细细品尝的话，应该都是好吃的。</p>
+<p>热身赛的慌乱，最后一份模板的未打印，DDL的迫近占走练习时间，一切预示着已经过去的未来。想得到周六晚上那份隐隐的不安，应该会成为现实。</p>
+<p>只是……来的还是有点残酷：</p>
+<h2 id="不是成都，只是赛场。">不是成都，只是赛场。</h2>
+<p>没有预想的异常的频发，却比异常更为刺痛人心。</p>
+<p>9:05。</p>
+<p>读题，构造，队友上机，验证，上机。队友上机。上机。</p>
+<p>10:05。</p>
+<p>4题完成。开I。按因子分解，修正队友思路，算出过多的区间，难以上机。</p>
+<p>11:05。</p>
+<p>经典的中期崩溃。实现推进遥遥无期，交替上机思路打断，一次TLE查点失去信心。</p>
+<p>12:05。</p>
+<p>完成I，为时已晚。</p>
+<p>12:35。</p>
+<p>队友第6题完成后，再次长时间上机冲刺E。但是……队友的思路只有一半。</p>
+<p>13:05。</p>
+<p>补足思路。但是并非诸葛，怎能算无遗策。</p>
+<p>13:30。</p>
+<p>完成初版，debug。树剖板子问题调了一会。队友尝试K让了一会。</p>
+<p>13:55。</p>
+<p>修复其他细节错误，第一组样例通过，第二组没过，换根出了问题，不是逆元，因为绕开了逆元。</p>
+<p>14:03。</p>
+<p>换根时候信息没继承，肯定是错答案。那我应该填什么上去呢？</p>
+<p>14:04。</p>
+<p>尝试所有能想到的极小改的方法，错误。</p>
+<p>14:05。</p>
+<p>再之后发生了什么我就不想记得了。</p>
+<p>最让人感到悲伤的是，我已经尽力了，这已经是我现在能保持的最好水平了。</p>
+<h2 id="北京。">北京。</h2>
+<p>两个pre的DDL，一个英语小测，一个CO上机，还有很多其他事情要做。</p>
+<p>哭不出来，也赶不下去，静静等待飞机降落。</p>
+<p>只是下了飞机之后，飞机上的橙汁味还留在嘴里。</p>
+<h2 id="从稍远的未来记录下来的，关于那一大堆DDL的后续">从稍远的未来记录下来的，关于那一大堆DDL的后续</h2>
+<p>周五了，终于想起来要补上这一段了。</p>
+<p>实际上从事后来看，这些DDL不是那么难赶，只是赶出来质量会很差而已。</p>
+<p>CO P3上机过了，八点就出来了。那天晚上，对未来的很多事情都松了一口气。</p>
+<p>更让人惊喜的是，就在周四从沙河回学院路的路上，我再次收到了一个月前早已准备了一次的文件。</p>
+<p>其实，银牌也不是那么差，对吧？</p>
+<h2 id="南京？">南京？</h2>
+<p>更强的对手，仍然是SUA命题，更不充分的准备时间。</p>
+<p>也许结果仍然如此，但是……还能如此就足够了。</p>
+<p>无论遇到了什么，都在朝着终会到来的那天向前。</p>
+]]></content>
+      <tags>
+        <tag>算法竞赛</tag>
+        <tag>ICPC</tag>
+        <tag>游记</tag>
       </tags>
   </entry>
   <entry>
