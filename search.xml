@@ -87,6 +87,79 @@
       </tags>
   </entry>
   <entry>
+    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
+    <url>/2024/10/28/BUAA-CO-P3-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
+<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P3课上题目回忆</h1>
+<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
+<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
+<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
+<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
+<h1>对CPU电路连接的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
+<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
+<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
+</ul>
+<h1>题目分析</h1>
+<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
+<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
+<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+</ul>
+<h2 id="cwp">cwp</h2>
+<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
+<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
+<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
+</ul>
+<h2 id="bgc">bgc</h2>
+<p>需要修改的模块有控制器，分支控制器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
+<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
+</ul>
+<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
+<h2 id="lwso">lwso</h2>
+<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
+<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
+</ul>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
+<h1>反思课下设计模块的问题</h1>
+<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
+<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
+<p>所以这几个独立的产生控制信号的部分要去掉。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Logisim</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北航CO 2024 P4课上部分题目回忆与分析</title>
     <url>/2024/11/04/BUAA-CO-P4-test/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第6篇文章！</p>
@@ -160,79 +233,6 @@
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
         <tag>Verilog</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
-    <url>/2024/10/28/BUAA-CO-P3-test/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
-<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>P3课上题目回忆</h1>
-<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
-<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
-<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
-<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
-<h1>对CPU电路连接的几点建议</h1>
-<ul>
-<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
-<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
-<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
-<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
-</ul>
-<h1>题目分析</h1>
-<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
-<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
-<ul>
-<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
-<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
-<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
-<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
-<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
-<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
-<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
-<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
-<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
-<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
-<li>数据内存（DM）：进行内存读写。</li>
-<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
-<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
-</ul>
-<h2 id="cwp">cwp</h2>
-<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
-<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
-<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
-</ul>
-<h2 id="bgc">bgc</h2>
-<p>需要修改的模块有控制器，分支控制器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
-<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
-</ul>
-<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
-<h2 id="lwso">lwso</h2>
-<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
-<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
-</ul>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
-<h1>反思课下设计模块的问题</h1>
-<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
-<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
-<p>所以这几个独立的产生控制信号的部分要去掉。</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>计算机组成原理</tag>
-        <tag>Logisim</tag>
       </tags>
   </entry>
   <entry>
@@ -323,6 +323,56 @@
 <p>这种不好的心理状态直到第2发还是第3发WA的时候才结束，那会我刚刚把自己的心态稳住，让自己意识到“没必要那么急”。虽然那个时候已经是八点了。</p>
 <p>然而看报错信息的事情还是八点十几分才做的，这个需要改正。</p>
 <p>到熄灯时间了，我先睡了，有啥想到的明晚更新吧。没有的话，这句话也就撂在这里不管了。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Verilog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>北航CO 2024 P6课上部分题目回忆与分析</title>
+    <url>/2024/11/18/BUAA-CO-P6-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第8篇文章！</p>
+<p>本文章是对课上部分的题目回忆（真的只有部分，关于T1我能说很大一段），<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P6课上题目（T1）回忆</h1>
+<p>三题仍然为互相独立的添加指令题，这次我只写T1的回忆。</p>
+<p>准确来说，我还是只想写这次上机里有含金量的题，T2有含金量的部分几乎为0，T3和第一次P5课上的T3考点重合度太高（需要了解的可自行查阅我之前写的博客），于是我只想完整回忆T1。</p>
+<p>T1添加指令为 <code>fmultu</code>，R型指令。具体操作为进行一个需要在乘除模块计算3个周期的计算指令，操作细节如下：</p>
+<p>首先，对 <code>GPR[rs]</code> 和 <code>GPR[rt]</code> 进行64位无符号乘法，结果记为 <code>prod</code>。</p>
+<p>若 <code>prod</code> 高32位为0，则把 <code>prod[63:32]</code> 保存到 <code>HI</code> 寄存器中，把 <code>prod[31:0]</code> 保存到 <code>LO</code> 寄存器中。</p>
+<p>否则，我们找到 <code>prod</code> 中最高位1的出现位置 <code>highbit_1</code> 与 <code>prod</code> 中最低位0的出现位置 <code>lowbit_0</code> （可以证明，这种情况下 <code>prod</code> 中必定存在至少一个1和一个0） 。之后，记 <code>reverse_bit</code> 为 <code>highbit_1-lowbit_0</code> 的绝对值，可以证明 <code>reverse_bit</code> 必定在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">0\sim 63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">63</span></span></span></span> 内。最后，把 <code>prod[reverse_bit]</code> 进行翻转（0变成1，1变成0），将结果的高32位保存到 <code>HI</code> 寄存器中，将结果的低32位保存到 <code>LO</code> 寄存器中。</p>
+<h1>对CPU模块编写的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用（除转发和阻塞信号对各级流水线寄存器的控制外），这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>课下的时候控制信号请务必集成到控制器里（包括Tuse和Tnew），能不新开模块就别新开模块生成控制信号。</li>
+<li>转发和阻塞的判断请务必使用各类控制信号和rs/rt/写入地址等等进行判断，而不使用完整的指令在内部做判断。（除非你是临时加指令）</li>
+<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
+<li>由于数据存储器改为外置，并且在D级时你无法得知要读写的具体位置和具体字节，所以一部分信息只能独立于控制器，在M级使用指令本身的opcode进行额外的处理。</li>
+<li>加入乘除模块时，可以将ALU的输出结果与HI寄存器，LO寄存器塞入一个多选器里，以多选器结果作为本周期ALU的“实际输出”，该多选器的控制信号在控制器里就可以处理出来。</li>
+<li>在考虑由乘除模块引起的阻塞条件增加时，我们可以考虑处理出该指令是否使用乘除模块（注意，这个和start信号还不是一个信号，后者只需要在处理需要多个周期的指令时才会用到），用D级的该信号，E级乘除模块的start信号和busy信号作为判断乘除法阻塞的依据。</li>
+</ul>
+<h1>FMULTU 题目分析</h1>
+<p>这题其实写起来也不算太困难，主要是讲一下对于乘除模块的修改，以及如何处理这种比较大号的计算型指令的添加。</p>
+<p>首先，依然是常规的控制器里填充控制信号，这个指令的控制信号其实和MULTU差不了多少，基本上没啥可说的。在乘除模块里设置周期数也很好说。</p>
+<p>并且，如果你是照着我给的建议搭的CPU，那么你不需要额外处理这条指令带来的额外的阻塞可能情况。</p>
+<p>这题唯一的问题在于，这个东西算起来着实有些麻烦，有种以前计算指令的大杂烩的感觉。</p>
+<p>对于这种情况，我的建议其实是：把计算过程独立于时序逻辑之外（防止出现时序问题），用always块建模组合逻辑（便于编写），多开reg变量存储中间结果（便于调试）。</p>
+<p>比如说这题吧。我应该是开了这些reg型变量： <code>[63:0]prod</code>，<code>[31:0]highbit_1</code>，<code>[31:0]lowbit_0</code>，<code>[31:0]reverse_bit</code>，<code>[63:0]temp</code>，<code>[63:0]result</code>。</p>
+<p>其实，我在之前描述题面的时候，就已经用了很多原题面根本没有明确提出的中间变量了（比如说，<code>|highbit_1-lowbit_0|</code> 在原题面里就直接被带着用了）。所以，这种适度的拆解有助于编写代码的时候快速理清思路。</p>
+<p>同时，多开变量还有一个好处，就是你可以在调试的时候清晰的看到每一次计算的时候的中间运行结果，这样不管是哪一步开始出了问题，你都可以快速的发现问题。</p>
+<p>然后，我们就可以照着题面要求一步步组合这些变量了。</p>
+<p>具体的大部分实现细节都很好说，只提一个 <code>highbit_1</code> 和 <code>lowbit_0</code> 的具体实现吧。我以 <code>lowbit_0</code> 举例，我的实现如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for (lowbit_0 = 0; lowbit_0 &lt; 32&#x27;d64 &amp;&amp; prod[lowbit_0] != 1&#x27;b0; lowbit_0 = lowbit_0 + 1) begin</span><br><span class="line">	//这里是个空循环，该干的活在循环条件里已经干完了</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>然后……？没了，恭喜AC！</p>
+<h1>反思课下设计模块的问题</h1>
+<p>没有。这次除了写的有点不是很美观之外，一点没有。</p>
+<h1>反思课上表现的问题</h1>
+<p>T2和T3的表现都没有大问题。最多来说就是，T3的时候我没有处理清楚判断WD和DM读取结果判断的位置，导致一开始多尝试了几次修改。</p>
+<p>不过小问题还是挺多的，比如说T1的时候我一开始把处理 <code>lowbit</code> 的终止条件写反了，步进方向也写反了。比如说T2我统计一个数字里1的个数的时候，一个是存储个数的寄存器大小没开够（实际上是忘了写位宽），另一个是需要逐位比较是否是1的时候我直接把整个数据拿来比较了……令人汗颜！</p>
+<p>当然，结果是好的，1h解决战斗。</p>
+<p>希望以上内容能够让各位有一点新的收获吧。</p>
 ]]></content>
       <tags>
         <tag>BUAA</tag>
@@ -631,6 +681,96 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </tags>
   </entry>
   <entry>
+    <title>ICPC 2024 成都站游记</title>
+    <url>/2024/11/01/ICPC-2024-Chengdu/</url>
+    <content><![CDATA[<p>你好，本文章为该博客的第5篇文章。</p>
+<p>本文章是<strong>一篇游记</strong>，大部分记录的是当时的所思所感，比较偏个人情绪。</p>
+<p>额外的，本文章大部分内容记录于比赛结束当天，在飞机上写的，最后一段于日后才补上。</p>
+<h2 id="？">？</h2>
+<p>我为什么要打算法竞赛？是热爱催生了功利，还是功利让我产生了热爱的错觉？</p>
+<p>作为一个喜欢悠闲的人，我为什么要给自己的时间表安排的这么满？是为了快点迎来理想的生活，还是环境让我遗忘了初衷？</p>
+<p>我无法回答这样的问题，我相信大多数人也无法回答类似这样的问题。我相信它们贯穿了我学业生活的始终，也贯穿了每个和我一样的，相当多计科学子学业生活的始终。</p>
+<p>但是不管这个问题回答的怎么样，我们仍然坐上了各自选择的无数个航班，起飞 ，降落。</p>
+<h2 id="成都。">成都。</h2>
+<p>除了河南话，山东话，最熟悉的应该就是四川话了，理应陌生，但异常亲切。</p>
+<p>烧烤，盒饭，火锅，比赛餐，如果我真的有机会细细品尝的话，应该都是好吃的。</p>
+<p>热身赛的慌乱，最后一份模板的未打印，DDL的迫近占走练习时间，一切预示着已经过去的未来。想得到周六晚上那份隐隐的不安，应该会成为现实。</p>
+<p>只是……来的还是有点残酷：</p>
+<h2 id="不是成都，只是赛场。">不是成都，只是赛场。</h2>
+<p>没有预想的异常的频发，却比异常更为刺痛人心。</p>
+<p>9:05。</p>
+<p>读题，构造，队友上机，验证，上机。队友上机。上机。</p>
+<p>10:05。</p>
+<p>4题完成。开I。按因子分解，修正队友思路，算出过多的区间，难以上机。</p>
+<p>11:05。</p>
+<p>经典的中期崩溃。实现推进遥遥无期，交替上机思路打断，一次TLE查点失去信心。</p>
+<p>12:05。</p>
+<p>完成I，为时已晚。</p>
+<p>12:35。</p>
+<p>队友第6题完成后，再次长时间上机冲刺E。但是……队友的思路只有一半。</p>
+<p>13:05。</p>
+<p>补足思路。但是并非诸葛，怎能算无遗策。</p>
+<p>13:30。</p>
+<p>完成初版，debug。树剖板子问题调了一会。队友尝试K让了一会。</p>
+<p>13:55。</p>
+<p>修复其他细节错误，第一组样例通过，第二组没过，换根出了问题，不是逆元，因为绕开了逆元。</p>
+<p>14:03。</p>
+<p>换根时候信息没继承，肯定是错答案。那我应该填什么上去呢？</p>
+<p>14:04。</p>
+<p>尝试所有能想到的极小改的方法，错误。</p>
+<p>14:05。</p>
+<p>再之后发生了什么我就不想记得了。</p>
+<p>最让人感到悲伤的是，我已经尽力了，这已经是我现在能保持的最好水平了。</p>
+<h2 id="北京。">北京。</h2>
+<p>两个pre的DDL，一个英语小测，一个CO上机，还有很多其他事情要做。</p>
+<p>哭不出来，也赶不下去，静静等待飞机降落。</p>
+<p>只是下了飞机之后，飞机上的橙汁味还留在嘴里。</p>
+<h2 id="从稍远的未来记录下来的，关于那一大堆DDL的后续">从稍远的未来记录下来的，关于那一大堆DDL的后续</h2>
+<p>周五了，终于想起来要补上这一段了。</p>
+<p>实际上从事后来看，这些DDL不是那么难赶，只是赶出来质量会很差而已。</p>
+<p>CO P3上机过了，八点就出来了。那天晚上，对未来的很多事情都松了一口气。</p>
+<p>更让人惊喜的是，就在周四从沙河回学院路的路上，我再次收到了一个月前早已准备了一次的文件。</p>
+<p>其实，银牌也不是那么差，对吧？</p>
+<h2 id="南京？">南京？</h2>
+<p>更强的对手，仍然是SUA命题，更不充分的准备时间。</p>
+<p>也许结果仍然如此，但是……还能如此就足够了。</p>
+<p>无论遇到了什么，都在朝着终会到来的那天向前。</p>
+]]></content>
+      <tags>
+        <tag>算法竞赛</tag>
+        <tag>ICPC</tag>
+        <tag>游记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>问好。</title>
+    <url>/2024/08/25/hello/</url>
+    <content><![CDATA[<h1>你好！</h1>
+<p>这里是懒鱼，一个北航在读本科生，一个车万人，一个XCPCer。</p>
+<p>建立这个博客的时候，其实我还没有具体要写什么的打算。也许未来我会选择把学习时候的各类思考，以及搞XCPC过程中的各个题目/算法笔记/游记（如果能打上比赛的话）等等的都丢上来。也许如果未来还有什么值得记录的活动的话，也会留一些内容上来。</p>
+<p>毕竟是作为第一篇博客，而且脑袋空空不知道说些什么，那就随便测个功能就跑吧。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{bmatrix}
+	F_{n+1} \\
+    F_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+	1 &amp; 1 \\
+	1 &amp; 0 \\
+\end{bmatrix}
+\begin{bmatrix}
+	F_n \\
+	F_{n-1} \\
+\end{bmatrix}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
+<p>希望未来我们能一直见面！</p>
+<p>为了终会到来的那天。</p>
+]]></content>
+      <tags>
+        <tag>hello world!</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>单周期CPU搭建的细节记录</title>
     <url>/2024/09/03/Single-Cycle-CPU-Build-Notes/</url>
     <content><![CDATA[<h1>固定开场</h1>
@@ -911,96 +1051,6 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <tags>
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ICPC 2024 成都站游记</title>
-    <url>/2024/11/01/ICPC-2024-Chengdu/</url>
-    <content><![CDATA[<p>你好，本文章为该博客的第5篇文章。</p>
-<p>本文章是<strong>一篇游记</strong>，大部分记录的是当时的所思所感，比较偏个人情绪。</p>
-<p>额外的，本文章大部分内容记录于比赛结束当天，在飞机上写的，最后一段于日后才补上。</p>
-<h2 id="？">？</h2>
-<p>我为什么要打算法竞赛？是热爱催生了功利，还是功利让我产生了热爱的错觉？</p>
-<p>作为一个喜欢悠闲的人，我为什么要给自己的时间表安排的这么满？是为了快点迎来理想的生活，还是环境让我遗忘了初衷？</p>
-<p>我无法回答这样的问题，我相信大多数人也无法回答类似这样的问题。我相信它们贯穿了我学业生活的始终，也贯穿了每个和我一样的，相当多计科学子学业生活的始终。</p>
-<p>但是不管这个问题回答的怎么样，我们仍然坐上了各自选择的无数个航班，起飞 ，降落。</p>
-<h2 id="成都。">成都。</h2>
-<p>除了河南话，山东话，最熟悉的应该就是四川话了，理应陌生，但异常亲切。</p>
-<p>烧烤，盒饭，火锅，比赛餐，如果我真的有机会细细品尝的话，应该都是好吃的。</p>
-<p>热身赛的慌乱，最后一份模板的未打印，DDL的迫近占走练习时间，一切预示着已经过去的未来。想得到周六晚上那份隐隐的不安，应该会成为现实。</p>
-<p>只是……来的还是有点残酷：</p>
-<h2 id="不是成都，只是赛场。">不是成都，只是赛场。</h2>
-<p>没有预想的异常的频发，却比异常更为刺痛人心。</p>
-<p>9:05。</p>
-<p>读题，构造，队友上机，验证，上机。队友上机。上机。</p>
-<p>10:05。</p>
-<p>4题完成。开I。按因子分解，修正队友思路，算出过多的区间，难以上机。</p>
-<p>11:05。</p>
-<p>经典的中期崩溃。实现推进遥遥无期，交替上机思路打断，一次TLE查点失去信心。</p>
-<p>12:05。</p>
-<p>完成I，为时已晚。</p>
-<p>12:35。</p>
-<p>队友第6题完成后，再次长时间上机冲刺E。但是……队友的思路只有一半。</p>
-<p>13:05。</p>
-<p>补足思路。但是并非诸葛，怎能算无遗策。</p>
-<p>13:30。</p>
-<p>完成初版，debug。树剖板子问题调了一会。队友尝试K让了一会。</p>
-<p>13:55。</p>
-<p>修复其他细节错误，第一组样例通过，第二组没过，换根出了问题，不是逆元，因为绕开了逆元。</p>
-<p>14:03。</p>
-<p>换根时候信息没继承，肯定是错答案。那我应该填什么上去呢？</p>
-<p>14:04。</p>
-<p>尝试所有能想到的极小改的方法，错误。</p>
-<p>14:05。</p>
-<p>再之后发生了什么我就不想记得了。</p>
-<p>最让人感到悲伤的是，我已经尽力了，这已经是我现在能保持的最好水平了。</p>
-<h2 id="北京。">北京。</h2>
-<p>两个pre的DDL，一个英语小测，一个CO上机，还有很多其他事情要做。</p>
-<p>哭不出来，也赶不下去，静静等待飞机降落。</p>
-<p>只是下了飞机之后，飞机上的橙汁味还留在嘴里。</p>
-<h2 id="从稍远的未来记录下来的，关于那一大堆DDL的后续">从稍远的未来记录下来的，关于那一大堆DDL的后续</h2>
-<p>周五了，终于想起来要补上这一段了。</p>
-<p>实际上从事后来看，这些DDL不是那么难赶，只是赶出来质量会很差而已。</p>
-<p>CO P3上机过了，八点就出来了。那天晚上，对未来的很多事情都松了一口气。</p>
-<p>更让人惊喜的是，就在周四从沙河回学院路的路上，我再次收到了一个月前早已准备了一次的文件。</p>
-<p>其实，银牌也不是那么差，对吧？</p>
-<h2 id="南京？">南京？</h2>
-<p>更强的对手，仍然是SUA命题，更不充分的准备时间。</p>
-<p>也许结果仍然如此，但是……还能如此就足够了。</p>
-<p>无论遇到了什么，都在朝着终会到来的那天向前。</p>
-]]></content>
-      <tags>
-        <tag>算法竞赛</tag>
-        <tag>ICPC</tag>
-        <tag>游记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>问好。</title>
-    <url>/2024/08/25/hello/</url>
-    <content><![CDATA[<h1>你好！</h1>
-<p>这里是懒鱼，一个北航在读本科生，一个车万人，一个XCPCer。</p>
-<p>建立这个博客的时候，其实我还没有具体要写什么的打算。也许未来我会选择把学习时候的各类思考，以及搞XCPC过程中的各个题目/算法笔记/游记（如果能打上比赛的话）等等的都丢上来。也许如果未来还有什么值得记录的活动的话，也会留一些内容上来。</p>
-<p>毕竟是作为第一篇博客，而且脑袋空空不知道说些什么，那就随便测个功能就跑吧。</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{bmatrix}
-	F_{n+1} \\
-    F_n
-\end{bmatrix}
-=
-\begin{bmatrix}
-	1 &amp; 1 \\
-	1 &amp; 0 \\
-\end{bmatrix}
-\begin{bmatrix}
-	F_n \\
-	F_{n-1} \\
-\end{bmatrix}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
-<p>希望未来我们能一直见面！</p>
-<p>为了终会到来的那天。</p>
-]]></content>
-      <tags>
-        <tag>hello world!</tag>
       </tags>
   </entry>
 </search>
