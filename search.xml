@@ -87,6 +87,79 @@
       </tags>
   </entry>
   <entry>
+    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
+    <url>/2024/10/28/BUAA-CO-P3-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
+<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P3课上题目回忆</h1>
+<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
+<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
+<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
+<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
+<h1>对CPU电路连接的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
+<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
+<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
+</ul>
+<h1>题目分析</h1>
+<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
+<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
+<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+</ul>
+<h2 id="cwp">cwp</h2>
+<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
+<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
+<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
+</ul>
+<h2 id="bgc">bgc</h2>
+<p>需要修改的模块有控制器，分支控制器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
+<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
+</ul>
+<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
+<h2 id="lwso">lwso</h2>
+<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
+<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
+</ul>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
+<h1>反思课下设计模块的问题</h1>
+<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
+<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
+<p>所以这几个独立的产生控制信号的部分要去掉。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Logisim</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北航CO 2024 P4课上部分题目回忆与分析</title>
     <url>/2024/11/04/BUAA-CO-P4-test/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第6篇文章！</p>
@@ -160,79 +233,6 @@
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
         <tag>Verilog</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
-    <url>/2024/10/28/BUAA-CO-P3-test/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
-<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>P3课上题目回忆</h1>
-<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
-<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
-<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
-<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
-<h1>对CPU电路连接的几点建议</h1>
-<ul>
-<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
-<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
-<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
-<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
-</ul>
-<h1>题目分析</h1>
-<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
-<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
-<ul>
-<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
-<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
-<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
-<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
-<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
-<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
-<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
-<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
-<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
-<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
-<li>数据内存（DM）：进行内存读写。</li>
-<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
-<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
-</ul>
-<h2 id="cwp">cwp</h2>
-<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
-<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
-<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
-</ul>
-<h2 id="bgc">bgc</h2>
-<p>需要修改的模块有控制器，分支控制器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
-<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
-</ul>
-<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
-<h2 id="lwso">lwso</h2>
-<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
-<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
-</ul>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
-<h1>反思课下设计模块的问题</h1>
-<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
-<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
-<p>所以这几个独立的产生控制信号的部分要去掉。</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>计算机组成原理</tag>
-        <tag>Logisim</tag>
       </tags>
   </entry>
   <entry>
@@ -787,7 +787,7 @@
 <p>从VPC开始，到EXLClr结束，这些是我们控制异常中断是否开始和结束的所有信号。我们来根据这些信号，以及以上给出的功能域信号的表格，填一下刚刚给出的思路。</p>
 <ol>
 <li>
-<p>CP0会先检查现在**<code>EXL</code>是否为1**（是否正在处理异常中断），再检查**<code>ExcCodeIn是否不为0</code><strong>（当前是否存在异常）和</strong><code>HWInt&amp;IM</code>是否不为0且<code>IE</code>不为0**（存在未被禁用的中断）。</p>
+<p>CP0会先检查现在 <strong><code>EXL</code>是否为1</strong>（是否正在处理异常中断），再检查**<code>ExcCodeIn</code>是否不为0**（当前是否存在异常）和**<code>HWInt&amp;IM</code>是否不为0且<code>IE</code>不为0**（存在未被禁用的中断）。</p>
 </li>
 <li>
 <p>如果现在 <code>EXL</code> 为0，并且 <code>ExcCodeIn</code> 不为0或“<code>HWInt&amp;IM</code> 不为0且<code>IE</code>不为0”，那么CP0会将 <code>Req</code> 置为1，否则置为0。</p>
@@ -800,7 +800,7 @@
 <p>接下来是CP0实现的一些细节：</p>
 <ul>
 <li>CP0内的寄存器可能仅有部分位是有用的，对于无用位我们会选择将其<strong>始终维持在0</strong>，即初始化时置为0，写入时不向这些位进行写入。</li>
-<li>当 <code>Req</code> 置为1时，我们需要修改 <code>EXL</code>，<code>BD</code> 和 <code>ExcCode</code>；当 <code>EXLClr</code> 置为1时，我们需要修改 <code>EXL</code>；当 <code>WE</code> 置为1时，我们按照以上写入规则进行写入。这三个信号应该是无所谓优先级的，因为两两之间不会同时置为1。</li>
+<li>当 <code>Req</code> 置为1时，我们需要修改 <code>EXL</code>，<code>BD</code> 和 <code>ExcCode</code>；当 <code>EXLClr</code> 置为1时，我们需要修改 <code>EXL</code>；当 <code>en</code> 置为1时，我们按照以上写入规则进行写入。这三个信号应该是无所谓优先级的，因为两两之间不会同时置为1。</li>
 <li>记录 <code>ExcCode</code> 时，如果当前同时有异常和中断，那么我们不应该直接记录 <code>ExcCodeIn</code>，而是应该记录成一个 <code>Int</code>。</li>
 <li>只要没有reset信号，每个时钟周期都要记录一次 <code>IP</code>。</li>
 <li>当 <code>BDIn</code> 为1时，表明发生异常中断的指令为延迟槽内的指令，此时我们应该让 <code>EPC</code> 记录 <code>VPC-4</code>，即延迟槽前一条指令（某个分支跳转指令），否则正常记录 <code>VPC</code>。</li>
