@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>北航2025面向对象设计与构造第一次作业思路简述 | Lazyfish &amp; chilly_river</title><meta name="author" content="Lazyfish"><meta name="copyright" content="Lazyfish"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="你好！本文章为该博客的第⑩篇文章！ 本文章包含北航2025面向对象设计与构造第一次作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的提示。 本文章即将同步投送至该次作业下的讨论区！ 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="北航2025面向对象设计与构造第一次作业思路简述">
+<meta property="og:url" content="http://lazyfish-lc.github.io/2025/03/01/BUAA-OO-hw1/index.html">
+<meta property="og:site_name" content="Lazyfish &amp; chilly_river">
+<meta property="og:description" content="你好！本文章为该博客的第⑩篇文章！ 本文章包含北航2025面向对象设计与构造第一次作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的提示。 本文章即将同步投送至该次作业下的讨论区！ 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，">
+<meta property="og:locale">
+<meta property="og:image" content="http://lazyfish-lc.github.io/img/deep_sea.png">
+<meta property="article:published_time" content="2025-02-28T17:13:59.000Z">
+<meta property="article:modified_time" content="2025-02-28T17:27:28.040Z">
+<meta property="article:author" content="Lazyfish">
+<meta property="article:tag" content="BUAA">
+<meta property="article:tag" content="面向对象设计与构造">
+<meta property="article:tag" content="OO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lazyfish-lc.github.io/img/deep_sea.png"><link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/67375982"><link rel="canonical" href="http://lazyfish-lc.github.io/2025/03/01/BUAA-OO-hw1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":3,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '北航2025面向对象设计与构造第一次作业思路简述',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-01 01:27:28'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/deep_sea.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Lazyfish &amp; chilly_river"><img class="site-icon" src="https://avatars.githubusercontent.com/u/67375982"/><span class="site-name">Lazyfish &amp; chilly_river</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">北航2025面向对象设计与构造第一次作业思路简述</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-02-28T17:13:59.000Z" title="Created 2025-03-01 01:13:59">2025-03-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-02-28T17:27:28.040Z" title="Updated 2025-03-01 01:27:28">2025-03-01</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>6mins</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title="北航2025面向对象设计与构造第一次作业思路简述"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">Comments:</span><a href="/2025/03/01/BUAA-OO-hw1/#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>你好！本文章为该博客的第⑩篇文章！</p>
+<p>本文章包含北航2025面向对象设计与构造第一次作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的提示。</p>
+<p>本文章即将同步投送至该次作业下的讨论区！</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>北航2025面向对象设计与构造第一次作业思路简述</h1>
+<h2 id="前言——为什么要写这个">前言——为什么要写这个</h2>
+<p>hw1本身难点在于递归下降的递归过程，以及化简过程中隐含的各类操作。</p>
+<p>因此，总结一种尽可能简单，且基本符合课程组形式化描述的设计方法。</p>
+<p>同时保证文字尽可能精炼，怕太长的文章没人读。</p>
+<h2 id="整体思路">整体思路</h2>
+<p>采用递归下降的分析方法，定义乘法方法和加法方法化简表达式。细分为以下四步：</p>
+<ol start="0">
+<li>
+<p>定义类型：好的类型能让后续过程更加容易处理。</p>
+</li>
+<li>
+<p>词法分析：给出合理的切词方式。</p>
+</li>
+<li>
+<p>语法分析：处理出表达式树。</p>
+</li>
+<li>
+<p>括号拆解和同类项合并：拆开各级括号，同时用合并来避免计算过程项数过多。</p>
+</li>
+<li>
+<p>调整符号和顺序：通过一些显然的优化，让表达式更简短。</p>
+</li>
+</ol>
+<h2 id="定义类型">定义类型</h2>
+<p>需要把表达式的一些必要信息以合理结构保存下来，同时避免处理过多细节。</p>
+<p>基本思路是：表达式下若干项，项下若干因子。</p>
+<blockquote>
+<p>由于因子中存在表达式因子，从而递归产生“表达式-项-因子”的结构，因此会有人担心该存储方式会产生无限递归，但可以证明表达式因子内的表达式长度相对于原表达式肯定是更小的，因此不会引起无限递归。</p>
+</blockquote>
+<p>总之，所需的类型有7个：符号，数字，幂函数，表达式因子，因子接口，项，表达式。</p>
+<p>其中，数字，幂函数，表达式因子需要实现因子接口。</p>
+<p>其中，符号类为枚举类，仅用于辅助存储项的符号信息，数字类内不使用该类型。</p>
+<p>此外，每个类型都必须包含一个Override的toString()方法，方便将其递归转化为字符串。</p>
+<p>以及，在toString()方法内，大多数情况下你不应该对转化结果在此处进行简化，除指数为1的情况，或表达式起始项的符号为正等不会引起逻辑混乱的情况外。</p>
+<p><strong>在本次作业设计中，一种思路是保证所有类型构造后内部属性不可变，增加了时间和空间开销，以此保证不会因为浅克隆产生若干问题。</strong></p>
+<h2 id="词法分析">词法分析</h2>
+<p>采用课程组提供的递归下降的处理方法，并除空白字符处理外严格采用课程组给出的形式化描述。</p>
+<p>可以发现，表达式可切分为若干词语（Token），类型如下：纯整数，正负符号，空白项，指数符号，变量，左括号，右括号。</p>
+<p>对于数位和空白字符，可以贪婪的把尽可能多的连续字符合并，作为单个Token。</p>
+<p>因此，可以将表达式字符串分割为若干互不相交的Token，每个Token包含其类型和内容（仅数位和变量需要）。</p>
+<p>切分方法参考OOpre hw7。</p>
+<p>需要指出，该方法下词法分析与形式化定义存在一个不同之处：在形式化定义中，空白项Token可包含0个空白字符，但词法分析中该Token至少需要一个空白字符才可以构建。</p>
+<h2 id="语法分析">语法分析</h2>
+<p>以上对空白项Token的处理区别将在该部分显现出来。</p>
+<p>修改形式化描述，要求空白项至少包含1个空白字符，且在其他对空白项的使用中，空白项总是可以出现0次。</p>
+<p>故，当定义中出现“空白项”时，若当前Token为空白项，则直接丢弃该Token。</p>
+<p>接下来，对于形式化描述中出现的各个模块，各自实现一个函数进行转化。</p>
+<p>转化出一个模块的通用大致思路为，检查当前未被处理的首个Token的类型，若该类型恰好符合该模块定义的某种分支，则根据需求调用子函数处理，或读取信息并转化后丢弃该Token。</p>
+<p>以表达式的转化为例（为方便表述，记录“此时未被使用的第一个Token”为起始Token）：</p>
+<ol>
+<li>若起始Token为空白项，丢弃该Token。</li>
+<li>此时若起始Token为符号，则“记录下该符号类型，之后若起始Token为空白项，丢弃该Token”。否则，仅记录符号类型为正，不丢弃Token。</li>
+<li>此时尝试调用转换函数获取返回值，即获取一个项。将项中的符号信息与先前读取的符号信息合并（负正得负，负负得正），存入表达式的项的列表中。</li>
+<li>此时若起始Token为空白项，跳过该Token。（到此为止，形式化表述的第一种情况结束）</li>
+<li>此时若起始Token为符号，则重复第2步。否则，转化过程结束，返回结果。</li>
+</ol>
+<blockquote>
+<p>由于因子中存在表达式因子，从而递归产生“表达式-项-因子”的结构，因此会有人担心转化过程产生无限递归，但可以证明表达式因子内所用Token个数相对于原表达式肯定是更少的，因此不会引起无限递归。</p>
+</blockquote>
+<h2 id="括号拆解和同类项合并">括号拆解和同类项合并</h2>
+<p>实测同类项合并不可能不做，否则运行速度极慢。</p>
+<p>此处需要两个概念：规格化项，规格化表达式。</p>
+<p>规格化项的要求为：项的符号为正，且项内要么有且仅有一个表达式因子，要么仅包含数字（1和-1不可省略）和幂函数（数字因子必须存在，幂函数的变量两两不同）。</p>
+<p>规格化表达式的要求为：表达式具有若干项，项均为规格化项，项内无表达式因子，且项之间两两不为同类项。</p>
+<p>下面给出一个结论：括号拆解的过程，实际上就是将整个表达式自底向上的转化为规格化表达式的过程。</p>
+<p>因此，需要实现两个方法：将项转化为规格化项，将表达式转化为规格化表达式。</p>
+<p><strong>将表达式转化为规格化表达式后，得到的答案已经可以作为合法答案了。</strong></p>
+<h3 id="将项转化为规格化项">将项转化为规格化项</h3>
+<p>先做两个易做的事情：</p>
+<ol>
+<li>把项的数字因子直接相乘，同时将项的符号信息塞进数字因子里，保证有且仅有一个数字因子。</li>
+<li>合并所有同变量幂函数。</li>
+</ol>
+<p>接下来，如果项内无表达式因子，则直接结束该过程。</p>
+<p>否则，把各个表达式因子中的表达式提取出来（表达式因子的幂次是多少，就要提取出多少个表达式）依次相乘，每做一次乘法之后<strong>就将运算结果规格化</strong>。</p>
+<p>最后，将数字因子和幂函数乘入上述运算结果（为一个表达式），将该表达式封装为一个幂次为1的表达式因子后放入项中。</p>
+<p>设置项的符号为正。</p>
+<h3 id="将表达式转化为规格化表达式">将表达式转化为规格化表达式</h3>
+<p>先获取所有规格化后的项的列表。</p>
+<p>之后，遍历所有项，若该项为仅含一个表达式因子的项，则删除该项，将表达式因子内表达式的所有项提取出来放入列表中。</p>
+<p>最后，可以确保所有项均为规格化且无表达式因子的项，合并同类项后消除含有0因子的项即可。</p>
+<p>如果合并同类项后，表达式内没有任何项，则需要人为添加一个仅包含0因子的项。</p>
+<h3 id="上述过程所需的部分关键函数">上述过程所需的部分关键函数</h3>
+<p>项与项的乘法，表达式与项的乘法，表达式与表达式的乘法。三者为递进关系，可通过后者调用前者的方法实现。</p>
+<h2 id="调整符号和顺序">调整符号和顺序</h2>
+<p>这里是一些对于规格化表达式转化为长度更小的表达式的优化。</p>
+<ul>
+<li>若项中存在负数因子，则可以将其符号反转，将项的符号也反转。</li>
+<li>若存在正数项，则可将其提至最前方。</li>
+</ul>
+<p><strong>以上优化均不可写入toString()方法内。</strong></p>
+<h2 id="结语">结语</h2>
+<p>面向对象设计与构造不是数据结构与算法，也不是代码精简大赛。</p>
+<p>我的意思是，至少在这门课里，我认为作业的完成要求只有一条：用好的设计解决一切问题。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io">Lazyfish</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io/2025/03/01/BUAA-OO-hw1/">http://lazyfish-lc.github.io/2025/03/01/BUAA-OO-hw1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/BUAA/">BUAA</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%9E%84%E9%80%A0/">面向对象设计与构造</a><a class="post-meta__tags" href="/tags/OO/">OO</a></div><div class="post_share"><div class="social-share" data-image="/img/deep_sea.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/11/21/BUAA-CO-P7/" title="北航CO 2024 P7经验分享"><img class="cover" src="/img/deep_sea.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">北航CO 2024 P7经验分享</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2024/10/31/BUAA-OOpre-2024/" title="北航2024面向对象程序先导课程心得"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-31</div><div class="title">北航2024面向对象程序先导课程心得</div></div></a></div><div><a href="/2024/11/04/BUAA-CO-P4-test/" title="北航CO 2024 P4课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-04</div><div class="title">北航CO 2024 P4课上部分题目回忆与分析</div></div></a></div><div><a href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-15</div><div class="title">北航CO 2024 P2课下部分思路引导</div></div></a></div><div><a href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-28</div><div class="title">北航CO 2024 P3课上部分题目回忆与分析</div></div></a></div><div><a href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-18</div><div class="title">北航CO 2024 P6课上部分题目回忆与分析</div></div></a></div><div><a href="/2024/11/12/BUAA-CO-P5-test/" title="北航CO 2024 P5课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-12</div><div class="title">北航CO 2024 P5课上部分题目回忆与分析</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Lazyfish</div><div class="author-info__description">The way through past, present and future.</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lazyfish-lc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">你好！这里是懒鱼！有建议的话请务必在“关于”页中提出！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">北航2025面向对象设计与构造第一次作业思路简述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%E2%80%94%E2%80%94%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%86%99%E8%BF%99%E4%B8%AA"><span class="toc-number">1.1.</span> <span class="toc-text">前言——为什么要写这个</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.</span> <span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">定义类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">词法分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">语法分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%AC%E5%8F%B7%E6%8B%86%E8%A7%A3%E5%92%8C%E5%90%8C%E7%B1%BB%E9%A1%B9%E5%90%88%E5%B9%B6"><span class="toc-number">1.6.</span> <span class="toc-text">括号拆解和同类项合并</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E9%A1%B9%E8%BD%AC%E5%8C%96%E4%B8%BA%E8%A7%84%E6%A0%BC%E5%8C%96%E9%A1%B9"><span class="toc-number">1.6.1.</span> <span class="toc-text">将项转化为规格化项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BD%AC%E5%8C%96%E4%B8%BA%E8%A7%84%E6%A0%BC%E5%8C%96%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.6.2.</span> <span class="toc-text">将表达式转化为规格化表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E8%BF%B0%E8%BF%87%E7%A8%8B%E6%89%80%E9%9C%80%E7%9A%84%E9%83%A8%E5%88%86%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0"><span class="toc-number">1.6.3.</span> <span class="toc-text">上述过程所需的部分关键函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E6%95%B4%E7%AC%A6%E5%8F%B7%E5%92%8C%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.7.</span> <span class="toc-text">调整符号和顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.8.</span> <span class="toc-text">结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第一次作业思路简述"/></a><div class="content"><a class="title" href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述">北航2025面向对象设计与构造第一次作业思路简述</a><time datetime="2025-02-28T17:13:59.000Z" title="Created 2025-03-01 01:13:59">2025-03-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/21/BUAA-CO-P7/" title="北航CO 2024 P7经验分享"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P7经验分享"/></a><div class="content"><a class="title" href="/2024/11/21/BUAA-CO-P7/" title="北航CO 2024 P7经验分享">北航CO 2024 P7经验分享</a><time datetime="2024-11-21T00:05:56.000Z" title="Created 2024-11-21 08:05:56">2024-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P6课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析">北航CO 2024 P6课上部分题目回忆与分析</a><time datetime="2024-11-18T14:40:26.000Z" title="Created 2024-11-18 22:40:26">2024-11-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/12/BUAA-CO-P5-test/" title="北航CO 2024 P5课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P5课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/11/12/BUAA-CO-P5-test/" title="北航CO 2024 P5课上部分题目回忆与分析">北航CO 2024 P5课上部分题目回忆与分析</a><time datetime="2024-11-11T16:15:15.000Z" title="Created 2024-11-12 00:15:15">2024-11-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/04/BUAA-CO-P4-test/" title="北航CO 2024 P4课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P4课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/11/04/BUAA-CO-P4-test/" title="北航CO 2024 P4课上部分题目回忆与分析">北航CO 2024 P4课上部分题目回忆与分析</a><time datetime="2024-11-04T14:28:38.000Z" title="Created 2024-11-04 22:28:38">2024-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Lazyfish</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    GLOBAL_CONFIG_SITE.isPost && getCount()
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
