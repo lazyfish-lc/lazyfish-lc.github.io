@@ -1,0 +1,675 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>北航2025面向对象设计与构造第一单元总结 | Lazyfish &amp; chilly_river</title><meta name="author" content="Lazyfish"><meta name="copyright" content="Lazyfish"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="你好！本文章为该博客的第十一篇文章！ 本文章包含北航2025面向对象设计与构造第一单元作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的建议。 本文章已经投送至本单元博客作业！ 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，谢谢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="北航2025面向对象设计与构造第一单元总结">
+<meta property="og:url" content="http://lazyfish-lc.github.io/2025/04/15/BUAA-OO-Unit1/index.html">
+<meta property="og:site_name" content="Lazyfish &amp; chilly_river">
+<meta property="og:description" content="你好！本文章为该博客的第十一篇文章！ 本文章包含北航2025面向对象设计与构造第一单元作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的建议。 本文章已经投送至本单元博客作业！ 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！ 以及，如果本文章涉及学术诚信问题，请第一时间和我联系，我将及时做出修改，谢谢">
+<meta property="og:locale">
+<meta property="og:image" content="http://lazyfish-lc.github.io/img/deep_sea.png">
+<meta property="article:published_time" content="2025-04-15T02:46:58.000Z">
+<meta property="article:modified_time" content="2025-04-15T02:52:08.596Z">
+<meta property="article:author" content="Lazyfish">
+<meta property="article:tag" content="BUAA">
+<meta property="article:tag" content="面向对象设计与构造">
+<meta property="article:tag" content="OO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lazyfish-lc.github.io/img/deep_sea.png"><link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/67375982"><link rel="canonical" href="http://lazyfish-lc.github.io/2025/04/15/BUAA-OO-Unit1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":3,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '北航2025面向对象设计与构造第一单元总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-15 10:52:08'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/deep_sea.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Lazyfish &amp; chilly_river"><img class="site-icon" src="https://avatars.githubusercontent.com/u/67375982"/><span class="site-name">Lazyfish &amp; chilly_river</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">北航2025面向对象设计与构造第一单元总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-04-15T02:46:58.000Z" title="Created 2025-04-15 10:46:58">2025-04-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-04-15T02:52:08.596Z" title="Updated 2025-04-15 10:52:08">2025-04-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">4.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>15mins</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title="北航2025面向对象设计与构造第一单元总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">Comments:</span><a href="/2025/04/15/BUAA-OO-Unit1/#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>你好！本文章为该博客的第十一篇文章！</p>
+<p>本文章包含北航2025面向对象设计与构造第一单元作业的思路简述，期望通过一个我自己用的顺手的构造给予一些设计上的建议。</p>
+<p>本文章已经投送至本单元博客作业！</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h2 id="为什么我把按单次作业写文章变成按单元写">为什么我把按单次作业写文章变成按单元写</h2>
+<p>第二次还是第三次第三次作业生病之后，越发感觉为了一个课程而累死累活是非常不值得的事情。身体重要。</p>
+<p>而且我也不是那种思路随时都能来的人。</p>
+<p>虽然我自认为我的想法还是可以写文章发博客的。</p>
+<p>（也许你会看到文章里有一些特别不协调的东西，毕竟课程要求和我想写的东西还是有点出入的。）</p>
+<h2 id="前言">前言</h2>
+<p>从本单元作业开始之初，我始终用一句话来自省：在这门课上，解决问题的应该是好的设计，并非巨量的功能与复杂的优化。</p>
+<p>如今完成了一个月的任务，很难说自己是否准确的践行了这一句话，但是确实对“好的设计”有了一点点理解。</p>
+<p>总之，让我来评价我所设计的架构的话，我会如此比喻：一个灵活的胖子。</p>
+<h2 id="架构设计与迭代过程">架构设计与迭代过程</h2>
+<h3 id="成品概述与优化方法">成品概述与优化方法</h3>
+<p>贯穿本单元作业始终的三个问题是：</p>
+<ol>
+<li>我们应该把表达式处理划分为几个阶段？</li>
+<li>每个阶段可以设计怎样的结构以达成易扩展的目的？</li>
+<li>怎样才能使每阶段的处理更加高效？</li>
+</ol>
+<p>优先级从上至下递减。如果解决不好这些问题，则或者会反复重构，或者bug百出，或者TLE与MLE齐飞。</p>
+<p>我的回答如下：</p>
+<ol>
+<li>
+<p>从输入到输出，实际上就是字符串，表达式，规格化表达式（其实就是很多人架构里出现的多项式和单项式）三者的互相转化。</p>
+<p>所以我分为五个阶段处理：</p>
+<ol>
+<li>词法和语法分析（<code>Lexer&amp;Parser</code>）；</li>
+<li>表达式规格化（<code>FormatParser</code>）；</li>
+<li>规格化表达式化简（<code>FormatMerger</code>）；</li>
+<li>规格化表达式普通化与微调（<code>Simplifier</code>）；</li>
+<li>转化为字符串（使用表达式类的 <code>toString()</code> 方法）。</li>
+</ol>
+</li>
+<li>
+<p>对于表达式，我的拆解几乎严格按照形式化描述进行拆分，大致处理为表达式-项-因子的结构；</p>
+<p>对于规格化表达式，我将其定义为多个规格化项之和，一个规格化项包含因子，幂函数，三角因子信息。</p>
+<p>额外的，我们将自定义普通函数和递归函数定义信息设为两个独立的类，在表达式规格化时使用该类保存的信息展开函数调用因子。</p>
+<p>对于以上所有类型，我均采用了不可变类型的设计，不可变类型对于本次作业来说非常有利于代码实现的清晰。</p>
+</li>
+<li>
+<p>大部分问题已经在上述架构里被解决了。唯一一个需要提及细节的是对规格化表达式的优化，关键的思路如下：</p>
+<ol>
+<li>规格化表达式在初始化时排序和合并同类项；</li>
+<li>规格化项使用 <code>TreeMap</code> 存储幂函数和三角因子。（这也就要求我们对规格化表达式和规格化项设计比较器类）</li>
+</ol>
+</li>
+</ol>
+<p>类图如下：</p>
+<p><img src="ClassDiagram.png" alt=""></p>
+<p>我会在下面展开我的具体设计，同时给出设计这个架构的过程实际上走过什么样的弯路。</p>
+<h3 id="第一次迭代">第一次迭代</h3>
+<p>本次作业仅涉及单变量多项式函数的表达式展开。</p>
+<p>此时我把表达式处理划分的方法为：词法和语法分析，规格化（去括号，合并同类项），简化（提取常数因子符号并调整项的顺序，移除常数1），转为字符串。</p>
+<p>此时我并没有设计规格化表达式类，毕竟针对第一次作业来说，原有的表达式类已经足够好操作了，最多需要记录一下这个类是否已经规格化。</p>
+<p>一些细节：</p>
+<ol>
+<li>
+<p>用于代替规格化表达式的，我的做法是给表达式类和项类加了个 <code>getFormat</code> 方法。毕竟，只要我们实现了一个合理的合并同类项方法，这个架构在本次作业基本上就没有什么改变的必要了。当然，最主要的原因是我不知道后续的任务要求如何，不敢贸然加入新的结构。</p>
+<p>事后证明，其实多项式类是一个很容易扩展的类，我这种做法反而是给自己挖坑。</p>
+<p>然而其中也诞生了后续架构的种子。 <code>getFormat</code> 方法的最主要作用是给出升幂顺序下的 <code>coef*x^expo</code> 各项，其中要求对表达式和项等类实现比较器，这为后来使用 <code>TreeMap</code> 优化提供了启发。</p>
+</li>
+<li>
+<p>我给项单独设计了一个符号信息，且保证符号信息仅存于项这一级，这个做法是为了输出表达式时能够快速连缀各个项，同时为化简时常数因子的符号提取提供存储空间。</p>
+</li>
+<li>
+<p>实际上，此时我对幂函数的处理已经考虑了多变量的情况，给幂函数设计了 <code>name</code> 和 <code>exponent</code> 两个属性。</p>
+</li>
+<li>
+<p>展开表达式时，我选择了由下至上进行展开和化简，以应对 <code>((((x^8)^8)^8)^8)^8</code> 的特殊情况，尽管此时并未存在括号嵌套问题。</p>
+</li>
+</ol>
+<h3 id="第二次迭代">第二次迭代</h3>
+<p>本次作业新增了三角函数因子，自定义递归函数定义与调用。</p>
+<p>此时，考虑到原先的 <code>getFormat</code> 方法会使得表达式类变得极度臃肿（表达式和项都选择用 <code>ArrayList</code> 聚合元素，且因子的种类繁多），我选择了设计规格化表达式和规格化项，把原先的表达式类变成了一个字符串和压缩信息后的表达式的中间类。</p>
+<p>对于规格化表达式的存储，我的做法为：</p>
+<ol>
+<li>规格化项包含四个部分：
+<ol>
+<li>系数;</li>
+<li>保存幂函数的 <code>TreeMap&lt;Var, Expo&gt;</code>;</li>
+<li>保存正弦因子的 <code>TreeMap&lt;FormatExpr, Expo&gt;</code>;</li>
+<li>保存余弦因子的 <code>TreeMap&lt;FormatExpr, Expo&gt;</code>。</li>
+</ol>
+</li>
+<li>规格化表达式为规格化项列表，构造时自动排序。</li>
+</ol>
+<p>（至于为什么不用 <code>HashMap</code>，一方面是因为受到第一次作业写比较器类的影响，另一方面是自行实现 <code>hashCode</code> 的碰撞频率很容易飙升还容易写错，效果可能甚至不如 <code>TreeMap</code>，同时 <code>TreeMap</code> 天然支持有序遍历，非常便于因子相乘和排序）</p>
+<p>另外，对于自定义递归函数的处理，我将其分为定义和因子两个类处理：</p>
+<ol>
+<li>对于定义，我保留其参数列表，递归信息和已使用的递归函数<strong>展开后的规格化表达式</strong>，在需要展开函数因子时动态的递推展开。（这个设计是存在问题的，在第三次作业中会提及）</li>
+<li>对于调用，我将其设置为一类单独的因子存放在项中，在表达式规格化时将其替换为代入函数后得到的规格化表达式。</li>
+</ol>
+<p>最后，考虑到三角函数化简的灵活性，且其化简结果与规格化表达式的形式仍然兼容，我选择单独设立一个过程类（<code>FormatMerger</code>）用于处理三角函数相关的简化，同时将上一次作业的简化步骤（<code>Simplify</code>）保留，放在规格化表达式化简后。这样，两个过程类各司其职，保证了化简过程的有序性和针对性。</p>
+<p>（实际上，在规格化表达式的计算中会混入诸如 <code>sin(0)=0</code> 的化简，以及同类项的合并，这种功能的冗杂算是一种计算需求带来的无奈之举）</p>
+<p>在第二次作业中，我添加了三个优化方法：</p>
+<ol>
+<li>将三角函数因子内的规格化表达式调整为第一项一定非负；</li>
+<li>如果两个规格化项的三角因子恰好为某一项多出 <code>sin(Expr)^2</code>，另一项多出 <code>cos(Expr)^2</code>，则使用 <code>sin(Expr)^2+cos(Expr)^2=1</code> 消除其中一项。</li>
+<li>如果两个规格化项的三角因子恰好为某一项多出 <code>sin(ExprA)*cos(ExprB)</code>，另一项多出 <code>sin(ExprB)*cos(ExprA)</code>，则使用 <code>sin(ExprA)*cos(ExprB)+/-sin(ExprB)*cos(ExprA)=sin(ExprA+/-ExprB)</code> 消除其中一项。</li>
+</ol>
+<p>优化时仍然是从内向外优化。</p>
+<p>（对于二倍角公式的使用，由于做作业时有使用二倍角公式产生了负优化的先例，所以我始终未加入相关优化，现在想想，产生负优化的原因可能是二倍角公式产生优化的条件比较苛刻，比如说必须要同时消除所有因子才能起到明显的优化效果之类的？）</p>
+<h3 id="第三次迭代">第三次迭代</h3>
+<p>本次作业新增了求导因子，自定义普通函数定义与调用，隐含的一个要求是函数的互相调用。</p>
+<p>对于求导因子，我们效仿自定义递归函数因子，额外的定义一个求导因子类，在表达式规格化时对因子内的规格化表达式进行求导。（也就是说，求导的过程放在了规格化表达式和规格化项中，表达式类本身不支持求导）</p>
+<p>对于自定义普通函数的定义和调用，虽然其定义类和调用类彼此独立，但我们实际上可以复用自定义递归函数的部分内容（主要是解析部分），总而言之类似于重复了一遍第二次作业的工作。</p>
+<p>一个对我来说不太好做的事情在于函数的互相调用。在我的设计中，无论是自定义普通函数还是递归函数，在存储函数表达式时，存储的都是完全展开后的规格化表达式，所以我在这里选择每读入一个表达式就必须一路转化成规格化表达式。为此，我改写了 <code>FormatParser</code> 类，向其加入了自定义普通函数列表和自定义递归函数列表的字段，每次读入一个表达式时，我都在读入字符串后立刻进行转化与规格化，在所有表达式读入结束之后再进行后续化简。</p>
+<p>（实际上这也未尝不是一个优化性能的做法，但是这和我一开始设计架构时预想的流程有较大不同）</p>
+<p>最后，我额外添加了一个优化方法：如果两个规格化项的三角因子恰好为某一项多出 <code>cos(ExprA)*cos(ExprB)</code>，另一项多出 <code>sin(ExprA)*sin(ExprB)</code>，则使用 <code>cos(ExprA)*cos(ExprB)+/-sin(ExprA)*sin(ExprB)=cos(ExprA-/+ExprB)</code> 消除其中一项。</p>
+<h3 id="后续可能的迭代情景与修改方法">后续可能的迭代情景与修改方法</h3>
+<p>一个简单的例子就是新增底数为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> 的指数函数。按照现在的架构，我们需要做如下改动：</p>
+<ol>
+<li>新增一个指数函数因子与其解析方法。</li>
+<li>由于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>e</mi><mi>x</mi></msup><mo>×</mo><msup><mi>e</mi><mi>y</mi></msup><mo>=</mo><msup><mi>e</mi><mrow><mi>x</mi><mo>+</mo><mi>y</mi></mrow></msup></mrow><annotation encoding="application/x-tex">e^x\times e^y=e^{x+y}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7477em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6644em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7713em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span></span></span></span></span></span></span></span></span>，所以对于规格化项来说，我们可以直接存储一个规格化表达式的字段用于保存合并后指数函数中指数部分的表达式。</li>
+<li>在规格化项的求导功能里新增对于指数函数因子的处理。</li>
+<li>在规格化项的比较器里新增对于指数函数因子的比较（加一个对该因子的比较即可）。</li>
+<li>对 <code>FormatMerger</code> 的各方法添加对于指数函数因子的比较。</li>
+</ol>
+<p>另外，现有的架构实际上已经支持多变量的情况。</p>
+<h2 id="复杂度分析">复杂度分析</h2>
+<p>各类的复杂度数据如下：</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>OCavg</th>
+<th>OCmax</th>
+<th>WMC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CustomRecFunctionDefinition</td>
+<td>1</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>DeriFactor</td>
+<td>1</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Token</td>
+<td>1</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Num</td>
+<td>1.1</td>
+<td>2</td>
+<td>11</td>
+</tr>
+<tr>
+<td>ExprFactor</td>
+<td>1.2</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr>
+<td>VarPow</td>
+<td>1.2</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr>
+<td>CustomRecFunctionFactor</td>
+<td>1.4</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr>
+<td>CustomSingleFunctionFactor</td>
+<td>1.5</td>
+<td>3</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Expr</td>
+<td>1.5</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Program</td>
+<td>1.5</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Term</td>
+<td>1.57</td>
+<td>4</td>
+<td>11</td>
+</tr>
+<tr>
+<td>SincosFactor</td>
+<td>1.6</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr>
+<td>CustomSingleFunction</td>
+<td>1.67</td>
+<td>3</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Sign</td>
+<td>2</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr>
+<td>FormatExpr</td>
+<td>2</td>
+<td>5</td>
+<td>26</td>
+</tr>
+<tr>
+<td>Lexer</td>
+<td>2.2</td>
+<td>13</td>
+<td>22</td>
+</tr>
+<tr>
+<td>Parser</td>
+<td>2.44</td>
+<td>6</td>
+<td>66</td>
+</tr>
+<tr>
+<td>FormatTermComparator</td>
+<td>3.17</td>
+<td>6</td>
+<td>19</td>
+</tr>
+<tr>
+<td>CustomRecFunction</td>
+<td>3.25</td>
+<td>5</td>
+<td>13</td>
+</tr>
+<tr>
+<td>FormatParser</td>
+<td>3.29</td>
+<td>15</td>
+<td>56</td>
+</tr>
+<tr>
+<td>Simplifier</td>
+<td>3.29</td>
+<td>8</td>
+<td>56</td>
+</tr>
+<tr>
+<td>FormatTerm</td>
+<td>3.82</td>
+<td>13</td>
+<td>65</td>
+</tr>
+<tr>
+<td>FormatMerger</td>
+<td>4.85</td>
+<td>9</td>
+<td>63</td>
+</tr>
+<tr>
+<td>FormatExprComparator</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>可以看出，高耦合度的代码主要集中于各个过程类，以及规格化表达式相关类型。考虑到过程类本身涉及对不同类之间的转换和难以统一描述的操作，以及规格化表达式承载了大量且递归的计算操作，耦合度的急剧上升在意料之内。</p>
+<p>接下来考察一些复杂度较高的方法：</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>CogC</th>
+<th>ev(G)</th>
+<th>iv(G)</th>
+<th>v(G)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FormatMerger.adjustSincosSign(FormatTerm)</td>
+<td>16</td>
+<td>1</td>
+<td>8</td>
+<td>9</td>
+</tr>
+<tr>
+<td>FormatMerger.mergeAllFormatTerm(FormatExpr)</td>
+<td>19</td>
+<td>7</td>
+<td>6</td>
+<td>8</td>
+</tr>
+<tr>
+<td>FormatMerger.mergeBySincosSquare(FormatTerm,  FormatTerm, Pair&lt;FormatTerm, FormatTerm&gt;)</td>
+<td>14</td>
+<td>5</td>
+<td>14</td>
+<td>16</td>
+</tr>
+<tr>
+<td>FormatParser.parseFormatExpr(Factor)</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>FormatParser.parseNonExprFormatTerm(Term)</td>
+<td>42</td>
+<td>8</td>
+<td>13</td>
+<td>15</td>
+</tr>
+<tr>
+<td>FormatTerm.derivation(String)</td>
+<td>19</td>
+<td>5</td>
+<td>9</td>
+<td>11</td>
+</tr>
+<tr>
+<td>FormatTerm.substitute(HashMap&lt;String,  FormatExpr&gt;)</td>
+<td>24</td>
+<td>7</td>
+<td>9</td>
+<td>13</td>
+</tr>
+<tr>
+<td>FormatTerm.toString(boolean)</td>
+<td>21</td>
+<td>3</td>
+<td>12</td>
+<td>14</td>
+</tr>
+<tr>
+<td>FormatTermComparator.compareVarPows(FormatTerm,  FormatTerm)</td>
+<td>9</td>
+<td>6</td>
+<td>4</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Lexer.Lexer(String)</td>
+<td>24</td>
+<td>11</td>
+<td>13</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Parser.parseFactor()</td>
+<td>7</td>
+<td>6</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Simplifier.adjustSign(Expr)</td>
+<td>17</td>
+<td>1</td>
+<td>8</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Simplifier.parseFactor(FormatTerm)</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>复杂的方法集中于简化和规格化项的计算。</p>
+<p>表达式类作为中间类，其高内聚低耦合原则被执行的较好。</p>
+<h2 id="架构优劣">架构优劣</h2>
+<p>我之前评价我的架构为“一个灵活的胖子”，实际上这就包含了所有优缺点了。</p>
+<p>优点：</p>
+<ol>
+<li>可扩展性强，加入一个因子或一种新的函数非常简单。</li>
+<li>易于添加有针对性的优化，对于处理过程的拆解决定了各种优化的所处位置清晰，方法编写简短。</li>
+<li>不可变类型保证了迭代过程中的正确性。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>搭建架构的代码本身过于冗长，搭架构本身十分费劲。</li>
+<li>自定义函数定义较为混乱。</li>
+<li>由于采用了不可变类型和 <code>TreeMap</code>，在进行计算时会把对三角函数因子的处理写的很长，并且容易写错。</li>
+</ol>
+<h2 id="bug检测与成因分析">bug检测与成因分析</h2>
+<h3 id="对我的程序的bug检测">对我的程序的bug检测</h3>
+<p>三次作业均为0被刀。</p>
+<p>不过，在第三次作业的互测中，我无意中构造了一个针对自己程序bug的数据（遗憾的是这个bug并未被其他同学发现，可能是因为此种样例不太好被随机数据生成器生成）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">g(x, y)=sin(x)*sin(y)</span><br><span class="line">0</span><br><span class="line">g(x, x)</span><br></pre></td></tr></table></figure>
+<p>正确答案为 <code>sin(x)^2</code>，我的答案为 <code>sin(x)</code>。究其原因，是我在实现规格化项的代换方法时，认为代换后的三角因子结果可以直接写入新规格化项的 <code>TreeMap</code> 中，无需考虑新项之前是否有该因子（我认为此时代换后的三角因子唯一存在）。</p>
+<p>这种数据的存在，证明了完全随机的数据生成器的局限性，实际上我们不得不去手工构造足够精确的corner case。</p>
+<h3 id="互测中的bug检测">互测中的bug检测</h3>
+<p>第一次作业中，我刀出了别人两个bug，一个是 <code>-(x)^0</code> 这种处理零次幂时对符号的错误处理，一个是 <code>x^3+ 0</code> 之类的连缀各个项时对0前符号添加与否问题的处理错误。此二bug的出现，实际上有功于大量随机数据的生成，考虑到此时的数据生成器极易完成，实际上并未体现充足的人类智慧，还是力大砖飞的结果。</p>
+<p>第二次作业中，我手动构造了一个复杂数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">f&#123;n&#125;(x,y)=1*f&#123;n-1&#125;(cos((x+y)),y)+1*f&#123;n-2&#125;(x,y)</span><br><span class="line">f&#123;1&#125;(x,y)=cos(x)+y</span><br><span class="line">f&#123;0&#125;(x,y)=x-y</span><br><span class="line">f&#123;5&#125;(x,(2*x))</span><br></pre></td></tr></table></figure>
+<p>该数据把一个同学卡出了TLE，把另一个同学卡出了格式错误，但是构造该数据时我并未针对任一bug，也许具有一定复杂度的数据也可以探查相当多的分支？</p>
+<p>另一个较好的数据是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0</span><br><span class="line">sin((-x))^2*sin(x)</span><br></pre></td></tr></table></figure>
+<p>这个数据卡出了之前格式错误同学的格式错误和计算结果错误（其结果为 <code>sin(-x)^3</code>）。此数据的构造方式为对随机生成的超过代价的数据进行逐步简化，得出简单典型数据，也证明了评测机和人类智慧结合的重要性。</p>
+<p>第三次作业由于时间冲突，并未搭建评测机，对corner case的考虑也极其有限，故未能刀出别人的bug。</p>
+<p>（实际上我注意到了一个同学的 <code>equals</code> 方法速度极慢，且存在卡法，但是并未构造出符合代价要求的数据）</p>
+<h2 id="心得与未来方向">心得与未来方向</h2>
+<p>实际上综观三次迭代，我时常会陷入一种“这样写是否会给未来挖坑”的纠结，有时候一个设计可能要纠结半天，或者写的十分冗长以“应对下一次迭代可能产生的局面”。</p>
+<p>但是实际上，除了第一次迭代产生的 <code>getFormat</code> 这个设计是坑以外，其他的设计并没有造成过多的浪费。</p>
+<p>只是，一共2500+行的代码量（在删除最终不使用的部分之前，这个数字曾经一度飙升至2800+）确实远超他人框架所需的代码量，所以该如何在保证功能正确高效的前提下精简框架，仍然是一个值得思考的问题。</p>
+<p>至于如何修改课程使得未来的学子对第一单元的学习更加顺利，也许我可以提出一些对本学期内容的修改意见：</p>
+<ol>
+<li>
+<p>考虑到前两次作业的任务量较大，第三次作业内容相比之下急剧减少，可以考虑调换自定义递归函数和自定义普通函数在作业中的出现顺序。</p>
+<p>（实际上，第二次作业难度的重要来源在于三角函数的加入，大部分同学能把这一部分处理好已经很不容易了）</p>
+</li>
+<li>
+<p>在第一次作业之前和之中加强对递归下降解析方法的引导。</p>
+</li>
+</ol>
+<h2 id="一个互相警示的结语">一个互相警示的结语</h2>
+<p>相信性能分的设立反而成了让相当多的同学丢失了好的设计，甚至丢失了巨量正确性得分的一大噩梦。</p>
+<p>所以这里有一个警示：面向对象设计与构造不是数据结构与算法。</p>
+<p>我的意思是，至少在这门课里，作业的完成要求只有一条：用好的设计解决一切问题。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io">Lazyfish</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io/2025/04/15/BUAA-OO-Unit1/">http://lazyfish-lc.github.io/2025/04/15/BUAA-OO-Unit1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/BUAA/">BUAA</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%9E%84%E9%80%A0/">面向对象设计与构造</a><a class="post-meta__tags" href="/tags/OO/">OO</a></div><div class="post_share"><div class="social-share" data-image="/img/deep_sea.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img class="cover" src="/img/deep_sea.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">北航2025面向对象设计与构造第一次作业思路简述</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-01</div><div class="title">北航2025面向对象设计与构造第一次作业思路简述</div></div></a></div><div><a href="/2024/10/31/BUAA-OOpre-2024/" title="北航2024面向对象程序先导课程心得"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-31</div><div class="title">北航2024面向对象程序先导课程心得</div></div></a></div><div><a href="/2024/10/15/BUAA-CO-P2/" title="北航CO 2024 P2课下部分思路引导"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-15</div><div class="title">北航CO 2024 P2课下部分思路引导</div></div></a></div><div><a href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-28</div><div class="title">北航CO 2024 P3课上部分题目回忆与分析</div></div></a></div><div><a href="/2024/11/04/BUAA-CO-P4-test/" title="北航CO 2024 P4课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-04</div><div class="title">北航CO 2024 P4课上部分题目回忆与分析</div></div></a></div><div><a href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析"><img class="cover" src="/img/deep_sea.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-18</div><div class="title">北航CO 2024 P6课上部分题目回忆与分析</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Lazyfish</div><div class="author-info__description">The way through past, present and future.</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lazyfish-lc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">你好！这里是懒鱼！有建议的话请务必在“关于”页中提出！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E6%8A%8A%E6%8C%89%E5%8D%95%E6%AC%A1%E4%BD%9C%E4%B8%9A%E5%86%99%E6%96%87%E7%AB%A0%E5%8F%98%E6%88%90%E6%8C%89%E5%8D%95%E5%85%83%E5%86%99"><span class="toc-number">1.</span> <span class="toc-text">为什么我把按单次作业写文章变成按单元写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BF%AD%E4%BB%A3%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">架构设计与迭代过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%93%81%E6%A6%82%E8%BF%B0%E4%B8%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">成品概述与优化方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">3.2.</span> <span class="toc-text">第一次迭代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">3.3.</span> <span class="toc-text">第二次迭代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">3.4.</span> <span class="toc-text">第三次迭代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E5%8F%AF%E8%83%BD%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%83%85%E6%99%AF%E4%B8%8E%E4%BF%AE%E6%94%B9%E6%96%B9%E6%B3%95"><span class="toc-number">3.5.</span> <span class="toc-text">后续可能的迭代情景与修改方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8A%A3"><span class="toc-number">5.</span> <span class="toc-text">架构优劣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bug%E6%A3%80%E6%B5%8B%E4%B8%8E%E6%88%90%E5%9B%A0%E5%88%86%E6%9E%90"><span class="toc-number">6.</span> <span class="toc-text">bug检测与成因分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%88%91%E7%9A%84%E7%A8%8B%E5%BA%8F%E7%9A%84bug%E6%A3%80%E6%B5%8B"><span class="toc-number">6.1.</span> <span class="toc-text">对我的程序的bug检测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%B5%8B%E4%B8%AD%E7%9A%84bug%E6%A3%80%E6%B5%8B"><span class="toc-number">6.2.</span> <span class="toc-text">互测中的bug检测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%83%E5%BE%97%E4%B8%8E%E6%9C%AA%E6%9D%A5%E6%96%B9%E5%90%91"><span class="toc-number">7.</span> <span class="toc-text">心得与未来方向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E4%BA%92%E7%9B%B8%E8%AD%A6%E7%A4%BA%E7%9A%84%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">一个互相警示的结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第一单元总结"/></a><div class="content"><a class="title" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结">北航2025面向对象设计与构造第一单元总结</a><time datetime="2025-04-15T02:46:58.000Z" title="Created 2025-04-15 10:46:58">2025-04-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第一次作业思路简述"/></a><div class="content"><a class="title" href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述">北航2025面向对象设计与构造第一次作业思路简述</a><time datetime="2025-02-28T17:13:59.000Z" title="Created 2025-03-01 01:13:59">2025-03-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/21/BUAA-CO-P7/" title="北航CO 2024 P7经验分享"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P7经验分享"/></a><div class="content"><a class="title" href="/2024/11/21/BUAA-CO-P7/" title="北航CO 2024 P7经验分享">北航CO 2024 P7经验分享</a><time datetime="2024-11-21T00:05:56.000Z" title="Created 2024-11-21 08:05:56">2024-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P6课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/11/18/BUAA-CO-P6-test/" title="北航CO 2024 P6课上部分题目回忆与分析">北航CO 2024 P6课上部分题目回忆与分析</a><time datetime="2024-11-18T14:40:26.000Z" title="Created 2024-11-18 22:40:26">2024-11-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/12/BUAA-CO-P5-test/" title="北航CO 2024 P5课上部分题目回忆与分析"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航CO 2024 P5课上部分题目回忆与分析"/></a><div class="content"><a class="title" href="/2024/11/12/BUAA-CO-P5-test/" title="北航CO 2024 P5课上部分题目回忆与分析">北航CO 2024 P5课上部分题目回忆与分析</a><time datetime="2024-11-11T16:15:15.000Z" title="Created 2024-11-12 00:15:15">2024-11-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Lazyfish</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    GLOBAL_CONFIG_SITE.isPost && getCount()
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
