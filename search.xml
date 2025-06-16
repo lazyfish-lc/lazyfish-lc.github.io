@@ -2164,4 +2164,241 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <tag>hello world!</tag>
       </tags>
   </entry>
+  <entry>
+    <title>北航2025 OS shell挑战性任务实现指导</title>
+    <url>/2025/06/16/BUAA-OS-shell-challenge/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第十二篇文章！</p>
+<p>本文章包含北航2025操作系统shell挑战性任务的实现指导，期望通过重述题目描述和给出一种可行的设计思路来帮助大家更好的完成此挑战性任务。</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OS课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<p><strong>本文章尚未完成，如有需要请大力催更！</strong></p>
+<h1>北航2025 OS shell挑战性任务实现指导</h1>
+<h2 id="任务回顾">任务回顾</h2>
+<p>本挑战性任务要求完成一个<strong>类似Linux中Bash的shell</strong>。</p>
+<blockquote>
+<p>基于此（可能是题目设计时候的）原则，接下来的大部分特性如无具体说明，将与其保持一致。</p>
+</blockquote>
+<p>本挑战性任务要求设计的新功能如下（与原指导书顺序相比有调整，内容有删改）：</p>
+<h3 id="实现输入指令的优化">实现输入指令的优化</h3>
+<p>本部分任务如下：</p>
+<ul>
+<li>
+<p>运行外部指令时，无需输入指令结尾的 <code>.b</code>。（举例：<code>ls</code> 和 <code>ls.b</code> 均为有效可运行的指令）</p>
+</li>
+<li>
+<p>实现以下快捷键：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">快捷键</th>
+<th style="text-align:left">行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">left-arrow</td>
+<td style="text-align:left">光标尝试向左移动 1 列，如果可以移动则移动</td>
+</tr>
+<tr>
+<td style="text-align:left">right-arrow</td>
+<td style="text-align:left">光标尝试向右移动 1 列，如果可以移动则移动</td>
+</tr>
+<tr>
+<td style="text-align:left">backspace</td>
+<td style="text-align:left">删除光标左侧 1 个字符并将光标向左移动 1 列；若已在行首则无动作</td>
+</tr>
+<tr>
+<td style="text-align:left">Ctrl-E</td>
+<td style="text-align:left">光标跳至最后</td>
+</tr>
+<tr>
+<td style="text-align:left">Ctrl-A</td>
+<td style="text-align:left">光标跳至最前</td>
+</tr>
+<tr>
+<td style="text-align:left">Ctrl-K</td>
+<td style="text-align:left">删除从当前光标处到最后的文本</td>
+</tr>
+<tr>
+<td style="text-align:left">Ctrl-U</td>
+<td style="text-align:left">删除从最开始到光标前的文本</td>
+</tr>
+<tr>
+<td style="text-align:left">Ctrl-W</td>
+<td style="text-align:left">向左删除最近一个 word（即，先越过空白(如果有)，再删除连续非空白字符）</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>实现历史指令功能。至多保存最近运行的20条指令，将其存入 <code>.mos_history</code> 中。</p>
+<p>需要在每次指令输入完毕之后，运行之前，对 <code>.mos_history</code> 进行写入。</p>
+<p>允许使用 <code>up-arrow</code> 和 <code>down-arrow</code> 实现历史指令和当前指令间的切换。</p>
+<p>新增内建指令 <code>history</code>，其效果为输出 <code>.mos_history</code> 中的内容。</p>
+</li>
+</ul>
+<h3 id="支持内建指令和外部指令传递返回值到shell中">支持内建指令和外部指令传递返回值到shell中</h3>
+<p>即，支持父进程获取子进程 <code>main</code> 函数的返回值。</p>
+<h3 id="支持内建指令-exit">支持内建指令 <code>exit</code></h3>
+<p>支持内建指令 <code>exit</code>，执行后退出当前shell。</p>
+<h3 id="支持更多标识符">支持更多标识符</h3>
+<p>本部分任务如下：</p>
+<ul>
+<li>支持使用 <code>&gt;&gt;</code> 将标准输出重定向至文件，进行追加输出。</li>
+<li>支持使用 <code>;</code> 分割多个指令，使得一行内的多个指令从前到后按顺序执行。</li>
+<li>支持使用 <code>&amp;&amp;</code> 和 <code>||</code> 实现指令的条件执行。对于 <code>command1 &amp;&amp; command2</code>，<code>command2</code> 被执行当且仅当 <code>command1</code> 返回 0；对于 <code>command1 || command2</code>，<code>command2</code> 被执行当且仅当 <code>command1</code> 返回非 0 值。二标识符的优先级相同，按从左到右的方式执行。</li>
+</ul>
+<p>完成此部分任务后，指令解析的EBNF文法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 指令输入</span><br><span class="line">line        ::= list</span><br><span class="line"></span><br><span class="line"># 列表</span><br><span class="line">list        ::= and_or ( ( &quot;;&quot; ) and_or )*</span><br><span class="line"></span><br><span class="line"># 逻辑与/或: 支持 &amp;&amp; 和 ||</span><br><span class="line">and_or      ::= pipeline ( ( &quot;&amp;&amp;&quot; | &quot;||&quot; ) pipeline )*</span><br><span class="line"></span><br><span class="line"># 管道: 支持 |</span><br><span class="line">pipeline    ::= command ( &quot;|&quot; command )*</span><br><span class="line"></span><br><span class="line"># 简单命令：WORD 串 + 重定向</span><br><span class="line">command     ::= WORD ( WORD | redirect )*</span><br><span class="line"></span><br><span class="line"># 重定向</span><br><span class="line">redirect    ::= &quot;&lt;&quot; WORD</span><br><span class="line">              | &quot;&gt;&quot; WORD</span><br><span class="line">              | &quot;&gt;&gt;&quot; WORD</span><br><span class="line"></span><br><span class="line"># 词法单元</span><br><span class="line">TOKEN       ::= </span><br><span class="line">    WORD         (* 普通字或变量展开后的字符串 *)</span><br><span class="line">  | T_PIPE       (* &quot;|&quot; *)</span><br><span class="line">  | T_SEMI       (* &quot;;&quot; *)</span><br><span class="line">  | T_AMP        (* &quot;&amp;&quot; *)</span><br><span class="line">  | T_AND        (* &quot;&amp;&amp;&quot; *)</span><br><span class="line">  | T_OR         (* &quot;||&quot; *)</span><br><span class="line">  | T_REDIR_IN   (* &quot;&lt;&quot; *)</span><br><span class="line">  | T_REDIR_OUT  (* &quot;&gt;&quot; *)</span><br><span class="line">  | T_REDIR_APP  (* &quot;&gt;&gt;&quot; *)</span><br><span class="line">  | T_EOL        (* 换行 或是 # *)</span><br><span class="line">  | T_EOF        (* 输入结束 *)</span><br></pre></td></tr></table></figure>
+<h3 id="支持对指令的预处理">支持对指令的预处理</h3>
+<p>本部分任务如下：</p>
+<ul>
+<li>使用 <code>#</code> 实现注释功能，<code>#</code> 之后的内容将被无视。</li>
+<li>使用反引号实现指令替换，将反引号内指令执行的所有标准输出代替原有指令中的反引号内容。</li>
+</ul>
+<h3 id="添加当前工作目录到shell中，并添加相关指令">添加当前工作目录到shell中，并添加相关指令</h3>
+<p>本部分任务如下：</p>
+<ul>
+<li>
+<p>为进程添加“当前工作目录”字段，子进程在创建时继承父进程的当前工作目录，无父进程的进程的当前工作目录初始为根目录。</p>
+</li>
+<li>
+<p>支持相对路径的解析，修改文件系统相关函数与当前指令的实现，使之支持相对路径。</p>
+</li>
+<li>
+<p>支持内建指令 <code>cd</code>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><strong>输入</strong></th>
+<th style="text-align:left"><strong>行为</strong></th>
+<th style="text-align:left"><strong>输出</strong></th>
+<th style="text-align:left"><strong>返回值</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>cd</code></td>
+<td style="text-align:left">切换工作目录到 <code>/</code></td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">0</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd &lt;abspath&gt;</code></td>
+<td style="text-align:left">若绝对路径 <code>&lt;abspath&gt;</code> 存在且为目录，切换到该目录</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">0</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd &lt;relpath&gt;</code></td>
+<td style="text-align:left">根据当前工作路径，对相对路径<code>&lt;relpath&gt;</code>，若存在且为目录，切换到该目录</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">0</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd &lt;noexist_path&gt;</code></td>
+<td style="text-align:left">路径不存在</td>
+<td style="text-align:left"><code>cd: The directory '原始输入' does not exist\n</code></td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd &lt;filepath&gt;</code></td>
+<td style="text-align:left">路径存在但不是目录</td>
+<td style="text-align:left"><code>cd: '原始输入' is not a directory\n</code></td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd &lt;arg1&gt;..&lt;argn&gt;</code></td>
+<td style="text-align:left">输入多于 1 个参数</td>
+<td style="text-align:left"><code>Too many args for cd command\n</code></td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd .</code></td>
+<td style="text-align:left">解析为当前目录 <code>/dir1/dir2</code>，无变化</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">0</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cd ..</code></td>
+<td style="text-align:left">解析为 <code>/dir1</code>，若存在且为目录，切换到该目录</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">0</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>支持内建指令 <code>pwd</code>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><strong>输入</strong></th>
+<th style="text-align:left"><strong>行为</strong></th>
+<th style="text-align:left"><strong>输出</strong></th>
+<th style="text-align:left"><strong>返回值</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>pwd</code></td>
+<td style="text-align:left">输出当前工作目录</td>
+<td style="text-align:left"><code>/dir1/dir2\n</code></td>
+<td style="text-align:left">0</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>pwd arg1 ... argn</code></td>
+<td style="text-align:left">参数数量错误</td>
+<td style="text-align:left"><code>pwd: expected 0 arguments; got n\n</code></td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>支持外部指令 <code>touch</code>，<code>mkdir</code>，<code>rm</code>，要求与Bash一致（但只需支持输入路径个数为0或1的情况）。</p>
+</li>
+</ul>
+<h3 id="增加对变量的支持">增加对变量的支持</h3>
+<p>在该shell中，变量为具有可读写属性和继承属性的键值对，具体描述如下：</p>
+<ul>
+<li>key最大长度不超过16，名称与C语言变量命名要求相同。</li>
+<li>value最大长度不超过16。</li>
+<li>按读写属性分类，可分为只读变量和可读写变量。前者只可读不可写，后者可读可写。</li>
+<li>按继承属性分类，可分为环境变量和局部变量。在创建子进程时，子进程仅从父进程处复制所有的环境变量，而不复制局部变量，且此后父子进程对变量的操作互不影响。</li>
+</ul>
+<p>本部分任务如下：</p>
+<ul>
+<li>支持内建指令 <code>declare [-xr] [NAME[=VALUE]]</code>，其中：
+<ul>
+<li><code>-x</code> 表示变量 <code>NAME</code> 为环境变量，否则为局部变量。</li>
+<li><code>-r</code> 表示将变量 <code>NAME</code> 设为只读。只读变量不能被 <code>declare</code> 重新赋值或被 <code>unset</code> 删除。</li>
+<li>如果变量 <code>NAME</code> 不存在，需要创建该变量；如果变量 <code>NAME</code> 存在，将该变量赋值为 <code>VALUE</code>。</li>
+<li>其中 <code>VALUE</code> 为可选参数，缺省时将该变量赋值为空字符串即可。</li>
+<li>若 <code>VALUE</code> 存在，则 <code>NAME=VALUE</code> 之间<strong>不存在任何空格</strong>。</li>
+<li>如果没有 <code>[-xr]</code> 及 <code>[NAME[=VALUE]]</code> 部分，即只输入 <code>declare</code>，则输出当前 shell 的所有变量，包括局部变量和环境变量。</li>
+</ul>
+</li>
+<li>支持内建指令 <code>unset NAME</code> 命令，若变量 <code>NAME</code> 不是只读变量，则在当前进程中删除变量 <code>NAME</code>。</li>
+<li>支持在命令解析时展开变量的值，如使用 <code>echo.b $NAME</code> 打印变量 <code>NAME</code> 的值。</li>
+</ul>
+<p>由此，我们记录下了所有需要完成的任务。</p>
+<h2 id="设计思路与特性总结">设计思路与特性总结</h2>
+<p>笔者完成该任务总计增删代码量为 <code>2211</code> 行。</p>
+<p>这样一个工作量，可以预见的是，如果一开始的架构很糟糕，那么接下来是寸步难行的。</p>
+<p>（很遗憾，lab6完成的shell的架构相对于该任务就很糟糕。）</p>
+<p>（当然，我的室友@wrongization 就基于原shell架构完成了整个任务，同时他也在OO课程的第一单元用纯纯的正则表达式解析处理掉了词法分析和语法分析，在此我向本宿舍最大赤石仙人致敬。）</p>
+<p>因此，我们根据以上调整顺序后的任务回顾进行提炼总结，给出以下完成顺序，以期在保留原shell部分特性的同时进行迭代式重构：</p>
+<p>（待完成）</p>
+<h2 id="实现过程">实现过程</h2>
+<p>（待完成）</p>
+<h2 id="参考资料">参考资料</h2>
+<p>本文的任务回顾部分主要参考2025 OS实验指导书和一部分Linux Bash的实现。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>操作系统</tag>
+        <tag>OS</tag>
+      </tags>
+  </entry>
 </search>
