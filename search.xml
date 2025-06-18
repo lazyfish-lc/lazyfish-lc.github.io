@@ -87,79 +87,6 @@
       </tags>
   </entry>
   <entry>
-    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
-    <url>/2024/10/28/BUAA-CO-P3-test/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
-<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>P3课上题目回忆</h1>
-<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
-<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
-<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
-<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
-<h1>对CPU电路连接的几点建议</h1>
-<ul>
-<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
-<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
-<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
-<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
-</ul>
-<h1>题目分析</h1>
-<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
-<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
-<ul>
-<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
-<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
-<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
-<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
-<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
-<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
-<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
-<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
-<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
-<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
-<li>数据内存（DM）：进行内存读写。</li>
-<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
-<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
-</ul>
-<h2 id="cwp">cwp</h2>
-<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
-<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
-<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
-</ul>
-<h2 id="bgc">bgc</h2>
-<p>需要修改的模块有控制器，分支控制器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
-<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
-</ul>
-<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
-<h2 id="lwso">lwso</h2>
-<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
-<p>具体来说：</p>
-<ul>
-<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
-<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
-</ul>
-<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
-<h1>反思课下设计模块的问题</h1>
-<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
-<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
-<p>所以这几个独立的产生控制信号的部分要去掉。</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>计算机组成原理</tag>
-        <tag>Logisim</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北航CO 2024 P4课上部分题目回忆与分析</title>
     <url>/2024/11/04/BUAA-CO-P4-test/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第⑥篇文章！</p>
@@ -236,53 +163,76 @@
       </tags>
   </entry>
   <entry>
-    <title>北航CO 2024 P6课上部分题目回忆与分析</title>
-    <url>/2024/11/18/BUAA-CO-P6-test/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第8篇文章！</p>
-<p>本文章是对课上部分的题目回忆（真的只有部分，关于T1我能说很大一段），<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+    <title>北航CO 2024 P3课上部分题目回忆与分析</title>
+    <url>/2024/10/28/BUAA-CO-P3-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第3篇文章！</p>
+<p>本文章是对课上部分的题目回忆，<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
 <p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>P6课上题目（T1）回忆</h1>
-<p>三题仍然为互相独立的添加指令题，这次我只写T1的回忆。</p>
-<p>准确来说，我还是只想写这次上机里有含金量的题，T2有含金量的部分几乎为0，T3和第一次P5课上的T3考点重合度太高（需要了解的可自行查阅我之前写的博客），于是我只想完整回忆T1。</p>
-<p>T1添加指令为 <code>fmultu</code>，R型指令。具体操作为进行一个需要在乘除模块计算3个周期的计算指令，操作细节如下：</p>
-<p>首先，对 <code>GPR[rs]</code> 和 <code>GPR[rt]</code> 进行64位无符号乘法，结果记为 <code>prod</code>。</p>
-<p>若 <code>prod</code> 高32位为0，则把 <code>prod[63:32]</code> 保存到 <code>HI</code> 寄存器中，把 <code>prod[31:0]</code> 保存到 <code>LO</code> 寄存器中。</p>
-<p>否则，我们找到 <code>prod</code> 中最高位1的出现位置 <code>highbit_1</code> 与 <code>prod</code> 中最低位0的出现位置 <code>lowbit_0</code> （可以证明，这种情况下 <code>prod</code> 中必定存在至少一个1和一个0） 。之后，记 <code>reverse_bit</code> 为 <code>highbit_1-lowbit_0</code> 的绝对值，可以证明 <code>reverse_bit</code> 必定在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">0\sim 63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">63</span></span></span></span> 内。最后，把 <code>prod[reverse_bit]</code> 进行翻转（0变成1，1变成0），将结果的高32位保存到 <code>HI</code> 寄存器中，将结果的低32位保存到 <code>LO</code> 寄存器中。</p>
-<h1>对CPU模块编写的几点建议</h1>
+<h1>P3课上题目回忆</h1>
+<p>三题为互相独立的添加指令题。（懒得写RTL了）</p>
+<p>第一题添加指令为 <code>cwp</code>，I型指令。具体操作为，将 <code>imm</code> 零扩展为32位数后逻辑左移8位的结果与PC的值进行比较，若大于PC，则将 <code>imm</code> 零扩展的结果存入 <code>GPR[rs]</code> 中，否则存入 <code>GPR[rt]</code> 中。</p>
+<p>第二题添加指令为 <code>bgc</code>，I型指令。具体操作为，将 <code>GPR[rs]</code> 分割为16个二进制数后，将每个二进制数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 转为其格雷码 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>r</mi><mi>e</mi><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">grey_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">re</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，计算所有转化结果的1的个数之和，若该总和大于 <code>rt</code>，则进行类似 <code>beq</code> 的指令跳转，否则PC正常自增。</p>
+<p>第三题添加指令为 <code>lwso</code>，I型指令。具体操作为……这题我不建议看文字描述，直接看伪代码吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">h_temp = GPR[rt] &amp; 0xf;</span><br><span class="line">reg_right = (GPR[rt] &gt;&gt; h_temp) &amp; 0x1f;</span><br><span class="line">reg_left = (GPR[rt] &lt;&lt; h_temp) &amp; 0x1f; </span><br><span class="line">write_data = mem[GPR[rs]+sign_ext(imm)];</span><br><span class="line">if (write_data % 2 == 1)</span><br><span class="line">	GPR[reg_left] = write_data;</span><br><span class="line">else</span><br><span class="line">	GPR[reg_right] = write_data;</span><br></pre></td></tr></table></figure>
+<h1>对CPU电路连接的几点建议</h1>
 <ul>
-<li>尽可能让主模块仅起到连接各模块的作用（除转发和阻塞信号对各级流水线寄存器的控制外），这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
-<li>课下的时候控制信号请务必集成到控制器里（包括Tuse和Tnew），能不新开模块就别新开模块生成控制信号。</li>
-<li>转发和阻塞的判断请务必使用各类控制信号和rs/rt/写入地址等等进行判断，而不使用完整的指令在内部做判断。（除非你是临时加指令）</li>
-<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
-<li>由于数据存储器改为外置，并且在D级时你无法得知要读写的具体位置和具体字节，所以一部分信息只能独立于控制器，在M级使用指令本身的opcode进行额外的处理。</li>
-<li>加入乘除模块时，可以将ALU的输出结果与HI寄存器，LO寄存器塞入一个多选器里，以多选器结果作为本周期ALU的“实际输出”，该多选器的控制信号在控制器里就可以处理出来。</li>
-<li>在考虑由乘除模块引起的阻塞条件增加时，我们可以考虑处理出该指令是否使用乘除模块（注意，这个和start信号还不是一个信号，后者只需要在处理需要多个周期的指令时才会用到），用D级的该信号，E级乘除模块的start信号和busy信号作为判断乘除法阻塞的依据。</li>
+<li>尽可能让主模块仅起到连接各模块的作用，并且尽可能用Tunnel沟通各模块。这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>可以预先对模块外观进行修改后再接入CPU，否则务必注意外观变化对CPU处接线的影响。</li>
+<li>为模块新增端口时，可以先把使用该模块的端口断开，再进行添加，添加时保证新端口在旧端口的下方。</li>
+<li>课下的时候控制信号请务必集成到控制器里，能不新开模块就别新开模块生成控制信号。</li>
 </ul>
-<h1>FMULTU 题目分析</h1>
-<p>这题其实写起来也不算太困难，主要是讲一下对于乘除模块的修改，以及如何处理这种比较大号的计算型指令的添加。</p>
-<p>首先，依然是常规的控制器里填充控制信号，这个指令的控制信号其实和MULTU差不了多少，基本上没啥可说的。在乘除模块里设置周期数也很好说。</p>
-<p>并且，如果你是照着我给的建议搭的CPU，那么你不需要额外处理这条指令带来的额外的阻塞可能情况。</p>
-<p>这题唯一的问题在于，这个东西算起来着实有些麻烦，有种以前计算指令的大杂烩的感觉。</p>
-<p>对于这种情况，我的建议其实是：把计算过程独立于时序逻辑之外（防止出现时序问题），用always块建模组合逻辑（便于编写），多开reg变量存储中间结果（便于调试）。</p>
-<p>比如说这题吧。我应该是开了这些reg型变量： <code>[63:0]prod</code>，<code>[31:0]highbit_1</code>，<code>[31:0]lowbit_0</code>，<code>[31:0]reverse_bit</code>，<code>[63:0]temp</code>，<code>[63:0]result</code>。</p>
-<p>其实，我在之前描述题面的时候，就已经用了很多原题面根本没有明确提出的中间变量了（比如说，<code>|highbit_1-lowbit_0|</code> 在原题面里就直接被带着用了）。所以，这种适度的拆解有助于编写代码的时候快速理清思路。</p>
-<p>同时，多开变量还有一个好处，就是你可以在调试的时候清晰的看到每一次计算的时候的中间运行结果，这样不管是哪一步开始出了问题，你都可以快速的发现问题。</p>
-<p>然后，我们就可以照着题面要求一步步组合这些变量了。</p>
-<p>具体的大部分实现细节都很好说，只提一个 <code>highbit_1</code> 和 <code>lowbit_0</code> 的具体实现吧。我以 <code>lowbit_0</code> 举例，我的实现如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for (lowbit_0 = 0; lowbit_0 &lt; 32&#x27;d64 &amp;&amp; prod[lowbit_0] != 1&#x27;b0; lowbit_0 = lowbit_0 + 1) begin</span><br><span class="line">	//这里是个空循环，该干的活在循环条件里已经干完了</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>然后……？没了，恭喜AC！</p>
+<h1>题目分析</h1>
+<p>这三题都是不涉及新增数据通路的新增指令题，因此仅需要考虑指令对各模块的影响即可。正是基于这样的想法，以下分析里我会尽量只列出修改的模块和修改方法。</p>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL。</p>
+<h2 id="为了防止大家看不懂所以把我课下设计的模块放上来">为了防止大家看不懂所以把我课下设计的模块放上来</h2>
+<ul>
+<li>取指令模块（IFU）：根据PC的值，从内存中读出指令。</li>
+<li>译码器（InstSplitter）：将指令按MIPS指令集架构分为各个部分。</li>
+<li>通用寄存器组（GRF）：读取最多两个寄存器的值，向最多一个寄存器写入值。</li>
+<li>控制器（Controller）：确定CPU各部分写入使能和写入数据源。</li>
+<li>分支控制器（BranchController）：计算并选择分支跳转的目标地址。</li>
+<li>ALU解码器（ALUDecoder）：确定ALU需要执行的运算操作ALU_opcode。</li>
+<li>ALU立即数扩展（ALUExt）：确定立即数扩展方式，对立即数进行扩展。</li>
+<li>ALU运算数选择器（ALUMux）：确定操作数源，选择ALU的操作数。</li>
+<li>算数逻辑单元（ALU）：对操作数进行运算。</li>
+<li>PC写入值选择器（PCMux）：选择下一周期PC的值。</li>
+<li>数据内存（DM）：进行内存读写。</li>
+<li>GRF写入地址选择器（GRFAddrMux）：选择下一周期写入的寄存器。</li>
+<li>GRF写入值选择器（GRFMux）：选择下一周期写入寄存器的值。</li>
+</ul>
+<h2 id="cwp">cwp</h2>
+<p>需要修改的模块有控制器，ALU解码器，ALU，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，并且需要额外输入立即数和PC值比较，产出比较信号；</li>
+<li>（ALU解码器，ALU）该指令将新增直接将立即数零扩展结果作为运算结果的运算；</li>
+<li>（GRF写入地址选择器）该指令将对GRF的写入地址额外进行影响，并且可能额外用到rs作为写入寄存器地址，额外用到比较信号作为选择依据。</li>
+</ul>
+<h2 id="bgc">bgc</h2>
+<p>需要修改的模块有控制器，分支控制器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发写入PC数据源选择信号。</li>
+<li>（分支控制器）该指令将额外需要rt作为分支跳转条件的数据源，添加bgc的分支跳转判断结果生成。</li>
+</ul>
+<p>另外，由于需要对两位二进制数进行格雷码转化，因此需要新增两个模块，一个对两位二进制数进行格雷码转化，另一个对16组两位二进制数的格雷码1的个数进行合并（这里可以采用bitadder元件）。第二个元件放入分支控制器内，辅助分支跳转条件的计算。</p>
+<h2 id="lwso">lwso</h2>
+<p>需要修改的模块有控制器，GRF写入地址选择器。</p>
+<p>具体来说：</p>
+<ul>
+<li>（控制器）该指令将触发GRF写入信号，DM读信号，GRF写入数据源选择信号。</li>
+<li>（GRF写入地址选择器）该指令将需要额外用到 <code>GRF[rt]</code> 和DM读出结果作为写入寄存器地址选择依据。</li>
+</ul>
+<p>需要额外注意的是，对一些故意绕的离谱的指令，请务必直接读RTL，照着RTL慢慢写，需要“暂存”的东西就用Tunnel标记一下。</p>
 <h1>反思课下设计模块的问题</h1>
-<p>没有。这次除了写的有点不是很美观之外，一点没有。</p>
-<h1>反思课上表现的问题</h1>
-<p>T2和T3的表现都没有大问题。最多来说就是，T3的时候我没有处理清楚判断WD和DM读取结果判断的位置，导致一开始多尝试了几次修改。</p>
-<p>不过小问题还是挺多的，比如说T1的时候我一开始把处理 <code>lowbit</code> 的终止条件写反了，步进方向也写反了。比如说T2我统计一个数字里1的个数的时候，一个是存储个数的寄存器大小没开够（实际上是忘了写位宽），另一个是需要逐位比较是否是1的时候我直接把整个数据拿来比较了……令人汗颜！</p>
-<p>当然，结果是好的，1h解决战斗。</p>
-<p>希望以上内容能够让各位有一点新的收获吧。</p>
+<p>写到这里已经懒得写了。就说一条最严重的吧。</p>
+<p>我课下设计的模块里有一个ALU运算数选择器和ALU解码器，这两个元件会独立于控制器产生控制信号，所以在新增指令的时候，有可能要一次改三个元件（没错，我第一题的原始做法其实就涉及了这个问题，你们看到的这个做法是我写博客写一半意识到有更好的临时解决方法才改的）。</p>
+<p>所以这几个独立的产生控制信号的部分要去掉。</p>
 ]]></content>
       <tags>
         <tag>BUAA</tag>
         <tag>计算机组成原理</tag>
-        <tag>Verilog</tag>
+        <tag>Logisim</tag>
       </tags>
   </entry>
   <entry>
@@ -373,6 +323,56 @@
 <p>这种不好的心理状态直到第2发还是第3发WA的时候才结束，那会我刚刚把自己的心态稳住，让自己意识到“没必要那么急”。虽然那个时候已经是八点了。</p>
 <p>然而看报错信息的事情还是八点十几分才做的，这个需要改正。</p>
 <p>到熄灯时间了，我先睡了，有啥想到的明晚更新吧。没有的话，这句话也就撂在这里不管了。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Verilog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>北航CO 2024 P6课上部分题目回忆与分析</title>
+    <url>/2024/11/18/BUAA-CO-P6-test/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第8篇文章！</p>
+<p>本文章是对课上部分的题目回忆（真的只有部分，关于T1我能说很大一段），<strong>不保证回忆内容一定正确</strong>，请各位注意甄别！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>P6课上题目（T1）回忆</h1>
+<p>三题仍然为互相独立的添加指令题，这次我只写T1的回忆。</p>
+<p>准确来说，我还是只想写这次上机里有含金量的题，T2有含金量的部分几乎为0，T3和第一次P5课上的T3考点重合度太高（需要了解的可自行查阅我之前写的博客），于是我只想完整回忆T1。</p>
+<p>T1添加指令为 <code>fmultu</code>，R型指令。具体操作为进行一个需要在乘除模块计算3个周期的计算指令，操作细节如下：</p>
+<p>首先，对 <code>GPR[rs]</code> 和 <code>GPR[rt]</code> 进行64位无符号乘法，结果记为 <code>prod</code>。</p>
+<p>若 <code>prod</code> 高32位为0，则把 <code>prod[63:32]</code> 保存到 <code>HI</code> 寄存器中，把 <code>prod[31:0]</code> 保存到 <code>LO</code> 寄存器中。</p>
+<p>否则，我们找到 <code>prod</code> 中最高位1的出现位置 <code>highbit_1</code> 与 <code>prod</code> 中最低位0的出现位置 <code>lowbit_0</code> （可以证明，这种情况下 <code>prod</code> 中必定存在至少一个1和一个0） 。之后，记 <code>reverse_bit</code> 为 <code>highbit_1-lowbit_0</code> 的绝对值，可以证明 <code>reverse_bit</code> 必定在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">0\sim 63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">63</span></span></span></span> 内。最后，把 <code>prod[reverse_bit]</code> 进行翻转（0变成1，1变成0），将结果的高32位保存到 <code>HI</code> 寄存器中，将结果的低32位保存到 <code>LO</code> 寄存器中。</p>
+<h1>对CPU模块编写的几点建议</h1>
+<ul>
+<li>尽可能让主模块仅起到连接各模块的作用（除转发和阻塞信号对各级流水线寄存器的控制外），这样在对电路进行修改时，我们可以把精力只放在对各个模块内部的修改，而无需过度置疑CPU连接的正确性。</li>
+<li>课下的时候控制信号请务必集成到控制器里（包括Tuse和Tnew），能不新开模块就别新开模块生成控制信号。</li>
+<li>转发和阻塞的判断请务必使用各类控制信号和rs/rt/写入地址等等进行判断，而不使用完整的指令在内部做判断。（除非你是临时加指令）</li>
+<li>为了防止Verilog的特性导致产生笔误，从而在无意中创造出一个和你预期的信号不同的wire型变量，建议在每个模块名前加上``default_nettype none`。</li>
+<li>由于数据存储器改为外置，并且在D级时你无法得知要读写的具体位置和具体字节，所以一部分信息只能独立于控制器，在M级使用指令本身的opcode进行额外的处理。</li>
+<li>加入乘除模块时，可以将ALU的输出结果与HI寄存器，LO寄存器塞入一个多选器里，以多选器结果作为本周期ALU的“实际输出”，该多选器的控制信号在控制器里就可以处理出来。</li>
+<li>在考虑由乘除模块引起的阻塞条件增加时，我们可以考虑处理出该指令是否使用乘除模块（注意，这个和start信号还不是一个信号，后者只需要在处理需要多个周期的指令时才会用到），用D级的该信号，E级乘除模块的start信号和busy信号作为判断乘除法阻塞的依据。</li>
+</ul>
+<h1>FMULTU 题目分析</h1>
+<p>这题其实写起来也不算太困难，主要是讲一下对于乘除模块的修改，以及如何处理这种比较大号的计算型指令的添加。</p>
+<p>首先，依然是常规的控制器里填充控制信号，这个指令的控制信号其实和MULTU差不了多少，基本上没啥可说的。在乘除模块里设置周期数也很好说。</p>
+<p>并且，如果你是照着我给的建议搭的CPU，那么你不需要额外处理这条指令带来的额外的阻塞可能情况。</p>
+<p>这题唯一的问题在于，这个东西算起来着实有些麻烦，有种以前计算指令的大杂烩的感觉。</p>
+<p>对于这种情况，我的建议其实是：把计算过程独立于时序逻辑之外（防止出现时序问题），用always块建模组合逻辑（便于编写），多开reg变量存储中间结果（便于调试）。</p>
+<p>比如说这题吧。我应该是开了这些reg型变量： <code>[63:0]prod</code>，<code>[31:0]highbit_1</code>，<code>[31:0]lowbit_0</code>，<code>[31:0]reverse_bit</code>，<code>[63:0]temp</code>，<code>[63:0]result</code>。</p>
+<p>其实，我在之前描述题面的时候，就已经用了很多原题面根本没有明确提出的中间变量了（比如说，<code>|highbit_1-lowbit_0|</code> 在原题面里就直接被带着用了）。所以，这种适度的拆解有助于编写代码的时候快速理清思路。</p>
+<p>同时，多开变量还有一个好处，就是你可以在调试的时候清晰的看到每一次计算的时候的中间运行结果，这样不管是哪一步开始出了问题，你都可以快速的发现问题。</p>
+<p>然后，我们就可以照着题面要求一步步组合这些变量了。</p>
+<p>具体的大部分实现细节都很好说，只提一个 <code>highbit_1</code> 和 <code>lowbit_0</code> 的具体实现吧。我以 <code>lowbit_0</code> 举例，我的实现如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for (lowbit_0 = 0; lowbit_0 &lt; 32&#x27;d64 &amp;&amp; prod[lowbit_0] != 1&#x27;b0; lowbit_0 = lowbit_0 + 1) begin</span><br><span class="line">	//这里是个空循环，该干的活在循环条件里已经干完了</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>然后……？没了，恭喜AC！</p>
+<h1>反思课下设计模块的问题</h1>
+<p>没有。这次除了写的有点不是很美观之外，一点没有。</p>
+<h1>反思课上表现的问题</h1>
+<p>T2和T3的表现都没有大问题。最多来说就是，T3的时候我没有处理清楚判断WD和DM读取结果判断的位置，导致一开始多尝试了几次修改。</p>
+<p>不过小问题还是挺多的，比如说T1的时候我一开始把处理 <code>lowbit</code> 的终止条件写反了，步进方向也写反了。比如说T2我统计一个数字里1的个数的时候，一个是存储个数的寄存器大小没开够（实际上是忘了写位宽），另一个是需要逐位比较是否是1的时候我直接把整个数据拿来比较了……令人汗颜！</p>
+<p>当然，结果是好的，1h解决战斗。</p>
+<p>希望以上内容能够让各位有一点新的收获吧。</p>
 ]]></content>
       <tags>
         <tag>BUAA</tag>
@@ -1568,6 +1568,8 @@
 <p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
 <p><strong>本文章尚未完成，如有需要请大力催更！</strong></p>
 <h1>北航2025 OS shell挑战性任务实现指导</h1>
+<h2 id="前言">前言</h2>
+<p>本文为北航2025《操作系统》课程的shell挑战性任务（基于lab6的MOS架构）的实现指导，主要聚焦于给出一种可行的设计思路，以及基于该设计的具体实现。</p>
 <h2 id="任务回顾">任务回顾</h2>
 <p>本挑战性任务要求完成一个<strong>类似Linux中Bash的shell</strong>。</p>
 <blockquote>
@@ -1626,10 +1628,10 @@
 </table>
 </li>
 <li>
-<p>实现历史指令功能。至多保存最近运行的20条指令，将其存入 <code>.mos_history</code> 中。</p>
-<p>需要在每次指令输入完毕之后，运行之前，对 <code>.mos_history</code> 进行写入。</p>
+<p>实现历史指令功能。至多保存最近运行的20条指令，将其存入 <code>/.mos_history</code> 中。</p>
+<p>需要在每次指令输入完毕之后，运行之前，对 <code>/.mos_history</code> 进行写入。</p>
 <p>允许使用 <code>up-arrow</code> 和 <code>down-arrow</code> 实现历史指令和当前指令间的切换。</p>
-<p>新增内建指令 <code>history</code>，其效果为输出 <code>.mos_history</code> 中的内容。</p>
+<p>新增内建指令 <code>history</code>，其效果为输出 <code>/.mos_history</code> 中的内容。</p>
 </li>
 </ul>
 <h3 id="支持内建指令和外部指令传递返回值到shell中">支持内建指令和外部指令传递返回值到shell中</h3>
@@ -1789,7 +1791,7 @@
 <li>在 <code>spawn</code> 处增加输入省去后缀的优化。</li>
 <li>重写 <code>readline</code>，将其扩展为一个管理输入缓冲与屏幕输出的模块，在此完成输入指令优化任务。</li>
 <li>重写指令解析与执行部分，将IO管理之后的部分移除，换为用递归下降法解析指令，之后在抽象语法树（AST）上进行运行。</li>
-<li>修正原shell中的进程调度结构，以支持内建指令。</li>
+<li>调整原shell中的子进程创建时机，以支持内建指令。</li>
 <li>修正原shell中对重定向的处理，以修正内建指令与重定向时的输入输出错误。</li>
 <li>增加指令 <code>exit</code>。</li>
 <li>修改进程控制块，增加进程返回值字段，并调整系统调用实现父子进程间返回值的传递。修正所有 <code>exit()</code> 的参数传递。</li>
@@ -1804,6 +1806,7 @@
 <li>提交，享受暑假生活。</li>
 </ol>
 <p>步骤很多，但是应该覆盖全面了。（毕竟我在读其他同学的分步较少的博客的时候，很多设计实际上还是需要我自己摸索，并且很多博客都是基于原架构实现的，而我刚刚才骂过原架构……）</p>
+<p>（以及，为了保证快速上手，建议在遇到一些不会写的代码的时候学会<strong>抄MOS的已有内容</strong>）</p>
 <p>为了保证下面叙述顺利，我在这里给出几个该任务中shell和进程应该具有的特性。</p>
 <p>（以及，如果你想试着不看下面的实现过程，想试试自己的工程能力的话，那么也请你至少读完这些特性再动手，毕竟这些坑实在是太难想了，我在实现过程中发了纠正帖，以及反复问了LLM，才踩完这些坑……）</p>
 <ol>
@@ -1816,7 +1819,7 @@
 <li>
 <p>在处理历史指令相关输入优化时，<code>.mos_history</code> 的写入应在指令读入完成之后，被执行之前。<code>.mos_history</code> 仅存放实际被执行的指令（即使该指令不合法），因此在用户输入时所进行的所有的指令修改中，仅被执行指令的指令追加至 <code>.mos_history</code> 的最后，其余修改仅保留至内存中，不影响 <code>.mos_history</code> 的内容。</p>
 <blockquote>
-<p>这个描述可能有点奇怪……如果让我举个例子的话就是，你现在可以去打开Linux的Bash，然后随便运行几条指令，接下来通过上下键修改某几条已运行的指令的内容，并运行其中一个修改后的指令。接下来，你会发现内存中保存的历史指令保持着被修改后的样子，而history指令的输出中这些修改则未被保存。</p>
+<p>这个描述可能有点奇怪……如果让我举个例子的话就是，你现在可以去打开Linux的Bash，然后随便运行几条指令，接下来通过上下键修改某几条已运行的指令的内容，并运行其中一个修改后的指令。接下来，你会发现内存中保存的历史指令保持着被修改后的样子，而history指令的输出中除最后一个被回车运行的指令外，其他修改则未被保存。</p>
 </blockquote>
 </li>
 <li>
@@ -1837,12 +1840,272 @@
 <li>
 <p>文件系统中的 <code>remove</code> 函数移除的目标文件若为一目录，则其一定会进行递归的文件删除。</p>
 </li>
+<li>
+<p>（哦对了，虽然这不属于一个完整的特性，但是你可以注意一下调整完子进程创建时机之后重定向带来的问题。）</p>
+</li>
 </ol>
 <p>如果我有什么遗漏，请一定在评论里告诉我！</p>
 <h2 id="实现过程">实现过程</h2>
-<p>（待完成）</p>
+<h3 id="文件架构">文件架构</h3>
+<p>整体来说，我所实现的文件架构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mos</span><br><span class="line"> └─ user</span><br><span class="line">    ├─ include</span><br><span class="line">    |    └─ shell.h</span><br><span class="line">    ├─ lib</span><br><span class="line">    |    ├─ shellio.c</span><br><span class="line">    |    ├─ lexer.c</span><br><span class="line">    |    ├─ parser.c</span><br><span class="line">    |    └─ executor.c</span><br><span class="line">    ├─ mkdir.c</span><br><span class="line">    ├─ touch.c</span><br><span class="line">    ├─ rm.c</span><br><span class="line">    └─ sh.c</span><br></pre></td></tr></table></figure>
+<p>其中，<code>shell.h</code> 负责将 <code>sh.c</code> 中的繁杂功能剥离开，其功能实现交由 <code>shellio.c</code>，<code>lexer.c</code>，<code>parser.c</code>，<code>executor.c</code> 实现。</p>
+<p>由此其实也可以看出来，整体上shell处理指令的顺序就是“IO管理-词法分析-语法分析-执行”，这与 <code>user/lib/</code> 中新增的文件是一一对应的。</p>
+<h3 id="与MOS交互的关键路径和文件">与MOS交互的关键路径和文件</h3>
+<p>此部分内容主要在于给出一套实现功能时的规范化的修改流程。</p>
+<p>具体来说，shell和MOS各模块的交互可以分为以下几种：</p>
+<ul>
+<li>
+<p>文件读写，此部分与文件系统相关，其路径为“shell-用户态文件操作接口-发送文件操作请求—文件系统接收请求-交由具体函数实现”。</p>
+<p>与之相关紧密的关键文件按路径顺序排列如下：<code>user/lib/file.c</code>，<code>user/lib/fsipc.c</code>，<code>fs/serv.c</code>，<code>fs/fs.c</code>。</p>
+</li>
+<li>
+<p>读写进程块信息，此部分与进程管理相关，其路径为“shell-用户态系统调用接口-内核处理系统调用-进程管理函数”。</p>
+<p>与之相关紧密的关键文件按路径顺序排列如下：<code>user/lib/syscall_lib.c</code>，<code>kern/syscall_all.c</code>，<code>kern/env.c</code>，<code>include/env.h</code>。</p>
+</li>
+</ul>
+<p>后续几乎所有需要改动内核的部分，基本上都是按照这两条路径依次修改文件。</p>
+<h3 id="实现细节">实现细节</h3>
+<p>如果把全部细节展开描述的话，效果可能甚至不如直接贴代码……所以这里主要是从大处着笔，写到实现思路彻底展明为止，着重描述一些关键细节。</p>
+<h4 id="IO管理与回显">IO管理与回显</h4>
+<p>实际上这里没有什么太大的难度，主要就是维护一个字符串和一个光标位置即可。可能很多同学会卡在控制台的回显特性带来的显示错误上（就是你按下去一个按键，无论这个按键是什么，控制台都会立刻把这个按键对应的字符或者控制效果显示出来）。解决这个问题的方法有两个，一个是去 <code>user/lib/console.c</code> 把回显有关的代码给改掉，然后在shell上自行实现一个回显（这是我的朋友之前采用的方法，但是我自己并不喜欢），另一个就是每次在回显之后，都让shell做一个把该操作撤销的控制台输出（如果当前的标准输入输出都是控制台的话）。</p>
+<p>另一个比较卡人的地方就是如何识别按键输入和实际读取的内容的联系了。（比如说，你可能会花一段时间去找上下左右对应的是“哪个”字符，而最后你会查出来这里面每个按键实际上会往标准输入里塞三个字符）</p>
+<p>这里我列个本次任务中会用到的按键输入对应表，方便大家对照。</p>
+<table>
+<thead>
+<tr>
+<th>按键</th>
+<th>输入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>up-arrow</td>
+<td><code>\x1b[A</code></td>
+</tr>
+<tr>
+<td>down-arrow</td>
+<td><code>\x1b[B</code></td>
+</tr>
+<tr>
+<td>left-arrow</td>
+<td><code>\x1b[D</code></td>
+</tr>
+<tr>
+<td>right-arrow</td>
+<td><code>\x1b[C</code></td>
+</tr>
+<tr>
+<td>backspace</td>
+<td><code>\b</code> / <code>\x7f</code></td>
+</tr>
+<tr>
+<td>Ctrl-E</td>
+<td><code>\x05</code></td>
+</tr>
+<tr>
+<td>Ctrl-A</td>
+<td><code>\x01</code></td>
+</tr>
+<tr>
+<td>Ctrl-K</td>
+<td><code>\x0b</code></td>
+</tr>
+<tr>
+<td>Ctrl-U</td>
+<td><code>\x15</code></td>
+</tr>
+<tr>
+<td>Ctrl-W</td>
+<td><code>\x17</code></td>
+</tr>
+</tbody>
+</table>
+<p>以及，不论你是手写一个回显还是输出一个操作相反的控制字符，你也应该需要其他的能控制控制台行为的输出，所以我接下来再给出一个我自己使用的表（当然，这里建议你询问大模型获取更多控制效果）：</p>
+<table>
+<thead>
+<tr>
+<th>输出</th>
+<th>控制效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&quot;\x1b[%dA&quot;</code></td>
+<td>光标向上移动 <code>%d</code> 列（如无该参数则为向上移动1列）</td>
+</tr>
+<tr>
+<td><code>&quot;\x1b[%dB&quot;</code></td>
+<td>光标向下移动 <code>%d</code> 列（如无该参数则为向下移动1列）</td>
+</tr>
+<tr>
+<td><code>&quot;\x1b[%dD&quot;</code></td>
+<td>光标向左移动 <code>%d</code> 列（如无该参数则为向左移动1列）</td>
+</tr>
+<tr>
+<td><code>&quot;\x1b[%dC&quot;</code></td>
+<td>光标向右移动 <code>%d</code> 列（如无该参数则为向右移动1列）</td>
+</tr>
+<tr>
+<td><code>&quot;\x1b[K&quot;</code></td>
+<td>清除光标后的一整行内容</td>
+</tr>
+</tbody>
+</table>
+<p>另外，在测试的时候可能会遇到 <code>Ctrl-A</code> 和 <code>Ctrl-W</code> 的测试相关的按键冲突。对于 <code>Ctrl-A</code> 的冲突，其实际上是qemu的快捷键的问题（有点类似于tmux里 <code>Ctrl-B</code> 的效果），按两遍就行；对于 <code>Ctrl-W</code> 的冲突，大概率是浏览器里关闭标签页的快捷键和我们要实现的快捷键撞了，这个可以选择在测试的时候随便换一组快捷键。</p>
+<h4 id="历史指令管理">历史指令管理</h4>
+<p>把历史指令的实现单拿出来的原因是，其实现难度约等于其他输入优化工作的总和（虽然都是一样的低），而且确实有一个不太好理解的细节。</p>
+<p>我对历史指令的存储实际上是分了两部分的：内存里的暂存区和 <code>/.mos_history</code>。二者内容实际上有一些差别，具体来说：</p>
+<ul>
+<li>暂存区是一块 <code>21*1024</code> 的二维数组，其作用相当于一个存储最近20条被执行的指令和当前输入指令的缓存；<code>/.mos_history</code> 记录的是最近20条实际被运行的指令。</li>
+<li>在shell初始化时，若 <code>/.mos_history</code> 存在，则将其内容填充至暂存区中，否则暂存区为空。</li>
+<li>存在一个指针指向当前被修改的缓存，在每次指令输入开始前，其指向暂存区已保存的最后一条指令的下一块内存。</li>
+<li>在指令输入时，若用户输入了上下键，则上述指针根据用户的按键改变指针指向位置，并把光标移动至改变指向位置后的指令末尾，并使控制台显示切换后的指令。</li>
+<li>在指令输入完毕前，对暂存区的任何修改都将被保留在暂存区中，修改效果不会因为指针的移动而还原（举个例子就是，你在指令输入完毕前切换到上一条指令做了些修改，那之后再次切到这条指令的时候其修改效果仍然留在暂存区里），但 <code>/.mos_history</code> 内不应记录下此时的任何修改（在指令输入完毕后，其修改仍然不应被保存）。</li>
+<li>在指令输入完毕后，指令运行开始前，应该将当前指针指向的指令被存入 <code>/.mos_history</code> 中，当前指针指向的指令也被存入暂存区末尾。若 <code>/.mos_history</code> 此时存储的指令超过20条，则应移除最开头的一条。若暂存区此时存储的指令超过20条，也应移除最开头的一条。</li>
+</ul>
+<h4 id="重构后的架构展开">重构后的架构展开</h4>
+<p>在进行重构之后，一条指令经过IO管理和预处理后，其会被解析成一抽象语法树。该语法树为一多叉树，且深度严格为4或5。具体来说，其结构如下：</p>
+<ul>
+<li><code>line</code> 节点（由 <code>;</code> 分割的各段指令）
+<ul>
+<li><code>expr</code> 节点（由 <code>&amp;&amp;</code> 或 <code>||</code> 分割的各段指令）
+<ul>
+<li><code>pipeline</code> 节点（由 <code>|</code> 分割的各段指令）
+<ul>
+<li><code>command</code> 节点（可被执行的最小单元指令）
+<ul>
+<li><code>word</code> 节点 / <code>redirect</code> 节点</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>至于节点所需的内存申请的问题，我选择照搬 <code>envs</code> 的实现，预先开个大数组开出所有节点所占用的空间，同时记录每个节点的被使用状态，通过申请和释放节点的函数把这个大数组包装起来。</p>
+<p>在解析完成后，尝试根据该抽象语法树运行指令，按照自顶向下的顺序依次尝试执行。</p>
+<h4 id="子进程创建时机调整">子进程创建时机调整</h4>
+<p>在我们现在设计的shell中，考虑到满足某些条件的内建指令必须在shell进程本身被处理，故我们需要对原shell中无脑开子进程处理的行为做一些修正。</p>
+<p>具体来说（其实这里就是复述一遍特性总结）：</p>
+<ul>
+<li>对于 <code>pipeline</code> 节点内只有一个 <code>command</code> 的情况（即不存在管道传递时），该指令应在shell进程本身中被处理。</li>
+<li>当 <code>pipeline</code> 中包含多于一个 <code>command</code> 时，被管道连接的各个 <code>command</code> 应在不同的子进程中运行。</li>
+<li>对于所有内建指令，其运行时不应额外开出子进程；对于所有外部指令，其均通过spawn-wait进行处理。</li>
+</ul>
+<p>具体的实现方法为：在运行 <code>pipeline</code> 节点的函数内，若 <code>pipeline</code> 内只有一个子节点，则直接调用运行 <code>command</code> 的函数；否则，创建一个子进程，之后：</p>
+<ul>
+<li>
+<p>子进程遍历该节点除最后一个子节点外的所有子节点，每次循环中创建一个管道和一个孙子进程，孙子进程负责接下来的遍历过程，而子进程则执行当前节点对应的指令，之后<strong>关闭自己的所有文件标识符</strong>，等待孙子进程结束，之后结束自己。</p>
+</li>
+<li>
+<p>容易发现，上述过程中最后会剩下一个孙子进程未执行任何指令，所以让其执行最后一个子节点对应的指令，之后结束自己。</p>
+</li>
+<li>
+<p>父进程等待该子进程结束，函数正常返回。</p>
+</li>
+</ul>
+<p>至此，子进程创建时机修正结束。</p>
+<h4 id="重定向修正">重定向修正</h4>
+<p>由于上述对子进程创建时机的调整，之前shell中对重定向的处理方法也跟着出现了问题。具体来说，对于一条有重定向信息的内建指令运行，其在运行后无法自行恢复原有的标准输入输出方向。</p>
+<p>这也就意味着，你需要在 <code>command</code> 节点运行前保存一份当前标准输入输出的文件标识符的备份。</p>
+<p>我的做法是：在开始处理重定向前，用 <code>fd_alloc()</code> 申请一个空的输入文件标识符，将当前标准输入标识符dup到这个空的标识符中，再对当前标准输出如法炮制。在当前 <code>command</code> 节点运行结束后，将上述申请的标识符再dup回标准输入输出，最后用 <code>close()</code> 释放上述申请的标识符。</p>
+<p>需要注意的是，运行 <code>pipeline</code> 的时候无需为管道操作执行这样的备份，因为 <code>pipeline</code> 内如果存在多于一个的子节点，则各子节点都将在子进程中运行，子进程运行指令结束后即会被销毁，无需恢复输入输出。</p>
+<h4 id="返回值机制实现">返回值机制实现</h4>
+<p>简单来说，由于原MOS中，在父进程创建完子进程后，父子进程实际上不存在什么直接信息传递的渠道，故子进程的 <code>main</code> 函数返回值无法传递给父进程。</p>
+<p>解决这个问题的方法有两种，一种是让子进程在被销毁前尝试和父进程进行通信，把返回值传递出去，另一种就是让父进程负责子进程的销毁，在销毁途中获取子进程的返回值。我采用的是后者。</p>
+<p>具体来说，我们从 <code>user/lib/libos.c</code> 里的 <code>exit()</code> 函数和 <code>user/lib/wait.c</code> 里的 <code>wait(u_int)</code> 函数开始考虑，看看如何通过 <code>exit()</code> 发出子进程的返回值信息，再从 <code>wait()</code> 获取这个信息。</p>
+<p><code>exit()</code> 函数实际上就干了两件事：</p>
+<ol>
+<li>关闭自己的所有文件标识符；</li>
+<li>调用系统调用销毁自己。</li>
+</ol>
+<p>但是如果直接让子进程销毁了自己，那么父进程不仅连通信的机会都没有，还没有寻找子进程PCB的机会了（如果在父进程寻找到子进程之前有新的进程使用了原子进程的PCB，那么就完蛋了）。所以，父进程不能等到子进程销毁后才去寻找其返回值。</p>
+<p>反过来说，就是子进程不能让自己被销毁，只能让自己被永久暂停，即<strong>把自己标记为运行结束的状态</strong>。</p>
+<p>所以，我们在进程状态里新增一个 <code>ENV_END</code> 状态，再新增一个用于进程结束的系统调用（我们暂且记为 <code>syscall_env_exit</code>）。其系统调用的主要功能有两个：</p>
+<ol>
+<li>将自己的状态设置为 <code>ENV_END</code>，并使自己不能被调度（即从调度链表和阻塞链表里被移除）；</li>
+<li>将自己的返回值记录到PCB里。</li>
+</ol>
+<p>至此，我们就完成了子进程的返回值发送部分。</p>
+<p>接下来考虑 <code>wait()</code> 函数，它实际上就干了一件事：</p>
+<ul>
+<li>如果子进程还存在并且未运行结束，则放弃该进程剩余的时间片，否则该函数结束。</li>
+</ul>
+<p>所以我们要做的修改就是：</p>
+<ol>
+<li>如果子进程还存在并且未运行结束，则放弃该进程剩余的时间片；</li>
+<li>否则，如果该子进程处于结束态，则读取子进程返回值，销毁子进程，之后函数结束。</li>
+<li>否则，函数结束。</li>
+</ol>
+<p>（写完才发现好像只是变相的实现了一遍MOS里的消息传递……不管了，写都写了）</p>
+<p>完全结束了吗？不是的。</p>
+<p>我们刚刚做的操作里是修改了两个已经存在的函数的：给 <code>wait()</code> 添加了返回值，给 <code>exit()</code> 添加了参数。前者其实没啥影响，但是后者做完之后，你还要修改所有调用了 <code>exit()</code> 的地方，给其填一个合适的参数，否则对该函数的调用就是错误的。所幸，我们现在的MOS里并没有特别多调用 <code>exit()</code> 的地方，诸葛修改即可。（不用修改 <code>test/</code> 文件夹里的该函数，反正里面的测试点你也用不上了）</p>
+<h4 id="指令预处理">指令预处理</h4>
+<p>这个其实没啥难度。</p>
+<p>对于 <code>#</code> 标记的注释，你可以把 <code>#</code> 在词法分析上识别成一行的结束符，从而无需进行任何额外处理。</p>
+<p>对于反引号的处理，我们选择开个缓冲区，开个管道，再开个子进程，把子进程的输出用管道连接到缓冲区里，再把缓冲区的内容塞到指令里面。</p>
+<p>（之所以写这一段，是因为有相当多的人问过这一段）</p>
+<h4 id="相对路径相关">相对路径相关</h4>
+<p>首先添加当前工作路径到进程里。</p>
+<p>我们注意到，当前工作路径是有继承性的，而且不同进程的当前工作路径在进程创建后是相互独立的，所以修改还有点多。</p>
+<p>首先我们要往PCB里丢垃圾，在PCB里开个长数组存放当前工作路径。</p>
+<p>然后，对于没有父进程的进程，其当前工作路径在被创建时应该被设定为根目录；对于有父进程的进程，其当前工作路径在被创建时应该被设定为父进程所在目录。（这一块需要通过修改 <code>env_create</code> 和 <code>env_exofork</code> 来实现）</p>
+<p>最后，写两个系统调用，分别负责把当前工作目录copy到指定地址，以及把指定地址的字符串copy到当前工作目录。</p>
+<p>（由于内核态没有文件系统的概念，所以我们不在此处做路径合法性的检查）</p>
+<p>接下来就是支持相对路径了。</p>
+<p>首先，可以预见的是接下来会有非常多的相对路径转绝对路径的操作，所以我建议你先实现一个相对路径转绝对路径的函数，其声明最好是塞到 <code>user/lib.h</code> 里，这样方便随处调用。</p>
+<p>然后，就是修改一下文件系统的接口函数，在接口函数里实现相对路径转绝对路径。具体来说，你需要修改 <code>open</code>，<code>stat</code> 和 <code>remove</code> 三个函数，使其在识别到传入参数为绝对路径时，将其转为绝对路径，再将转换后的绝对路径扔给文件系统进程即可。</p>
+<p>最后就是添加和修改使用了路径的指令执行程序/函数。具体有这样几个注意的点：</p>
+<ul>
+<li>在样例中，<code>ls</code> 的输出一定是绝对路径。</li>
+<li><code>mkdir</code> 需要一个可以创建文件夹的函数，且需要支持递归创建文件夹的函数。</li>
+<li>实际上，原有的文件系统中似乎不存在递归删除文件夹内所有文件的函数。</li>
+</ul>
+<p>对于后两个问题，你需要在文件系统中加入对应的函数，或者通过修改已有函数实现其效果，或者在用户程序中做一些处理。</p>
+<h4 id="变量相关">变量相关</h4>
+<p>注意到环境变量和当前工作目录其实非常像，所以我们可以采用类似的维护方法：在进程块里面开一块存储若干环境变量的空间，写几个系统调用负责读写环境变量（以及读出全部环境变量），最后在 <code>declare</code> 指令中调用这些系统调用即可。</p>
+<p>当然，为了使PCB变得不那么大，另一种替代方案是开一片全局数组，并给环境变量添加一个“所在进程id”的信息，（或者添加用于组成链表的 <code>Entry</code>，与之匹配的就是在PCB中存储一个链表结构体），在进程创建和销毁时完成环境变量的继承和销毁操作，其余操作和上述方法一致。</p>
+<p>对于局部变量，其实际上可以直接在shell进程内被维护。当然，你也可以选择将其和环境变量混在一起。</p>
+<p>最后就是，如何识别一般指令中的变量并进行替换。我的做法是在执行 <code>command</code> 节点的时候进行处理，即每在执行中发现一个 <code>word</code> 节点，就尝试找出其中所有的 <code>$</code>，并将 <code>$</code> 后直到非字母，数字，下划线的部分视作一个 <code>key</code>，优先在局部变量，其次在环境变量中试图寻找该 <code>key</code> 并替换。最后，把替换后的结果存储回原 <code>word</code> 节点，再进行执行操作。</p>
+<h2 id="一些可能出现的Q-A">一些可能出现的Q&amp;A</h2>
+<h3 id="这个解决方案有哪些潜在的bug？">这个解决方案有哪些潜在的bug？</h3>
+<p>我没找过。主要是测试点太好过了。</p>
+<p>但是我倒是确实知道几个问题：</p>
+<ul>
+<li>在我最后一版实现里，实际上并未对僵尸进程做任何处理。这在子进程过多且不写wait的情况下很容易会爆，虽然课程组没有也很难测试这一点。</li>
+<li>我对大多数指令参数的处理都是在执行<code>command</code> 节点的时候被处理的，包括后面环境变量的识别和替换，但是这样做其实多少有点问题，毕竟在Linux的Bash上，当环境变量的值包含空格时，其实际上会被在传参时识别成两个参数，而非这种实现里的一个参数。一个比较好的解决方案是，把这个处理过程扔到预处理那里。（当然，由于课程组并未要求实现单引号，所以实际上这事课程组测不了）</li>
+<li>在我最后一版实现里，我误以为原有的 <code>remove</code> 函数可以递归删除，从而未对递归删除做特殊处理。</li>
+</ul>
+<h3 id="如果你的任务指导书里包含“实现后台任务”？">如果你的任务指导书里包含“实现后台任务”？</h3>
+<p>2025年的shell挑战性任务里不包含这个任务。</p>
+<p>尽管确实没有，但是考虑到接下来的某一届也许有可能出现这样的任务，遂也记录一下基于这个架构做扩展的方法。</p>
+<blockquote>
+<p>要求大意为用 <code>&amp;</code> 分开同一行内的两条命令，表示<strong>同时</strong>执行前后两条命令。<code>&amp;</code> 左侧的命令应被置于后台执行，Shell 只等待 <code>&amp;</code> 右侧的命令执行完毕，然后继续执行后续语句，此时用户可以输入新的命令，并且可能同时观察到后台任务的输出。</p>
+<p><strong>左侧命令不可为空</strong>。</p>
+</blockquote>
+<p>实际上也没啥困难的，词法分析加一种token，语法分析加一层，然后模仿处理管道的部分即可，其区别主要在于：</p>
+<ul>
+<li>管道需要进行输入输出的传递，而后台任务不需要；</li>
+<li>管道的设计保证了其需要等待所有子进程执行完毕，而后台任务只需要等待最后一个子任务。</li>
+</ul>
+<p>同时需要注意的是，这样的要求实际上对进程管理的要求更完备一点，需要更加严格的防范僵尸进程的产生。</p>
+<h3 id="如果你希望让大模型进行辅助？">如果你希望让大模型进行辅助？</h3>
+<p>写到一半突然意识到，这都2025年了，肯定会有人想用大模型做一些辅助，省去大量的人工写代码的过程……但是比较遗憾的是，我目前见到的大模型辅助实现的错误率很高，而且集中在和MOS做对接上。</p>
+<p>尽管我本人并未使用大模型辅助实现，我仍然希望能够在这方面给出一些指导，一方面是防止大模型的修改错误导致回正变得更加困难，另一方面也是希望大家能够“省力”，把注意力放在架构设计和进程管理上。</p>
+<p>其实也没什么特别深刻的指导，我的建议就是把只属于shell和外部指令的实现丢给LLM进行实现，这一部分大概率LLM不会做错。子进程创建的时机除外，<strong>最好人工实现这一段</strong>，虽然这也是纯用户层软件的过程，但是其准确度要求较高，实现错误的话很可能内建指令运行结果不对，并且你很有可能不知道怎么在大模型生成的代码基础上二次修改。</p>
+<p>同时，一个更为重要的经验是，用大模型查询资料比直接做实现往往效果更好，比如说关于按键和输入的对应关系实际上就是我通过直接询问大模型得到的。</p>
+<h2 id="文末碎碎念">文末碎碎念</h2>
+<p>啊，写完了。写了九千多个字，字数都快赶上今年的lab5-extra了。</p>
+<p>最初写这篇文章的原因是找我问问题的人太多了，想着写个一劳永逸的东西，结果在完成任务的过程中稀奇古怪的问题越来越多，似乎这篇文章也没有覆盖到多少。</p>
+<p>总之，如果你觉得这个文章有啥讲的不清楚的问题，仍然欢迎直接问我（或者发发评论，如果评论区还在的话）。</p>
+<p>另外，回头把OO的几次博客作业也会发上来，虽然大概率没人看（毕竟我觉得写的极其没有营养）。</p>
+<p>祝各位暑假愉快！</p>
 <h2 id="参考资料">参考资料</h2>
-<p>本文的任务回顾部分主要参考2025 OS实验指导书和一部分Linux Bash的实现。</p>
+<p>本文的任务回顾部分主要参考2025 OS实验指导书和Linux Bash的实现。</p>
+<p>本文的Q&amp;A部分中，对实现后台任务的要求简述部分摘自 <a href="https://cookedbear.top/p/28193.html">CookedBear的这篇文章</a>，在此向前人表示深深的感谢。</p>
 ]]></content>
       <tags>
         <tag>BUAA</tag>
