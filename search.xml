@@ -381,560 +381,6 @@
       </tags>
   </entry>
   <entry>
-    <title>北航CO 2024 P7经验分享</title>
-    <url>/2024/11/21/BUAA-CO-P7/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第⑨篇文章！</p>
-<p>本文章包含北航2024计组实验课P7课下部分的个人理解，第一次课上题目的简要介绍和一种实现思路。</p>
-<p>由于P7教程内容实现方法<strong>过于宽泛</strong>，所以这里我仅对自己的理解做一个分享，并不意味着这一环节的某一部分写法只有文章内一种，如果你觉得其他方法更好可以直接采纳。</p>
-<p>本文章参考了 <a href="https://roife.github.io/posts/buaa-co-lab-p7/">BUAA-CO-Lab P7 MIPS 微体系 | ROIFE BLOG</a> 和 <a href="https://flyinglandlord.github.io/2021/12/15/BUAA-CO-2021/P7/P7%E8%AF%BE%E4%B8%8A&amp;%E8%AF%BE%E4%B8%8B/">P7 课下 &amp; 课上总结 - 北航计算机组成原理 | Test Blog = FlyingLandlord’s Blog</a>，在此<strong>非常感谢两位前辈做出的贡献</strong>！（没有这两篇文章的话，我可能还要在P7耗上超过一倍的时间）</p>
-<p>本文章将在北航2024计组实验课结束之前持续更新，如果你在阅读本文的过程中遇到了不理解的地方/发现了有笔误的地方（哪怕只是非常小的笔误）/觉得某部分还有更好的实现，请务必<strong>在评论区里留下这些想法</strong>！（或者，直接联系我本人也可以！）</p>
-<p>同样的，请<strong>务必仔细读完整篇文章，以及上述推荐的博客后再动手</strong>，以保证自己所理解的内容没有巨大的偏差。</p>
-<p>需要注意的是，本文<strong>仅完全适用于北航2024计组课程</strong>，对于之前和之后的课程，教程部分内容可能会发生变动，发生冲突时请以实验教程为准！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>这篇文章还有什么空白？</h1>
-<p>嗯……非常遗憾，直到动笔之前，我还没有构造出一个行之有效的调试P7的思路或者工具，因此我非常希望能有同学搞定这一部分分享一下，不过既然文章已经开始动笔了，那我就先把自己知道的写完再说吧。</p>
-<h1>我们要干啥？</h1>
-<p>（事先声明，本文提到的中断全是外部中断，异常全是内部异常，所以当我想要把这两个概念合起来说的时候，一定会表述成“异常中断”，如果我在这篇文章里违反了这个原则，请第一时间和我联系）</p>
-<p>包括我在内，我认识的很多朋友看完P7的第一反应都是：它在说啥？</p>
-<p>没错，P7教程写的确实会让人一下子不知道要干啥，你只能大概知道自己要新做的主要模块名：CP0，桥，然后附上两个Timer，最后通过某种方式把这些东西和你之前做的CPU连起来。</p>
-<p>所以，在开始所有工作之前，我先对P7要做的事情做一个总结（此部分和FlyingLandlord的文章内容基本一致）：</p>
-<ol>
-<li>
-<p>给原流水线CPU的各个模块进行修改，使之可以产生由该元件信息可以得到的异常，并将其通过流水寄存器一路流下去；</p>
-</li>
-<li>
-<p>完成CP0，确定CP0的位置（我选择定到了M级），将以上异常信息流水至该级（而不是直接相连），并把CPU接收到的终端信号和CPU内产生的异常信息和CP0连接，使之可以完成两个事情：判断当前是否需要跳转至异常处理指令，保存处理异常中断需要的各个状态信号，在CPU响应完跳转，处理完异常中断后，跳回正常程序。</p>
-<blockquote>
-<p>是的，CP0其实就是个大号的处于M级的分支判断模块，实际上所有工作都是你原先设计的CPU在做，只是CP0这个东西可以帮你保存一些异常中断的状态信息，以及帮你判断当前时刻是否需要处理一个异常/中断而已。</p>
-</blockquote>
-</li>
-<li>
-<p>将以上所有内容全部封装为一个 <code>CPU.v</code>（这里的大概意思就是，你在P6所做的所有内容，以及P7对CPU新增的内容，全部应该放入 <code>CPU.v</code> 里，而不是像P6之前那样直接放到 <code>mips.v </code>里），然后在 <code>mips.v</code> 里把CPU和两个计时器装进去，最后设计一个 <code>Bridge</code> 模块把两个计时器，数据存储器和中断发生器（这玩意在课程里被抽象成了 <code>mips.v</code> 的几个输入输出端口，类似IM和DM）的数据读写端口连进 <code>Bridge</code> 做处理，再让CPU通过 <code>Bridge</code> 获得信息。</p>
-</li>
-</ol>
-<blockquote>
-<p>鉴于这里对 <code>CPU.v</code> 的描述仍然有点模糊，我这里做一些说明：</p>
-<ol>
-<li>从内容上说，<code>CPU.v</code> 与P6时候的 <code>mips.v</code> 基本相同。<code>CPU.v</code> 里包含的是我们基于P6完成的 <code>mips.v</code> 内容的扩展，在P7中我们需要把扩展后的 <code>mips.v</code> 里的所有内容迁移过来。</li>
-<li>从结构上说，P6的 <code>mips.v</code> 完成的也是一块CPU，但顶层端口限制使得这个CPU只能是提交要求里的端口，而P7的 <code>CPU.v </code> 不是顶层模块，不受提交要求限制，因此可以在P6基础上自由修改/扩展。具体来说，我选择保留P6时的所有端口，并加入一个 <code>HWInt</code> 端口，向CPU输入外部中断信号。</li>
-<li>以及，这里有一个设计思想：CPU实际上并不需要知道有哪些外设，也不需要特别清楚这些外设具体是如何被写入/读取的，它只需要知道数据存储器的某一部分地址被划给了某些外设，因此CPU可以通过对这些地址进行读写操作来对外设进行访问，仅此而已。</li>
-</ol>
-</blockquote>
-<p>Update(2024/11/27)：<strong>这里需要强调的是，因为桥的存在，CPU不应该对每个外设都引入端口进行特殊处理，而是把所有对外设的操作集中到一组端口，所以CPU向外传出的端口信号实际上只需要对IM的读写，对DM（在CPU眼里看是DM，在外界看是各种外设的集合）的读写，以及其他testbench需要的端口。</strong></p>
-<p>总之，你要干的三件事情是： <strong>产生异常，处理异常中断，用桥连接外设</strong>。</p>
-<p>如果你是按照我的思路做完的P7，那么以上我提到的模块关系应该如下：</p>
-<ul>
-<li>mips.v
-<ul>
-<li>CPU.v
-<ul>
-<li>CP0.v</li>
-</ul>
-</li>
-<li>Bridge.v</li>
-<li>Timer.v</li>
-</ul>
-</li>
-</ul>
-<p>同时，为了辅助理解以上目标，我们指出几条比较重要的数据通路，作为判断你是否理解正确的部分参考：</p>
-<ul>
-<li>异常：从CPU的各级元件产生，经由流水寄存器进入M级，在CP0进行判断，产生是否响应异常中断的控制信号，其信号回传至CPU各级决定是否进行处理异常中断的跳转操作。</li>
-<li>中断：从中断发生器和计时器产生，打包后直接进入CPU的CP0，在CP0进行判断，产生是否响应异常中断的控制信号，其信号回传至CPU各级决定是否进行处理异常中断的跳转操作（后面这部分是异常中断都要做的事情，具体咋做后面再说）</li>
-<li>包含外设的数据读取：从CPU产生读取地址，经过Bridge的分析，从DM和计时器中选定对应的外设进行读取，结果传回CPU中。</li>
-<li>包含外设的数据写入：从CPU产生写入地址和值，经过Bridge的分析，从DM，计时器和异常发生器中选定对应的外设进行写入。</li>
-</ul>
-<p>经过以上分析，我们大致提炼出了P7的总目标。</p>
-<h1>具体怎么实现？</h1>
-<p>由于我们的总目标分了三点，那我们叙述这一部分的时候也分三段吧。</p>
-<p>当然，你会发现前两部分有时候会有重叠，毕竟前两个目标干的是一件事——处理异常和中断，这里只是对这件事预先进行了一个拆分而已。</p>
-<p>而中断的产生是由外设决定的，这玩意无需做任何说明，所以我们首先要额外说明一下如何产生异常。</p>
-<h2 id="产生异常">产生异常</h2>
-<p>异常就是指令的参数或行为并不符合我们的期望，因此我们需要知道哪些行为不符合我们的期望。</p>
-<p>首先，我们给出一个教程中的表格，以说明哪些情况会产生哪一类异常：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">异常与中断码</th>
-<th style="text-align:left">助记符与名称</th>
-<th style="text-align:left">指令与指令类型</th>
-<th style="text-align:left">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">0</td>
-<td style="text-align:left"><code>Int</code> （外部中断）</td>
-<td style="text-align:left">所有指令</td>
-<td style="text-align:left">中断请求，来源于计时器与外部中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取指异常）</td>
-<td style="text-align:left">所有指令</td>
-<td style="text-align:left">PC 地址未字对齐。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取指异常）</td>
-<td style="text-align:left">所有指令</td>
-<td style="text-align:left">PC 地址超过 <code>0x3000 ~ 0x6ffc</code>。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
-<td style="text-align:left"><code>lw</code></td>
-<td style="text-align:left">取数地址未与 4 字节对齐。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
-<td style="text-align:left"><code>lh</code></td>
-<td style="text-align:left">取数地址未与 2 字节对齐。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
-<td style="text-align:left"><code>lh</code>, <code>lb</code></td>
-<td style="text-align:left">取 Timer 寄存器的值。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
-<td style="text-align:left">load 型指令</td>
-<td style="text-align:left">计算地址时加法溢出。</td>
-</tr>
-<tr>
-<td style="text-align:left">4</td>
-<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
-<td style="text-align:left">load 型指令</td>
-<td style="text-align:left">取数地址超出 DM、Timer0、Timer1、中断发生器的范围。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left"><code>sw</code></td>
-<td style="text-align:left">存数地址未 4 字节对齐。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left"><code>sh</code></td>
-<td style="text-align:left">存数地址未 2 字节对齐。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left"><code>sh</code>, <code>sb</code></td>
-<td style="text-align:left">存 Timer 寄存器的值。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left">store 型指令</td>
-<td style="text-align:left">计算地址加法溢出。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left">store 型指令</td>
-<td style="text-align:left">向计时器的 Count 寄存器存值。</td>
-</tr>
-<tr>
-<td style="text-align:left">5</td>
-<td style="text-align:left"><code>AdES</code> （存数异常）</td>
-<td style="text-align:left">store 型指令</td>
-<td style="text-align:left">存数地址超出 DM、Timer0、Timer1、中断发生器的范围。</td>
-</tr>
-<tr>
-<td style="text-align:left">8</td>
-<td style="text-align:left"><code>Syscall</code> （系统调用）</td>
-<td style="text-align:left"><code>syscall</code></td>
-<td style="text-align:left">系统调用。</td>
-</tr>
-<tr>
-<td style="text-align:left">10</td>
-<td style="text-align:left"><code>RI</code>（未知指令）</td>
-<td style="text-align:left">-</td>
-<td style="text-align:left">未知的指令码。</td>
-</tr>
-<tr>
-<td style="text-align:left">12</td>
-<td style="text-align:left"><code>Ov</code>（溢出异常）</td>
-<td style="text-align:left"><code>add</code>, <code>addi</code>, <code>sub</code></td>
-<td style="text-align:left">算术溢出。</td>
-</tr>
-</tbody>
-</table>
-<p>这里我们进行一些说明：</p>
-<ul>
-<li><code>EXCcode</code> （异常与中断码）为 <code>Int</code>（外部中断）时，在课程内其含义实际上是<strong>此时没有异常发生，仅考虑中断是否发生</strong>。也正因为如此，在没有异常产生时，我们可以考虑给CP0传入 <code>Int</code>，让其根据实际中断信号判断是否发生中断，而无需考虑异常。</li>
-<li>尽管以上表格列出了海量的情况，但最后产生异常信息的时候，我们只需要处理出其 <code>EXCcode</code> 即可，<strong>无需附加任何额外信息</strong>。</li>
-<li><strong>除以0不是任何异常</strong>。实际上，除以0是未定义行为，按照标准我们无需进行任何处理，评测数据也不应该有除以0的指令。</li>
-</ul>
-<p>接下来，我们要想办法探测这些异常。</p>
-<p>我们会发现一个事情：从F级到M级，每一级都恰好有一个模块可以分辨一些异常。比如，对于未知指令，我们在控制单元进行解码的时候就能发现问题。因此，我们可以给F级的PC，D级的控制单元，E级的ALU和M级的数据存储器（这个东西是外设，所以你可以写个模块专门处理异常相关信息）各加一个输出端口，用于输出该时刻用该模块是否探查出异常。</p>
-<blockquote>
-<p>以及，某个元件在同一指令执行到同一级时，可能会因为多种原因产生异常（如，使用 <code>lw</code> 时，既有不对齐的问题，也有地址超出范围的问题），但是在实现正确的情况下，其产生的 <code>EXCcode</code> 必然唯一。</p>
-</blockquote>
-<p>最后就是传递异常了。按道理来说，这其实只是一个流水的过程，没啥可讲的，但实际上我们会面对这样几个问题：</p>
-<ul>
-<li>如果一条指令会<strong>连续触发多个异常</strong>，我们应该如何处理？</li>
-<li>如果<strong>多个指令</strong>都会产生异常，我们应该如何处理？</li>
-</ul>
-<p>此时我们规定一个原则：<strong>我们优先处理最早可以探查到的异常</strong>。</p>
-<p>比如说，如果一条指令在E级，M级都会产生异常，那么我们认为这个指令首先触发的是E级的异常，因此传入CP0的异常必须是E级产生的异常。</p>
-<p>比如说，如果有两条指令在E级和M级都产生异常，那么我们认为M级的指令首先触发了M级的异常，因此传入CP0的异常必须是M级产生的异常。</p>
-<p>至此，我们已经可以把所有异常检测出来，并且传递到M级了。</p>
-<p>Update(2024/11/26)：但是，我们仍然有一些工作要做，那就是在检测出异常/遇到中断时，我们不应该让M级与其之前的指令对其他模块<strong>产生任何影响</strong>。</p>
-<p>具体来说，有以下几种情况（我们事先说明，当发现遇到异常或中断时，CP0寄存器会产生一个req为1的信号，以表示CPU将进入异常处理状态，以下提到的req为1都是这个意思）：</p>
-<ol>
-<li>当PC探查出异常时，我们必须<strong>把读取出的指令覆盖为NOP</strong>；</li>
-<li>当req为1时，若此时存在一个可能会修改HI寄存器/LO寄存器的指令在E级，则乘除模块<strong>不应该对其进行任何响应（即不写入，不计算）</strong>；</li>
-<li>当req为1时，DM的字节写使能信号<strong>必须全部为0</strong>，读取出的数据<strong>必须用0覆盖</strong>。</li>
-</ol>
-<p>下面我们思考如何处理这些异常，以及从外部可能输入的中断。</p>
-<h2 id="处理异常中断">处理异常中断</h2>
-<h3 id="异常中断处理思路">异常中断处理思路</h3>
-<p>接下来我们要展开一个问题：我们是如何处理异常中断的？</p>
-<p>具体来说，在一个时钟周期内，</p>
-<ol>
-<li>
-<p>CP0会先检查现在是否正在处理异常中断（不在异常中断处理里处理异常中断），再检查CP0所在流水级的指令是否存在异常，以及外部是否有未被禁用的中断（如果同时出现，我们认为此时发生了一个中断而非异常）。</p>
-</li>
-<li>
-<p>如果现在没有在处理异常中断，并且CP0所在流水级存在异常或外部产生了未被禁用的中断，那么CP0会向CPU发送一个“跳转至异常中断处理”的信号。</p>
-</li>
-<li>
-<p>CPU在接收到该信号之后，对CP0所在流水级及其之前的流水级进行“清空”（之后的流水级继续正常执行），并让PC直接跳转至异常中断处理地址（<code>0x4180</code>），此时CP0记录下处理完异常后需要返回的地址，以及出现异常的指令是否为延迟槽内指令。</p>
-</li>
-</ol>
-<p>在CPU完成异常中断处理之后，会通过 <code>eret</code> 回到“处理完异常后需要返回的地址”里。</p>
-<p>所以我们再次重复一下下面这段话：</p>
-<blockquote>
-<p>其实CP0就是一个大号的处于M级的分支判断模块，实际上所有工作都是你原先设计的CPU在做，只是CP0这个东西可以帮你保存一些异常中断的状态信息（包含处理完之后回到哪一条指令），以及帮你判断当前时刻是否需要处理一个异常/中断而已。</p>
-</blockquote>
-<p>以及，既然CP0会使用一些寄存器来保存异常中断的状态信息，那么我们在某些时刻是希望对这几个寄存器进行读写的，所以CP0也应该支持对其内部的寄存器进行读写。</p>
-<p>所以，我们根据这个思路，以及教程给出的一种实现的模块，来构建这个CP0。</p>
-<h3 id="CP0的实现">CP0的实现</h3>
-<h4 id="端口、寄存器、寄存器的有效位">端口、寄存器、寄存器的有效位</h4>
-<p>下面我们贴出教程给出的端口表格（稍有修改）：</p>
-<blockquote>
-<p>（这一段本来应该放在表格后给出，但是后来发现放到前面似乎更有助于理解整个表格）</p>
-<p>其实教程在给出这些表格的时候，就已经给出了CP0的两个主要功能：读写内部寄存器（<code>mfc0,mtc0</code>），判断是否进行异常跳转。前者和普通的GRF差别不大，只需要在后续做一点点特殊修改即可，而后者是一个比较新的东西，我们会具体展开说明如何实现后者。</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">端口</th>
-<th style="text-align:left">方向</th>
-<th style="text-align:left">位数</th>
-<th style="text-align:left">解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">clk</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">时钟信号。</td>
-</tr>
-<tr>
-<td style="text-align:left">reset</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">复位信号。</td>
-</tr>
-<tr>
-<td style="text-align:left">en</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">写使能信号。</td>
-</tr>
-<tr>
-<td style="text-align:left">CP0Add</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">5</td>
-<td style="text-align:left">读取/写入目标寄存器地址。</td>
-</tr>
-<tr>
-<td style="text-align:left">CP0In</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">32</td>
-<td style="text-align:left">写入寄存器数据。</td>
-</tr>
-<tr>
-<td style="text-align:left">CP0Out</td>
-<td style="text-align:left">OUT</td>
-<td style="text-align:left">32</td>
-<td style="text-align:left">读出寄存器数据。</td>
-</tr>
-<tr>
-<td style="text-align:left">VPC</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">32</td>
-<td style="text-align:left">当前异常中断发生时PC的值。</td>
-</tr>
-<tr>
-<td style="text-align:left">BDIn</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">当前异常中断发生指令是否是延迟槽内指令。</td>
-</tr>
-<tr>
-<td style="text-align:left">ExcCodeIn</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">5</td>
-<td style="text-align:left">当前发生异常类型。</td>
-</tr>
-<tr>
-<td style="text-align:left">HWInt</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">6</td>
-<td style="text-align:left">外部产生的中断信号。</td>
-</tr>
-<tr>
-<td style="text-align:left">EXLClr</td>
-<td style="text-align:left">IN</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">是否结束异常中断处理（复位 EXL）。</td>
-</tr>
-<tr>
-<td style="text-align:left">EPCOut</td>
-<td style="text-align:left">OUT</td>
-<td style="text-align:left">32</td>
-<td style="text-align:left">EPC 的值。</td>
-</tr>
-<tr>
-<td style="text-align:left">Req</td>
-<td style="text-align:left">OUT</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">进入处理程序请求。</td>
-</tr>
-</tbody>
-</table>
-<p>以及CP0内需要保存的各个<strong>32位</strong>寄存器（稍有修改）：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">寄存器</th>
-<th style="text-align:left">编号</th>
-<th style="text-align:left">功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">SR</td>
-<td style="text-align:left">12</td>
-<td style="text-align:left">配置异常中断的功能。</td>
-</tr>
-<tr>
-<td style="text-align:left">Cause</td>
-<td style="text-align:left">13</td>
-<td style="text-align:left">记录异常中断发生的原因和情况。</td>
-</tr>
-<tr>
-<td style="text-align:left">EPC</td>
-<td style="text-align:left">14</td>
-<td style="text-align:left">记录异常中断处理结束后需要返回的 PC。</td>
-</tr>
-</tbody>
-</table>
-<p>以及这些寄存器我们各自仅需要几位，分别在干什么（稍有修改）：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">寄存器</th>
-<th style="text-align:left">功能域</th>
-<th style="text-align:left">位域</th>
-<th style="text-align:left">解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">SR（State Register）</td>
-<td style="text-align:left">IM（Interrupt Mask）</td>
-<td style="text-align:left">15:10</td>
-<td style="text-align:left">分别对应六个外部中断，相应位置 1 表示允许中断，置 0 表示禁止中断。这是一个被动的功能，只能通过 <code>mtc0</code> 这个指令修改，通过修改这个功能域，我们可以屏蔽一些中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">SR（State Register）</td>
-<td style="text-align:left">EXL（Exception Level）</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">任何异常中断发生时置位，这会强制进入核心态（也就是进入异常中断处理程序）并禁止再次触发异常中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">SR（State Register）</td>
-<td style="text-align:left">IE（Interrupt Enable）</td>
-<td style="text-align:left">0</td>
-<td style="text-align:left">全局中断使能，该位置 1 表示允许中断，置 0 表示禁止中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">Cause</td>
-<td style="text-align:left">BD（Branch Delay）</td>
-<td style="text-align:left">31</td>
-<td style="text-align:left">当该位置 1 的时候，EPC 指向当前指令的前一条指令（一定为跳转），否则指向当前指令。</td>
-</tr>
-<tr>
-<td style="text-align:left">Cause</td>
-<td style="text-align:left">IP（Interrupt Pending）</td>
-<td style="text-align:left">15:10</td>
-<td style="text-align:left">为 6 位待决的中断位，分别对应 6 个外部中断，相应位置 1 表示有中断，置 0 表示无中断，将会每个周期被修改一次，修改的内容来自计时器和外部中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">Cause</td>
-<td style="text-align:left">ExcCode</td>
-<td style="text-align:left">6:2</td>
-<td style="text-align:left">异常中断编码，记录当前发生的是什么异常中断。</td>
-</tr>
-<tr>
-<td style="text-align:left">EPC</td>
-<td style="text-align:left">EPC</td>
-<td style="text-align:left">31:0</td>
-<td style="text-align:left">记录异常中断处理结束后需要返回的 PC。</td>
-</tr>
-</tbody>
-</table>
-<p>接下来，我们具体描述如何实现CP0的各个功能。</p>
-<h4 id="读写状态寄存器">读写状态寄存器</h4>
-<p>这一个功能主要是用来实现 <code>mfc0,mtc0</code> 的。</p>
-<p>对于CP0的读写功能，我们主要用 <code>en</code>，<code>CP0Add</code>，<code>CP0In</code>，<code>CP0Out</code> 端口来完成任务即可。这个东西其实和普通的GRF差不多，读寄存器就把 <code>CP0Add</code> 对应的寄存器的值输出到 <code>CP0Out</code>，该写寄存器就写到 <code>CP0Add</code> 对应的寄存器即可。</p>
-<p>但是有一个需要注意的地方，CP0内的三个状态寄存器<strong>仅有部分位是有用的</strong>，对于无用位我们会选择将其<strong>始终维持在0</strong>，即初始化时置为0，写入时不向这些位进行写入。</p>
-<h4 id="进入异常中断处理程序">进入异常中断处理程序</h4>
-<p>这一个功能主要是用来实现异常中断处理的。</p>
-<p>从 <code>VPC</code> 开始，到 <code>HWInt</code> 结束（<code>EXLClr</code> 不在内，这个端口后面会具体说明），这些是我们判断是否进入异常中断处理程序的所有输入端口。我们来根据这些端口，以及以上给出的功能域信号的表格，填一下“异常中断处理思路”里给出的思路。</p>
-<ol>
-<li>CP0会先检查现在 <strong><code>EXL</code>是否为1</strong>（是否正在处理异常中断），再检查 <strong><code>ExcCodeIn</code>是否不为0</strong>（当前是否存在异常）和 <strong><code>HWInt&amp;IM</code>是否不为0且<code>IE</code>不为0</strong>（存在未被禁用的中断）。</li>
-<li>如果现在 <code>EXL</code> 为0，并且 <code>ExcCodeIn</code> 不为0或“<code>HWInt&amp;IM</code> 不为0且<code>IE</code>不为0”，那么CP0会将 <code>Req</code> 置为1，同时记录一下 <code>EPC</code> 、<code>BD</code>、<code>EXL</code>、<code>ExcCode</code> 的值，否则置为0。</li>
-<li>CPU在接收到 <code>Req</code> 为1之后，对CP0所在流水级及其之前的流水级进行“清空”（之后的流水级继续正常执行），并让PC直接跳转至异常中断处理地址（<code>0x4180</code>）。</li>
-</ol>
-<p><strong>额外的，独立于以上所有内容的是，只要没有 <code>reset</code> 信号，每个时钟周期都要记录一次 <code>IP</code>。</strong></p>
-<blockquote>
-<p>上面没有说明的是，这里的 <code>VPC</code> 应该接入什么呢？是PC寄存器当前的值吗？并不是。</p>
-<p>我们在这里需要插入一个“宏观PC”的概念。实际上，不论是CP0在处理异常，还是外部给CPU一个中断，在CP0和外部眼里，你的CPU表现的应该像是“一个有延迟槽的单周期CPU”，每条指令只有两个状态：执行完了和没执行（而不会细化到执行到了哪一级流水线）。</p>
-<p>（打个比方，这个概念有点类似于你在用Mars跑自己写的代码对拍P5P6的时候，实际上你并不关心这块CPU内部是长啥样的，有几个流水级，观察到的就是一个“有延迟槽的单周期CPU”。而当你观察Mars的PC时，看到的也不是5个流水线各自的PC是多少，而是一个“整体的PC值”。我们所引入的宏观PC就是这里的PC。）</p>
-<p>由于我们的CP0设置在了M级，异常处理就只能在M级来做，所以这个宏观PC的值就等同于M级PC的值，在CPU处理异常中断时，我们就认为M级PC的值是当前时刻的PC，也就是我们传入的 <code>VPC</code> 的来源。</p>
-</blockquote>
-<p>于是，CP0的判断功能被勾勒完了。</p>
-<p>接下来我们细说CP0记录的都是什么值：</p>
-<ul>
-<li>记录 <code>ExcCode</code> 时，如果当前同时有异常和中断，那么我们不应该直接记录 <code>ExcCodeIn</code>，而是应该记录成一个 <code>Int</code>。</li>
-<li>当 <code>BDIn</code> 为1时，表明发生异常中断的指令为延迟槽内的指令，此时我们应该让 <code>EPC</code> 记录 <code>VPC-4</code>，即延迟槽前一条指令（某个分支跳转指令），否则正常记录 <code>VPC</code>。</li>
-<li><code>EXL</code> 置为1。</li>
-<li><code>BD</code> 置为 <code>BDIn</code>。</li>
-</ul>
-<blockquote>
-<p>为什么 <code>BDIn</code> 为1时， <code>EPC</code> 应该记录 <code>VPC-4</code> 呢？</p>
-<p>对绝大多数情况来说，<code>EPC</code> 就是 <code>VPC</code> ，这个没错。但问题在于，如果对于分支跳转指令和其延迟槽内的指令呢？</p>
-<p>如果异常中断发生在了延迟槽内的指令，那么我们就要面对一个问题：我们无法单纯通过这条指令的运行结果判断分支跳转指令会把PC改成什么样。因此，我们必须让前一条分支跳转指令“重新跑一遍”，所以需要返回的地址也就变成了 <code>VPC-4</code> 。其余情况下，需要返回的地址就是 <code>VPC</code> 。</p>
-</blockquote>
-<h4 id="退出异常中断处理程序">退出异常中断处理程序</h4>
-<p>这一个功能主要是用来实现 <code>eret</code> 的。</p>
-<p>我们从D级的控制单元引出一个新的信号（记为 <code>ID_EXLClr</code> ），将其流水至M级后与 <code>EXLClr</code> 进行对接，当此时控制器所在级运行的指令为 <code>eret</code> 时，我们把这个信号置1，否则置0。</p>
-<p>当 <code>EXLClr</code> 置为1时，我们需要修改 <code>EXL</code> 为0。</p>
-<p>然后？没了。这个功能其实就是解除由 <code>EXL</code> 记录的异常中断处理状态而已。</p>
-<p>（当然，这个 <code>EXLClr</code> 后面还有一个作用，我们在改CPU的时候再说）</p>
-<p>接下来我们要展开的就是，CPU内除了产生异常信号，还应该对异常中断信号和指令做出什么回应。</p>
-<h4 id="CP0内信号的优先级问题">CP0内信号的优先级问题</h4>
-<p>实际上，只有 <code>req</code> 和其他信号是可能同时出现的，其他信号里两两不会同时出现，所以我们只需要明确 <code>req</code> 的优先级高于其他所有信号即可。</p>
-<h3 id="CPU的修改">CPU的修改</h3>
-<p>在原来的CPU部分，我们主要要多做两件事：</p>
-<ol>
-<li>根据 <code>req</code> 信号清空M级与其之前的流水级，并跳入异常中断程序；</li>
-<li>程序运行到 <code>eret</code> 的时候跳回正常程序。</li>
-</ol>
-<blockquote>
-<p>关于 <code>mfc0</code>， <code>mtc0</code> 和 <code>syscall</code>，我们会发现在根据以上内容搭完框架之后，这几条指令都变成了普通的新指令，所以我们不做展开叙述。（如果说有什么新东西的话，那就是这会带来一个读写CP0的新通路，但是这个东西做起来比加乘除模块还好搞，想必大家都已经非常熟练了吧）</p>
-</blockquote>
-<p>首先需要强调的是，<code>reset</code>，<code>req</code>，<code>ID_EXLClr</code> 和 <code>stall</code> 是四种信号，各个模块在接收到这些信号的表现是有不同的，有些时候不能进行粗暴的合并，这一点我们马上就会感觉到。</p>
-<p>（这里我相对于教程加了一个 <code>ID_EXLClr</code> 信号，主要也是用来应对 <code>eret</code> 这个指令的特殊性的，毕竟这条指令没延迟槽，运行到 <code>eret</code> 的时候需要清空一下延迟槽，并且跳入的PC来源也会发生改变，所以需要引入一个信号）</p>
-<p>前者其实看起来是比较好搞的，貌似就是给所有流水寄存器（M级到W级也要清空）发一个清空信号即可……吗？</p>
-<p>这就不得不提到一种特殊情况了。当我们产生阻塞信号时，D级到E级的流水寄存器会被清空一次，导致下一周期的E级会产生一个空泡，再下一个周期这个空泡就到了M级。而如果有一个中断恰好在空泡进入M级的时候产生，那么CP0就会选择处理这个中断，而此时CP0记录下的返回地址会是什么呢？</p>
-<p>没错，如果你产生空泡的方式是完全的清空所有寄存器，包括传递PC的寄存器，那么此时你会把返回地址记录成 <code>0x00000000</code>（或者 <code>0x00003000</code>，或者什么别的你实现的东西），这显然不符合我们的期望。</p>
-<p>同理，判断一条指令是否为延迟槽内指令的的信号也不能在阻塞的时候被暴力清空。</p>
-<p>而这只是针对 <code>stall</code> 信号的特殊情况，对于 <code>reset</code> 后刚开始的几个周期，也有可能产生类似的错误。因此我们需要对这四种信号产生的时候流水寄存器的行为做一个规定。</p>
-<table>
-<thead>
-<tr>
-<th>信号</th>
-<th>PC流水寄存器行为</th>
-<th>BD流水寄存器行为</th>
-<th>其他流水寄存器行为</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>reset</code></td>
-<td>复位至 <code>0x00003000</code></td>
-<td>复位至 <code>0</code></td>
-<td>清空</td>
-</tr>
-<tr>
-<td><code>req</code></td>
-<td>设置为 <code>0x00004180</code></td>
-<td>设置为 <code>0</code></td>
-<td>清空</td>
-</tr>
-<tr>
-<td><code>ID_EXLClr</code> （仅对F级到D级流水寄存器起作用，<strong>且此时stall信号为0</strong>）</td>
-<td>设置为当前周期的 <code>EPC</code> 的值</td>
-<td>不发生变化</td>
-<td>清空</td>
-</tr>
-<tr>
-<td><code>flush</code>（仅指对D级到E级流水寄存器起作用的阻塞信号）</td>
-<td>不发生变化</td>
-<td>不发生变化</td>
-<td>清空</td>
-</tr>
-</tbody>
-</table>
-<p>以及，当这些信号中的某几个同时出现时，我们按照从上至下的优先级依次处理。</p>
-<p>Update(2024/11/26)：除此之外，我们还需要考虑一个问题：<code>eret</code> 在D级时就会发挥作用，而此时可能会出现一条 <code>mtc0</code> 将要写入 <code>EPC</code> 但未写入的情况。此时，我们应该<strong>增加一种阻塞情况</strong>，即当D级指令为 <code>eret</code> ，且E级或M级存在向 <code>CP0</code> 写入 <code>EPC</code> 的指令时，我们选择进行阻塞。</p>
-<p>总之，如此连接之后，对流水寄存器的信号操作应该是完全正确了。</p>
-<p>最后，我们在产生 <code>req</code> 信号的时候向 <code>PC</code> 写入 <code>0x00004180</code>，否则在产生 <code>EXLClr</code> 信号的时候向 <code>PC</code> 写入 <code>EPC</code>，对异常中断的处理就基本结束了。</p>
-<h2 id="用桥连接外设">用桥连接外设</h2>
-<p>这一步相对于前面的东西来说，实际上没啥好说的，首先导入教程里给的 Timer，然后写一个Bridge，最后在 <code>mips.v</code> 里把线连一下，没了。</p>
-<p>（平心而论，这段教程给的信息其实足够了）</p>
-<p>我只在这里描述一下Bridge里有啥端口吧，当你知道有啥端口之后，实际实现真的很简单。</p>
-<p>我们需要的端口有：</p>
-<ul>
-<li>CPU对外设的读写地址，字节写入使能，读取数据端口；</li>
-<li>DM的读写地址，字节写入使能，读取数据端口；</li>
-<li>Timer0和Timer1的读写地址，写入使能，读取数据端口；</li>
-<li>中断发生器的写入地址，字节写入使能端口。</li>
-</ul>
-<p>没了（</p>
-<h1>课上考试题目简述与思路</h1>
-<h2 id="题目简述">题目简述</h2>
-<p>第一次P7的课上测试包含5道题，其中前4道题为对课下部分的强测（功能强测，异常强测，中断强测，冒险强测），最后一题为新增指令题，新增指令为 <code>withdraw</code>。</p>
-<p>关于 <code>withdraw</code>，其只有一种编码：<code>0x04000000</code>（<code>opcode</code> 为 <code>0b000001</code>），作用大致为撤销最后一次 <code>sw</code> 操作。</p>
-<p>具体来说，题目要求在CP0中添加 <code>18,19,20,21</code> 号寄存器，其中 <code>$18</code> 和 <code>$19</code> 分别存储当前 <code>withdraw</code> 指令可以撤销的写入地址的上界和下界（左闭右开），<code>$20</code> 存储上一次成功执行的 <code>sw</code> 指令的写入地址，<code>$21</code> 存储上一次成功执行的 <code>sw</code> 指令写入地址的原数值。这四个寄存器都允许通过 <code>mfc0</code> 进行读取，但仅 <code>$18</code> 和 <code>$19</code> 允许通过 <code>mtc0</code> 进行写入， <code>$20</code> 和 <code>$21</code> 仅能在 <code>sw</code> 指令被正确运行时被进行修改。</p>
-<p>当 <code>withdraw</code> 指令到达M级时，若 <code>CP0[$19] &lt;= CP0[$20] &lt; CP0[$18]</code>，则 <code>DM[CP0[$20]] &lt;= CP0[$21]</code>，否则报出 <code>AdES</code> 异常。</p>
-<p>若 <code>withdraw</code> 指令运行之前不存在任何一条 <code>sw</code> 被运行，则此次指令运行被忽略，即不进行任何操作。</p>
-<p>保证测试数据中不会出现使用 <code>mtc0</code> 写入CP0中  <code>$20</code> 和 <code>$21</code> 的指令。</p>
-<p>保证 <code>CP0[$18] &lt; CP0[$19]</code>，且 <code>CP0[$18],CP0[$19]</code> 均已对齐（可被4整除）且均在DM存储范围内。</p>
-<h2 id="实现思路">实现思路</h2>
-<p>内容很多，但是可以一点点来。</p>
-<p>首先，作为集成在CP0的寄存器，我们可以先把最基本的常规读写功能写好。</p>
-<p>然后我们注意到，整个题目实际上就是 <code>sw</code> 和 <code>withdraw</code> 进行各种交互，所以我们可以先添加 <code>sw</code> 指令对CP0的更多影响，再尝试加入 <code>withdraw</code> 本体。</p>
-<p>对于加入 <code>sw</code> 对CP0的影响，我们需要这样几个信息：当前指令是否是 <code>sw</code>，当前指令写入地址是多少，当前指令写入地址原数值是多少。如果当前 <strong><code>req</code> 为0</strong> 且指令为 <code>sw</code>，则对 <code>$20</code> 和 <code>$21</code> 进行更新即可。</p>
-<p>而对于 <code>withdraw</code> 本体来说，则需要对CP0内和CPU两段都进行修改（对CP0内修改是因为异常判断最好是在CP0内搞定，或者就需要把 <code>$18</code> 和 <code>$19</code> 引出CP0做判断再把结果引回来）。对CP0来说，我们需要一个新的1位寄存器信号（记为 <code>exist_sw</code>）记录一下在运行该指令前是否已经出现了正常运行的 <code>sw</code> 指令，将该信号和 <code>$20</code> 和 <code>$21</code> 暴露为三个输出，用于后续操作。此外，我们需要新增一种 <code>req</code> 为1的情况，即当前指令为 <code>withdraw</code>，且之前已经有过对 <code>sw</code> 的修改，且不满足 <code>CP0[$19] &lt;= CP0[$20] &lt; CP0[$18]</code> ，且 <code>EXL</code> 不为1的情况。</p>
-<p>而在整个CPU进行修改的话，我们主要是需要加入 <code>withdraw</code> 对内存的写入，即在M级当前运行指令为 <code>withdraw</code> 时，若 <code>exist_sw</code> 为1，则向DM写入，否则不做任何操作。（如果你之前实现“<code>req</code> 为1时不进行对DM的任何写入”这一步做的比较可扩展，那么你不需要再做任何操作，否则还需要考虑一下这个）</p>
-<p>然后？</p>
-<p>你做完了。</p>
-<p>恭喜AC！并且，恭喜AK！</p>
-<h1>在CO之前……</h1>
-<p>就像是我本想纪念，但是已经消失的回忆一样，这部分内容也莫名其妙的消失了。</p>
-<p>我想，你应该能用下面这一段，在我的博客设法找出来点什么。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">now, it&#x27;s time to Leave CO Behind.</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>计算机组成原理</tag>
-        <tag>Verilog</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北航2025面向对象设计与构造第一单元总结</title>
     <url>/2025/04/15/BUAA-OO-Unit1/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第十一篇文章！</p>
@@ -1492,74 +938,6 @@
       </tags>
   </entry>
   <entry>
-    <title>北航2024面向对象程序先导课程心得</title>
-    <url>/2024/10/31/BUAA-OOpre-2024/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第4篇文章！</p>
-<p>本文章即将作为该课程结课作业提交至CSDN！</p>
-<h1>北航2024面向对象程序先导课程心得</h1>
-<h2 id="前言">前言</h2>
-<p>在知道这课有博客作业之前，我是动过心思把这课内容写在博客上的，后来犯懒了没做，没想到现在不得不写了（</p>
-<p>既然作为作业，那就有作业必须要有的内容，从整体架构到各类心得体会，还有课程建议，这些都是必选项。不过在此之外，我觉得也应该在这里留一些给后人的提示，毕竟如果你是通过<a href="https://lazyfish-lc.github.io/">我的博客</a>看这个文章的话，那也许你是希望学到一点东西的。</p>
-<p>希望各位能通过这个课程和我的博客，能够对面向对象设计的模式有一点理解，至少最好摆脱可能会有的大一的抽象命名和混乱架构（</p>
-<h2 id="整体架构">整体架构</h2>
-<p><img src="AdventureGame.png" alt="整体架构图"></p>
-<p>由于这几次作业的迭代任务较为简单，以及最后一次作业实际上给了完成度较高的代码，所以实际上我所完成的结构比较简单扁平。大体上说，我的架构可以分为以下几部分：</p>
-<ul>
-<li>副本相关：由Shd，Flm，Stn，Wnd，Frz类管理副本内怪物信息，各怪物具有其Treasure类管理各怪物守卫的宝藏信息，TreasureFactory类作为宝藏工厂。以上内容由AdventureSideGame类统一管理，负责协助AdventureGame类处理冒险者挑战副本的请求。</li>
-<li>药水和装备：由Bottle类管理单个药水信息，Equipment类管理单个装备信息，二者均存在各个派生类管理不同类型的药水或装备信息。</li>
-<li>仓库和背包：由Repository类管理冒险者拥有的药水和装备信息，并让继承Repository类的Backpack类管理冒险者携带的药水和装备信息。</li>
-<li>冒险者：由Adventurer类管理单个冒险者信息，包含基本信息与状态，物品仓库与背包，持有碎片，雇佣关系。</li>
-<li>主要游戏：由AdventureGame类作为核心，管理所有冒险者的信息，处理来自AdventureGameCommand类解析出的各类请求，并记录最后一次操作产生的输出信息。</li>
-<li>IO与输入处理：由AdventureProgram类进行IO操作，读入数据经过AdventureGameCommand解析后发送给AdventureGame进行处理。</li>
-</ul>
-<p>可以看得出来，这个结构比较扁平，很好理清楚思路，所以迭代开发的时候几乎不需要费什么力气就能找到该在哪里加东西，该怎样对原有函数的某部分进行修改，学习起来的时候也能一下就捋清楚。</p>
-<p>但是其实迭代后期对于雇佣关系的处理还是略显混乱，对本应做成观察者模式的援助和解雇操作还是没有做的很好，文件结构上也没有很好的对各个类进行更细致的分门别类，总而言之就是，还能调。</p>
-<h2 id="迭代要点记录">迭代要点记录</h2>
-<h3 id="初次作业——准确的判断？">初次作业——准确的判断？</h3>
-<p>从第一次作业的结果来看，实际上当时我就意识到了层次化的重要性，把文件连续拆了好几层。当时的整体框架是，AdventureProgram作为IO和输入处理，然后AdventureGame管理各个冒险者，让冒险者管理各个药水和装备，这也算是为后续开发开了个层次化的好头吧。</p>
-<p>同时，从这次作业开始就经常有人把跟头栽在了for循环内删元素的操作，也算是对未来的一个警醒吧，一开始测试ArrayList玩，触发这个问题之后我应该是没有这么干过。</p>
-<p>不过和后续相比，没有仓库和背包也算是给自己留的第一个改进点，毕竟当时确实没法想到还有携带和非携带的区别。</p>
-<h3 id="迭代开始——一个可以打磨的细节">迭代开始——一个可以打磨的细节</h3>
-<p>第二次作业和第一次作业相比，主要是添加了三个概念：药水的使用，更多药水，战力和攻防。药水使用就是新添一个是否使用的属性和操作属性的方法（当时只需要从没用过到用过，做个use即可），更多药水主要是用继承来做好各类药水，战力主要是添加接口来约束类内的战力计算。顺便，我当时把仓库类提前做了出来，并且“跟着OIer的直觉”给很多ArrayList换成了HashMap，也算是为未来做了一个提前规划吧。</p>
-<p>以及，仓库类的出现也让我提早一周意识到了删除操作要同时对仓库和背包进行，未来看到许多人这么挂的时候，我倒是非常感谢自己了（</p>
-<p>但是当时设计的一个问题就是，我们在做可以饮用的更多药水瓶的时候，肯定是有饮用后要给冒险者加成的效果，这就要求所有药水都要有一个给冒险者加成的方法，然而我当时的做法是给Bottle类加个getEffect返回加成的值，然后其他子类都重载这个函数，再在Adventurer的饮用药水瓶方法里把加成加到冒险者身上。</p>
-<p>现在思考过来，既然从这次作业开始Bottle这个基类不会也不应该被创建出来，并且药水瓶产生加成的计算逻辑主要是在药水瓶身上，那还有另一种处理方法：给Adventurer类添加一些增加攻击力防御力血量的方法（这个方法是相对稳定不变的），饮用药水的时候调用药水的use方法，然后方法内使药水调用Adventurer的增加属性方法，这个处理是否更好呢？不过考虑到这个写法的耦合情况，我直到现在都是比较犹豫的。</p>
-<h3 id="继续迭代——失误，反思">继续迭代——失误，反思</h3>
-<p>这次迭代充分证明了当时对仓库和背包拆分的正确性，但是也因此产生了一个带走强测整整40分的bug，所以我也说不上好坏了。</p>
-<p>装备类型的细化很好说，类似上次迭代一样如法炮制即可，受击血量的计算我沿袭了之前对药水的处理，把对冒险者状态的操作写进了Adventure类，战斗功能就是在这个基础上对一个ArrayList里的防御者遍历两遍而已。碎片兑换也是一个比较好维护的东西，开个HashMap也可以快速解决。</p>
-<p>至于背包，重名问题很好解决，HashMap解君愁。然而先前的设计模式带给了我第二个问题：如何更新背包最大容量呢？这个问题其实和药水的饮用，装备的攻击差不了多少，但是最大的区别就是背包塞入物品的时候需要时刻获取冒险者的攻防和。那么在背包不知道自己的主人的情况下，这个“时刻”该怎么做呢？答案是：我当时不知道为啥，忘了这茬，压根就没更新过背包最大容量。于是，-40。</p>
-<p>来到bug修复，发现这个问题之后，我麻了。最后的解决方法比较草率，每次添加瓶子的时候多传一个参数表示最大可装同名瓶子数。现在再看的话，或许我会选择让背包记录一个主人？毕竟，一个背包还能有两个主人吗（x）</p>
-<h3 id="最后迭代">最后迭代</h3>
-<p>感觉这次迭代可说的就比较少了。雇佣与援助系统和观察者模式联系紧密，递归攻击纯粹考基本功（和HashSet的使用），秘境工厂副本考工厂模式（然而课程组直接给代码了）。没有什么特别可圈可点的迭代问题。</p>
-<h2 id="心得体会">心得体会</h2>
-<h3 id="关于JUnit的使用——相信，但是别偏信">关于JUnit的使用——相信，但是别偏信</h3>
-<p>这几次作业里，我经常听到很多同学有这么一句话：我JUnit写的挺敷衍的，要不你再看看有啥问题吧。很不幸的是，我写的不那么敷衍，但是还是被刀了40分。</p>
-<p>其实，JUnit确实是个很方便的东西，单元测试可以让你对某一个单元进行非常细致的尝试，而不需要考虑针对整个项目或者部分项目的极其难以构造（还不一定覆盖的全）的样例。然而……</p>
-<blockquote>
-<p>单元测试正确不意味着连接就正确。——AOSTL（</p>
-</blockquote>
-<p>然后我就对单元测试产生了标题里的态度了。JUnit该写全写全，一定能发现绝大多数问题，但是各类连接问题还是需要看原函数咋写的，有时候甚至得脑测几遍。</p>
-<p>单元样例的构造也是一个艺术。比如说对于递归攻击的样例构造，我当时选用的是一个深度为7的满二叉树，攻击其中一个靠底层的节点，一个根节点，然后这两个节点的雇佣关系有一点重叠，这样一次性也许就能测出一堆问题。还有诸如“A雇佣B，B攻击A，攻击用武器只有1点耐久”的离谱情况，这也是一个单元测试就能干的，但是……很离奇，需要一点智慧和对规则的理解（</p>
-<h2 id="关于面向对象——条理与简化条理">关于面向对象——条理与简化条理</h2>
-<p>面向对象相对于面向过程的最大区别就是，面向对象里什么东西都要作为对象处理，这也就疯狂引导你去思考如何优雅的把某个事务的某些特征打包成一整个类。从整体上来说，一级又一级的类替代了单纯打包数据的结构体，类内约束好的方法和属性替代了散落一地的函数和变量，整个项目在你眼前会一下就变得清晰而简单。</p>
-<p>继承，封装和多态则是从不同的方面去帮助你完成这个思考过程的特性。继承不用多说，一个是代码复用的想法，一个是提取共性的想法；封装则是希望你不去关注一个类的过多的细节，从而在类与类交互时不要搞出各类混乱的互相操作；多态则更像是一种“偷懒的艺术”，对不同对象做极为类似的操作时，不需要在调用方法的时候思考什么方法精准适配这个类，而是可以直接一股脑的丢进一组功能相似，内容不同的函数的某一个里进行处理。</p>
-<p>总体来说，面向对象像是在传达这样一个信息：顾全大局，做好框架之后，再去深入细节。</p>
-<h2 id="关于CheckStyle——约束与可维护">关于CheckStyle——约束与可维护</h2>
-<p>初学OOpre时，CheckStyle对很多人来说都是一个紧箍咒，我身边的朋友就曾跟我抱怨过这玩意让他变量命名做的非常……难受。后来他因为第一次迭代写的挺乱而第二次被迫重构了。然而，使用CheckStyle之后，我也没见过几个debug非常困难的朋友了，很多时候他们能快速捋清楚代码内容了（这和我上学期对数据结构课的debug形成鲜明对比）。所以，这玩意在大二初就出现，可以说是一种对6系学生的最大的收获了。很多时候，如果你不去痛苦的学习一个让自己受益终身的东西（或者工具方法，或者课程学业），你永远感觉不到这玩意的好处，我想这就是CheckStyle在课程里出现的意义所在吧。</p>
-<h2 id="对课程的建议">对课程的建议</h2>
-<p>嗯……老实说，OOpre算是我在大二上感觉非常舒服的一门课程，感觉确实能学到很多东西。但是，在迭代开发任务之外的各类debug和填充代码的任务，却总是让人感觉……如学，好像什么都没学到一样（也许可能学到了什么？），或许课程组可以尝试对这部分零散的作业再开发开发？</p>
-<h2 id="结语">结语</h2>
-<p>想说的也都说完了其实。未来的OO正课将会强度爆炸，但我仍然坚信每个人都有在这门课里拨云见日的时候。</p>
-<p>祝大家OO正课愉快！</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>OO</tag>
-        <tag>面向对象程序先导</tag>
-        <tag>OOpre</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北航2025 OS shell挑战性任务实现指导</title>
     <url>/2025/06/16/BUAA-OS-shell-challenge/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第十二篇文章！</p>
@@ -1568,6 +946,7 @@
 <p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
 <p><strong>本文章已完成，如有疑问请在评论区提出！</strong></p>
 <p>2025/06/23 upd：增加了赤石仙人@wrongization 的shell挑战性任务博客链接：<a href="https://wrongization.site/2025/06/18/os-shell.html">BUAA-OS-shell | wrongization</a>（以及他的另一篇赤石实录：<a href="https://wrongization.site/2025/03/18/oo_unit1.html">BUAA-OO-unit1 | wrongization</a>）（</p>
+<p>2025/06/26 upd：在“实现过程-文件架构”中增加了处理指令的顺序和本次任务之间的对应关系。</p>
 <h1>北航2025 OS shell挑战性任务实现指导</h1>
 <h2 id="前言">前言</h2>
 <p>本文为北航2025《操作系统》课程的shell挑战性任务（基于lab6的MOS架构）的实现指导，主要聚焦于给出一种可行的设计思路，以及基于该设计的具体实现。</p>
@@ -1852,6 +1231,13 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mos</span><br><span class="line"> └─ user</span><br><span class="line">    ├─ include</span><br><span class="line">    |    └─ shell.h</span><br><span class="line">    ├─ lib</span><br><span class="line">    |    ├─ shellio.c</span><br><span class="line">    |    ├─ lexer.c</span><br><span class="line">    |    ├─ parser.c</span><br><span class="line">    |    └─ executor.c</span><br><span class="line">    ├─ mkdir.c</span><br><span class="line">    ├─ touch.c</span><br><span class="line">    ├─ rm.c</span><br><span class="line">    └─ sh.c</span><br></pre></td></tr></table></figure>
 <p>其中，<code>shell.h</code> 负责将 <code>sh.c</code> 中的繁杂功能剥离开，其功能实现交由 <code>shellio.c</code>，<code>lexer.c</code>，<code>parser.c</code>，<code>executor.c</code> 实现。</p>
 <p>由此其实也可以看出来，整体上shell处理指令的顺序就是“IO管理-词法分析-语法分析-执行”，这与 <code>user/lib/</code> 中新增的文件是一一对应的。</p>
+<p>2025/06/26 upd：总结下来，其实本次挑战性任务中，与shell强相关的目标和这个处理顺序的对应关系如下：</p>
+<ol>
+<li>IO管理：输入回显调整&amp;快捷键处理&amp;历史指令调取 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 历史指令保存 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 反引号处理；</li>
+<li>词法分析：token解析；</li>
+<li>语法分析：AST生成；</li>
+<li>执行：条件指令执行 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 管道修正 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 环境变量识别和替换 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 各内建指令执行&amp;外部指令调用 <code>spawn</code>。</li>
+</ol>
 <h3 id="与MOS交互的关键路径和文件">与MOS交互的关键路径和文件</h3>
 <p>此部分内容主要在于给出一套实现功能时的规范化的修改流程。</p>
 <p>具体来说，shell和MOS各模块的交互可以分为以下几种：</p>
@@ -2073,11 +1459,11 @@
 <p>最后就是，如何识别一般指令中的变量并进行替换。我的做法是在执行 <code>command</code> 节点的时候进行处理，即每在执行中发现一个 <code>word</code> 节点，就尝试找出其中所有的 <code>$</code>，并将 <code>$</code> 后直到非字母，数字，下划线的部分视作一个 <code>key</code>，优先在局部变量，其次在环境变量中试图寻找该 <code>key</code> 并替换。最后，把替换后的结果存储回原 <code>word</code> 节点，再进行执行操作。</p>
 <h2 id="一些可能出现的Q-A">一些可能出现的Q&amp;A</h2>
 <h3 id="这个解决方案有哪些潜在的bug？">这个解决方案有哪些潜在的bug？</h3>
-<p>我没找过。主要是测试点太好过了。</p>
+<p>我没认真找过。主要是测试点太好过了。</p>
 <p>但是我倒是确实知道几个问题：</p>
 <ul>
-<li>在我最后一版实现里，实际上并未对僵尸进程做任何处理。这在子进程过多且不写wait的情况下很容易会爆，虽然课程组没有也很难测试这一点。</li>
-<li>我对大多数指令参数的处理都是在执行<code>command</code> 节点的时候被处理的，包括后面环境变量的识别和替换，但是这样做其实多少有点问题，毕竟在Linux的Bash上，当环境变量的值包含空格时，其实际上会被在传参时识别成两个参数，而非这种实现里的一个参数。一个比较好的解决方案是，把这个处理过程扔到预处理那里。（当然，由于课程组并未要求实现单引号，所以实际上这事课程组测不了）</li>
+<li>在我最后一版实现里，实际上并未对僵尸进程做任何处理。这在子进程过多且不写wait的情况下很容易会爆。</li>
+<li>我对环境变量的识别和替换是在执行<code>command</code> 节点的时候被处理的，但是这样做其实多少有点问题，毕竟在Linux的Bash上，当环境变量的值包含空格时，其实际上会被在传参时识别成两个参数，而非这种实现里的一个参数。一个比较好的解决方案是，把这个处理过程扔到预处理那里。</li>
 <li>在我最后一版实现里，我误以为原有的 <code>remove</code> 函数可以递归删除，从而未对递归删除做特殊处理。</li>
 </ul>
 <h3 id="如果你的任务指导书里包含“实现后台任务”？">如果你的任务指导书里包含“实现后台任务”？</h3>
@@ -2692,6 +2078,560 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </tags>
   </entry>
   <entry>
+    <title>北航CO 2024 P7经验分享</title>
+    <url>/2024/11/21/BUAA-CO-P7/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第⑨篇文章！</p>
+<p>本文章包含北航2024计组实验课P7课下部分的个人理解，第一次课上题目的简要介绍和一种实现思路。</p>
+<p>由于P7教程内容实现方法<strong>过于宽泛</strong>，所以这里我仅对自己的理解做一个分享，并不意味着这一环节的某一部分写法只有文章内一种，如果你觉得其他方法更好可以直接采纳。</p>
+<p>本文章参考了 <a href="https://roife.github.io/posts/buaa-co-lab-p7/">BUAA-CO-Lab P7 MIPS 微体系 | ROIFE BLOG</a> 和 <a href="https://flyinglandlord.github.io/2021/12/15/BUAA-CO-2021/P7/P7%E8%AF%BE%E4%B8%8A&amp;%E8%AF%BE%E4%B8%8B/">P7 课下 &amp; 课上总结 - 北航计算机组成原理 | Test Blog = FlyingLandlord’s Blog</a>，在此<strong>非常感谢两位前辈做出的贡献</strong>！（没有这两篇文章的话，我可能还要在P7耗上超过一倍的时间）</p>
+<p>本文章将在北航2024计组实验课结束之前持续更新，如果你在阅读本文的过程中遇到了不理解的地方/发现了有笔误的地方（哪怕只是非常小的笔误）/觉得某部分还有更好的实现，请务必<strong>在评论区里留下这些想法</strong>！（或者，直接联系我本人也可以！）</p>
+<p>同样的，请<strong>务必仔细读完整篇文章，以及上述推荐的博客后再动手</strong>，以保证自己所理解的内容没有巨大的偏差。</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2024计组课程</strong>，对于之前和之后的课程，教程部分内容可能会发生变动，发生冲突时请以实验教程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>这篇文章还有什么空白？</h1>
+<p>嗯……非常遗憾，直到动笔之前，我还没有构造出一个行之有效的调试P7的思路或者工具，因此我非常希望能有同学搞定这一部分分享一下，不过既然文章已经开始动笔了，那我就先把自己知道的写完再说吧。</p>
+<h1>我们要干啥？</h1>
+<p>（事先声明，本文提到的中断全是外部中断，异常全是内部异常，所以当我想要把这两个概念合起来说的时候，一定会表述成“异常中断”，如果我在这篇文章里违反了这个原则，请第一时间和我联系）</p>
+<p>包括我在内，我认识的很多朋友看完P7的第一反应都是：它在说啥？</p>
+<p>没错，P7教程写的确实会让人一下子不知道要干啥，你只能大概知道自己要新做的主要模块名：CP0，桥，然后附上两个Timer，最后通过某种方式把这些东西和你之前做的CPU连起来。</p>
+<p>所以，在开始所有工作之前，我先对P7要做的事情做一个总结（此部分和FlyingLandlord的文章内容基本一致）：</p>
+<ol>
+<li>
+<p>给原流水线CPU的各个模块进行修改，使之可以产生由该元件信息可以得到的异常，并将其通过流水寄存器一路流下去；</p>
+</li>
+<li>
+<p>完成CP0，确定CP0的位置（我选择定到了M级），将以上异常信息流水至该级（而不是直接相连），并把CPU接收到的终端信号和CPU内产生的异常信息和CP0连接，使之可以完成两个事情：判断当前是否需要跳转至异常处理指令，保存处理异常中断需要的各个状态信号，在CPU响应完跳转，处理完异常中断后，跳回正常程序。</p>
+<blockquote>
+<p>是的，CP0其实就是个大号的处于M级的分支判断模块，实际上所有工作都是你原先设计的CPU在做，只是CP0这个东西可以帮你保存一些异常中断的状态信息，以及帮你判断当前时刻是否需要处理一个异常/中断而已。</p>
+</blockquote>
+</li>
+<li>
+<p>将以上所有内容全部封装为一个 <code>CPU.v</code>（这里的大概意思就是，你在P6所做的所有内容，以及P7对CPU新增的内容，全部应该放入 <code>CPU.v</code> 里，而不是像P6之前那样直接放到 <code>mips.v </code>里），然后在 <code>mips.v</code> 里把CPU和两个计时器装进去，最后设计一个 <code>Bridge</code> 模块把两个计时器，数据存储器和中断发生器（这玩意在课程里被抽象成了 <code>mips.v</code> 的几个输入输出端口，类似IM和DM）的数据读写端口连进 <code>Bridge</code> 做处理，再让CPU通过 <code>Bridge</code> 获得信息。</p>
+</li>
+</ol>
+<blockquote>
+<p>鉴于这里对 <code>CPU.v</code> 的描述仍然有点模糊，我这里做一些说明：</p>
+<ol>
+<li>从内容上说，<code>CPU.v</code> 与P6时候的 <code>mips.v</code> 基本相同。<code>CPU.v</code> 里包含的是我们基于P6完成的 <code>mips.v</code> 内容的扩展，在P7中我们需要把扩展后的 <code>mips.v</code> 里的所有内容迁移过来。</li>
+<li>从结构上说，P6的 <code>mips.v</code> 完成的也是一块CPU，但顶层端口限制使得这个CPU只能是提交要求里的端口，而P7的 <code>CPU.v </code> 不是顶层模块，不受提交要求限制，因此可以在P6基础上自由修改/扩展。具体来说，我选择保留P6时的所有端口，并加入一个 <code>HWInt</code> 端口，向CPU输入外部中断信号。</li>
+<li>以及，这里有一个设计思想：CPU实际上并不需要知道有哪些外设，也不需要特别清楚这些外设具体是如何被写入/读取的，它只需要知道数据存储器的某一部分地址被划给了某些外设，因此CPU可以通过对这些地址进行读写操作来对外设进行访问，仅此而已。</li>
+</ol>
+</blockquote>
+<p>Update(2024/11/27)：<strong>这里需要强调的是，因为桥的存在，CPU不应该对每个外设都引入端口进行特殊处理，而是把所有对外设的操作集中到一组端口，所以CPU向外传出的端口信号实际上只需要对IM的读写，对DM（在CPU眼里看是DM，在外界看是各种外设的集合）的读写，以及其他testbench需要的端口。</strong></p>
+<p>总之，你要干的三件事情是： <strong>产生异常，处理异常中断，用桥连接外设</strong>。</p>
+<p>如果你是按照我的思路做完的P7，那么以上我提到的模块关系应该如下：</p>
+<ul>
+<li>mips.v
+<ul>
+<li>CPU.v
+<ul>
+<li>CP0.v</li>
+</ul>
+</li>
+<li>Bridge.v</li>
+<li>Timer.v</li>
+</ul>
+</li>
+</ul>
+<p>同时，为了辅助理解以上目标，我们指出几条比较重要的数据通路，作为判断你是否理解正确的部分参考：</p>
+<ul>
+<li>异常：从CPU的各级元件产生，经由流水寄存器进入M级，在CP0进行判断，产生是否响应异常中断的控制信号，其信号回传至CPU各级决定是否进行处理异常中断的跳转操作。</li>
+<li>中断：从中断发生器和计时器产生，打包后直接进入CPU的CP0，在CP0进行判断，产生是否响应异常中断的控制信号，其信号回传至CPU各级决定是否进行处理异常中断的跳转操作（后面这部分是异常中断都要做的事情，具体咋做后面再说）</li>
+<li>包含外设的数据读取：从CPU产生读取地址，经过Bridge的分析，从DM和计时器中选定对应的外设进行读取，结果传回CPU中。</li>
+<li>包含外设的数据写入：从CPU产生写入地址和值，经过Bridge的分析，从DM，计时器和异常发生器中选定对应的外设进行写入。</li>
+</ul>
+<p>经过以上分析，我们大致提炼出了P7的总目标。</p>
+<h1>具体怎么实现？</h1>
+<p>由于我们的总目标分了三点，那我们叙述这一部分的时候也分三段吧。</p>
+<p>当然，你会发现前两部分有时候会有重叠，毕竟前两个目标干的是一件事——处理异常和中断，这里只是对这件事预先进行了一个拆分而已。</p>
+<p>而中断的产生是由外设决定的，这玩意无需做任何说明，所以我们首先要额外说明一下如何产生异常。</p>
+<h2 id="产生异常">产生异常</h2>
+<p>异常就是指令的参数或行为并不符合我们的期望，因此我们需要知道哪些行为不符合我们的期望。</p>
+<p>首先，我们给出一个教程中的表格，以说明哪些情况会产生哪一类异常：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">异常与中断码</th>
+<th style="text-align:left">助记符与名称</th>
+<th style="text-align:left">指令与指令类型</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0</td>
+<td style="text-align:left"><code>Int</code> （外部中断）</td>
+<td style="text-align:left">所有指令</td>
+<td style="text-align:left">中断请求，来源于计时器与外部中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取指异常）</td>
+<td style="text-align:left">所有指令</td>
+<td style="text-align:left">PC 地址未字对齐。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取指异常）</td>
+<td style="text-align:left">所有指令</td>
+<td style="text-align:left">PC 地址超过 <code>0x3000 ~ 0x6ffc</code>。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
+<td style="text-align:left"><code>lw</code></td>
+<td style="text-align:left">取数地址未与 4 字节对齐。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
+<td style="text-align:left"><code>lh</code></td>
+<td style="text-align:left">取数地址未与 2 字节对齐。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
+<td style="text-align:left"><code>lh</code>, <code>lb</code></td>
+<td style="text-align:left">取 Timer 寄存器的值。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
+<td style="text-align:left">load 型指令</td>
+<td style="text-align:left">计算地址时加法溢出。</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>AdEL</code> （取数异常）</td>
+<td style="text-align:left">load 型指令</td>
+<td style="text-align:left">取数地址超出 DM、Timer0、Timer1、中断发生器的范围。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left"><code>sw</code></td>
+<td style="text-align:left">存数地址未 4 字节对齐。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left"><code>sh</code></td>
+<td style="text-align:left">存数地址未 2 字节对齐。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left"><code>sh</code>, <code>sb</code></td>
+<td style="text-align:left">存 Timer 寄存器的值。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left">store 型指令</td>
+<td style="text-align:left">计算地址加法溢出。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left">store 型指令</td>
+<td style="text-align:left">向计时器的 Count 寄存器存值。</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>AdES</code> （存数异常）</td>
+<td style="text-align:left">store 型指令</td>
+<td style="text-align:left">存数地址超出 DM、Timer0、Timer1、中断发生器的范围。</td>
+</tr>
+<tr>
+<td style="text-align:left">8</td>
+<td style="text-align:left"><code>Syscall</code> （系统调用）</td>
+<td style="text-align:left"><code>syscall</code></td>
+<td style="text-align:left">系统调用。</td>
+</tr>
+<tr>
+<td style="text-align:left">10</td>
+<td style="text-align:left"><code>RI</code>（未知指令）</td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">未知的指令码。</td>
+</tr>
+<tr>
+<td style="text-align:left">12</td>
+<td style="text-align:left"><code>Ov</code>（溢出异常）</td>
+<td style="text-align:left"><code>add</code>, <code>addi</code>, <code>sub</code></td>
+<td style="text-align:left">算术溢出。</td>
+</tr>
+</tbody>
+</table>
+<p>这里我们进行一些说明：</p>
+<ul>
+<li><code>EXCcode</code> （异常与中断码）为 <code>Int</code>（外部中断）时，在课程内其含义实际上是<strong>此时没有异常发生，仅考虑中断是否发生</strong>。也正因为如此，在没有异常产生时，我们可以考虑给CP0传入 <code>Int</code>，让其根据实际中断信号判断是否发生中断，而无需考虑异常。</li>
+<li>尽管以上表格列出了海量的情况，但最后产生异常信息的时候，我们只需要处理出其 <code>EXCcode</code> 即可，<strong>无需附加任何额外信息</strong>。</li>
+<li><strong>除以0不是任何异常</strong>。实际上，除以0是未定义行为，按照标准我们无需进行任何处理，评测数据也不应该有除以0的指令。</li>
+</ul>
+<p>接下来，我们要想办法探测这些异常。</p>
+<p>我们会发现一个事情：从F级到M级，每一级都恰好有一个模块可以分辨一些异常。比如，对于未知指令，我们在控制单元进行解码的时候就能发现问题。因此，我们可以给F级的PC，D级的控制单元，E级的ALU和M级的数据存储器（这个东西是外设，所以你可以写个模块专门处理异常相关信息）各加一个输出端口，用于输出该时刻用该模块是否探查出异常。</p>
+<blockquote>
+<p>以及，某个元件在同一指令执行到同一级时，可能会因为多种原因产生异常（如，使用 <code>lw</code> 时，既有不对齐的问题，也有地址超出范围的问题），但是在实现正确的情况下，其产生的 <code>EXCcode</code> 必然唯一。</p>
+</blockquote>
+<p>最后就是传递异常了。按道理来说，这其实只是一个流水的过程，没啥可讲的，但实际上我们会面对这样几个问题：</p>
+<ul>
+<li>如果一条指令会<strong>连续触发多个异常</strong>，我们应该如何处理？</li>
+<li>如果<strong>多个指令</strong>都会产生异常，我们应该如何处理？</li>
+</ul>
+<p>此时我们规定一个原则：<strong>我们优先处理最早可以探查到的异常</strong>。</p>
+<p>比如说，如果一条指令在E级，M级都会产生异常，那么我们认为这个指令首先触发的是E级的异常，因此传入CP0的异常必须是E级产生的异常。</p>
+<p>比如说，如果有两条指令在E级和M级都产生异常，那么我们认为M级的指令首先触发了M级的异常，因此传入CP0的异常必须是M级产生的异常。</p>
+<p>至此，我们已经可以把所有异常检测出来，并且传递到M级了。</p>
+<p>Update(2024/11/26)：但是，我们仍然有一些工作要做，那就是在检测出异常/遇到中断时，我们不应该让M级与其之前的指令对其他模块<strong>产生任何影响</strong>。</p>
+<p>具体来说，有以下几种情况（我们事先说明，当发现遇到异常或中断时，CP0寄存器会产生一个req为1的信号，以表示CPU将进入异常处理状态，以下提到的req为1都是这个意思）：</p>
+<ol>
+<li>当PC探查出异常时，我们必须<strong>把读取出的指令覆盖为NOP</strong>；</li>
+<li>当req为1时，若此时存在一个可能会修改HI寄存器/LO寄存器的指令在E级，则乘除模块<strong>不应该对其进行任何响应（即不写入，不计算）</strong>；</li>
+<li>当req为1时，DM的字节写使能信号<strong>必须全部为0</strong>，读取出的数据<strong>必须用0覆盖</strong>。</li>
+</ol>
+<p>下面我们思考如何处理这些异常，以及从外部可能输入的中断。</p>
+<h2 id="处理异常中断">处理异常中断</h2>
+<h3 id="异常中断处理思路">异常中断处理思路</h3>
+<p>接下来我们要展开一个问题：我们是如何处理异常中断的？</p>
+<p>具体来说，在一个时钟周期内，</p>
+<ol>
+<li>
+<p>CP0会先检查现在是否正在处理异常中断（不在异常中断处理里处理异常中断），再检查CP0所在流水级的指令是否存在异常，以及外部是否有未被禁用的中断（如果同时出现，我们认为此时发生了一个中断而非异常）。</p>
+</li>
+<li>
+<p>如果现在没有在处理异常中断，并且CP0所在流水级存在异常或外部产生了未被禁用的中断，那么CP0会向CPU发送一个“跳转至异常中断处理”的信号。</p>
+</li>
+<li>
+<p>CPU在接收到该信号之后，对CP0所在流水级及其之前的流水级进行“清空”（之后的流水级继续正常执行），并让PC直接跳转至异常中断处理地址（<code>0x4180</code>），此时CP0记录下处理完异常后需要返回的地址，以及出现异常的指令是否为延迟槽内指令。</p>
+</li>
+</ol>
+<p>在CPU完成异常中断处理之后，会通过 <code>eret</code> 回到“处理完异常后需要返回的地址”里。</p>
+<p>所以我们再次重复一下下面这段话：</p>
+<blockquote>
+<p>其实CP0就是一个大号的处于M级的分支判断模块，实际上所有工作都是你原先设计的CPU在做，只是CP0这个东西可以帮你保存一些异常中断的状态信息（包含处理完之后回到哪一条指令），以及帮你判断当前时刻是否需要处理一个异常/中断而已。</p>
+</blockquote>
+<p>以及，既然CP0会使用一些寄存器来保存异常中断的状态信息，那么我们在某些时刻是希望对这几个寄存器进行读写的，所以CP0也应该支持对其内部的寄存器进行读写。</p>
+<p>所以，我们根据这个思路，以及教程给出的一种实现的模块，来构建这个CP0。</p>
+<h3 id="CP0的实现">CP0的实现</h3>
+<h4 id="端口、寄存器、寄存器的有效位">端口、寄存器、寄存器的有效位</h4>
+<p>下面我们贴出教程给出的端口表格（稍有修改）：</p>
+<blockquote>
+<p>（这一段本来应该放在表格后给出，但是后来发现放到前面似乎更有助于理解整个表格）</p>
+<p>其实教程在给出这些表格的时候，就已经给出了CP0的两个主要功能：读写内部寄存器（<code>mfc0,mtc0</code>），判断是否进行异常跳转。前者和普通的GRF差别不大，只需要在后续做一点点特殊修改即可，而后者是一个比较新的东西，我们会具体展开说明如何实现后者。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">端口</th>
+<th style="text-align:left">方向</th>
+<th style="text-align:left">位数</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">clk</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">时钟信号。</td>
+</tr>
+<tr>
+<td style="text-align:left">reset</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">复位信号。</td>
+</tr>
+<tr>
+<td style="text-align:left">en</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">写使能信号。</td>
+</tr>
+<tr>
+<td style="text-align:left">CP0Add</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">5</td>
+<td style="text-align:left">读取/写入目标寄存器地址。</td>
+</tr>
+<tr>
+<td style="text-align:left">CP0In</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">32</td>
+<td style="text-align:left">写入寄存器数据。</td>
+</tr>
+<tr>
+<td style="text-align:left">CP0Out</td>
+<td style="text-align:left">OUT</td>
+<td style="text-align:left">32</td>
+<td style="text-align:left">读出寄存器数据。</td>
+</tr>
+<tr>
+<td style="text-align:left">VPC</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">32</td>
+<td style="text-align:left">当前异常中断发生时PC的值。</td>
+</tr>
+<tr>
+<td style="text-align:left">BDIn</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">当前异常中断发生指令是否是延迟槽内指令。</td>
+</tr>
+<tr>
+<td style="text-align:left">ExcCodeIn</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">5</td>
+<td style="text-align:left">当前发生异常类型。</td>
+</tr>
+<tr>
+<td style="text-align:left">HWInt</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">6</td>
+<td style="text-align:left">外部产生的中断信号。</td>
+</tr>
+<tr>
+<td style="text-align:left">EXLClr</td>
+<td style="text-align:left">IN</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">是否结束异常中断处理（复位 EXL）。</td>
+</tr>
+<tr>
+<td style="text-align:left">EPCOut</td>
+<td style="text-align:left">OUT</td>
+<td style="text-align:left">32</td>
+<td style="text-align:left">EPC 的值。</td>
+</tr>
+<tr>
+<td style="text-align:left">Req</td>
+<td style="text-align:left">OUT</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">进入处理程序请求。</td>
+</tr>
+</tbody>
+</table>
+<p>以及CP0内需要保存的各个<strong>32位</strong>寄存器（稍有修改）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">寄存器</th>
+<th style="text-align:left">编号</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SR</td>
+<td style="text-align:left">12</td>
+<td style="text-align:left">配置异常中断的功能。</td>
+</tr>
+<tr>
+<td style="text-align:left">Cause</td>
+<td style="text-align:left">13</td>
+<td style="text-align:left">记录异常中断发生的原因和情况。</td>
+</tr>
+<tr>
+<td style="text-align:left">EPC</td>
+<td style="text-align:left">14</td>
+<td style="text-align:left">记录异常中断处理结束后需要返回的 PC。</td>
+</tr>
+</tbody>
+</table>
+<p>以及这些寄存器我们各自仅需要几位，分别在干什么（稍有修改）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">寄存器</th>
+<th style="text-align:left">功能域</th>
+<th style="text-align:left">位域</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SR（State Register）</td>
+<td style="text-align:left">IM（Interrupt Mask）</td>
+<td style="text-align:left">15:10</td>
+<td style="text-align:left">分别对应六个外部中断，相应位置 1 表示允许中断，置 0 表示禁止中断。这是一个被动的功能，只能通过 <code>mtc0</code> 这个指令修改，通过修改这个功能域，我们可以屏蔽一些中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">SR（State Register）</td>
+<td style="text-align:left">EXL（Exception Level）</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">任何异常中断发生时置位，这会强制进入核心态（也就是进入异常中断处理程序）并禁止再次触发异常中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">SR（State Register）</td>
+<td style="text-align:left">IE（Interrupt Enable）</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">全局中断使能，该位置 1 表示允许中断，置 0 表示禁止中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">Cause</td>
+<td style="text-align:left">BD（Branch Delay）</td>
+<td style="text-align:left">31</td>
+<td style="text-align:left">当该位置 1 的时候，EPC 指向当前指令的前一条指令（一定为跳转），否则指向当前指令。</td>
+</tr>
+<tr>
+<td style="text-align:left">Cause</td>
+<td style="text-align:left">IP（Interrupt Pending）</td>
+<td style="text-align:left">15:10</td>
+<td style="text-align:left">为 6 位待决的中断位，分别对应 6 个外部中断，相应位置 1 表示有中断，置 0 表示无中断，将会每个周期被修改一次，修改的内容来自计时器和外部中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">Cause</td>
+<td style="text-align:left">ExcCode</td>
+<td style="text-align:left">6:2</td>
+<td style="text-align:left">异常中断编码，记录当前发生的是什么异常中断。</td>
+</tr>
+<tr>
+<td style="text-align:left">EPC</td>
+<td style="text-align:left">EPC</td>
+<td style="text-align:left">31:0</td>
+<td style="text-align:left">记录异常中断处理结束后需要返回的 PC。</td>
+</tr>
+</tbody>
+</table>
+<p>接下来，我们具体描述如何实现CP0的各个功能。</p>
+<h4 id="读写状态寄存器">读写状态寄存器</h4>
+<p>这一个功能主要是用来实现 <code>mfc0,mtc0</code> 的。</p>
+<p>对于CP0的读写功能，我们主要用 <code>en</code>，<code>CP0Add</code>，<code>CP0In</code>，<code>CP0Out</code> 端口来完成任务即可。这个东西其实和普通的GRF差不多，读寄存器就把 <code>CP0Add</code> 对应的寄存器的值输出到 <code>CP0Out</code>，该写寄存器就写到 <code>CP0Add</code> 对应的寄存器即可。</p>
+<p>但是有一个需要注意的地方，CP0内的三个状态寄存器<strong>仅有部分位是有用的</strong>，对于无用位我们会选择将其<strong>始终维持在0</strong>，即初始化时置为0，写入时不向这些位进行写入。</p>
+<h4 id="进入异常中断处理程序">进入异常中断处理程序</h4>
+<p>这一个功能主要是用来实现异常中断处理的。</p>
+<p>从 <code>VPC</code> 开始，到 <code>HWInt</code> 结束（<code>EXLClr</code> 不在内，这个端口后面会具体说明），这些是我们判断是否进入异常中断处理程序的所有输入端口。我们来根据这些端口，以及以上给出的功能域信号的表格，填一下“异常中断处理思路”里给出的思路。</p>
+<ol>
+<li>CP0会先检查现在 <strong><code>EXL</code>是否为1</strong>（是否正在处理异常中断），再检查 <strong><code>ExcCodeIn</code>是否不为0</strong>（当前是否存在异常）和 <strong><code>HWInt&amp;IM</code>是否不为0且<code>IE</code>不为0</strong>（存在未被禁用的中断）。</li>
+<li>如果现在 <code>EXL</code> 为0，并且 <code>ExcCodeIn</code> 不为0或“<code>HWInt&amp;IM</code> 不为0且<code>IE</code>不为0”，那么CP0会将 <code>Req</code> 置为1，同时记录一下 <code>EPC</code> 、<code>BD</code>、<code>EXL</code>、<code>ExcCode</code> 的值，否则置为0。</li>
+<li>CPU在接收到 <code>Req</code> 为1之后，对CP0所在流水级及其之前的流水级进行“清空”（之后的流水级继续正常执行），并让PC直接跳转至异常中断处理地址（<code>0x4180</code>）。</li>
+</ol>
+<p><strong>额外的，独立于以上所有内容的是，只要没有 <code>reset</code> 信号，每个时钟周期都要记录一次 <code>IP</code>。</strong></p>
+<blockquote>
+<p>上面没有说明的是，这里的 <code>VPC</code> 应该接入什么呢？是PC寄存器当前的值吗？并不是。</p>
+<p>我们在这里需要插入一个“宏观PC”的概念。实际上，不论是CP0在处理异常，还是外部给CPU一个中断，在CP0和外部眼里，你的CPU表现的应该像是“一个有延迟槽的单周期CPU”，每条指令只有两个状态：执行完了和没执行（而不会细化到执行到了哪一级流水线）。</p>
+<p>（打个比方，这个概念有点类似于你在用Mars跑自己写的代码对拍P5P6的时候，实际上你并不关心这块CPU内部是长啥样的，有几个流水级，观察到的就是一个“有延迟槽的单周期CPU”。而当你观察Mars的PC时，看到的也不是5个流水线各自的PC是多少，而是一个“整体的PC值”。我们所引入的宏观PC就是这里的PC。）</p>
+<p>由于我们的CP0设置在了M级，异常处理就只能在M级来做，所以这个宏观PC的值就等同于M级PC的值，在CPU处理异常中断时，我们就认为M级PC的值是当前时刻的PC，也就是我们传入的 <code>VPC</code> 的来源。</p>
+</blockquote>
+<p>于是，CP0的判断功能被勾勒完了。</p>
+<p>接下来我们细说CP0记录的都是什么值：</p>
+<ul>
+<li>记录 <code>ExcCode</code> 时，如果当前同时有异常和中断，那么我们不应该直接记录 <code>ExcCodeIn</code>，而是应该记录成一个 <code>Int</code>。</li>
+<li>当 <code>BDIn</code> 为1时，表明发生异常中断的指令为延迟槽内的指令，此时我们应该让 <code>EPC</code> 记录 <code>VPC-4</code>，即延迟槽前一条指令（某个分支跳转指令），否则正常记录 <code>VPC</code>。</li>
+<li><code>EXL</code> 置为1。</li>
+<li><code>BD</code> 置为 <code>BDIn</code>。</li>
+</ul>
+<blockquote>
+<p>为什么 <code>BDIn</code> 为1时， <code>EPC</code> 应该记录 <code>VPC-4</code> 呢？</p>
+<p>对绝大多数情况来说，<code>EPC</code> 就是 <code>VPC</code> ，这个没错。但问题在于，如果对于分支跳转指令和其延迟槽内的指令呢？</p>
+<p>如果异常中断发生在了延迟槽内的指令，那么我们就要面对一个问题：我们无法单纯通过这条指令的运行结果判断分支跳转指令会把PC改成什么样。因此，我们必须让前一条分支跳转指令“重新跑一遍”，所以需要返回的地址也就变成了 <code>VPC-4</code> 。其余情况下，需要返回的地址就是 <code>VPC</code> 。</p>
+</blockquote>
+<h4 id="退出异常中断处理程序">退出异常中断处理程序</h4>
+<p>这一个功能主要是用来实现 <code>eret</code> 的。</p>
+<p>我们从D级的控制单元引出一个新的信号（记为 <code>ID_EXLClr</code> ），将其流水至M级后与 <code>EXLClr</code> 进行对接，当此时控制器所在级运行的指令为 <code>eret</code> 时，我们把这个信号置1，否则置0。</p>
+<p>当 <code>EXLClr</code> 置为1时，我们需要修改 <code>EXL</code> 为0。</p>
+<p>然后？没了。这个功能其实就是解除由 <code>EXL</code> 记录的异常中断处理状态而已。</p>
+<p>（当然，这个 <code>EXLClr</code> 后面还有一个作用，我们在改CPU的时候再说）</p>
+<p>接下来我们要展开的就是，CPU内除了产生异常信号，还应该对异常中断信号和指令做出什么回应。</p>
+<h4 id="CP0内信号的优先级问题">CP0内信号的优先级问题</h4>
+<p>实际上，只有 <code>req</code> 和其他信号是可能同时出现的，其他信号里两两不会同时出现，所以我们只需要明确 <code>req</code> 的优先级高于其他所有信号即可。</p>
+<h3 id="CPU的修改">CPU的修改</h3>
+<p>在原来的CPU部分，我们主要要多做两件事：</p>
+<ol>
+<li>根据 <code>req</code> 信号清空M级与其之前的流水级，并跳入异常中断程序；</li>
+<li>程序运行到 <code>eret</code> 的时候跳回正常程序。</li>
+</ol>
+<blockquote>
+<p>关于 <code>mfc0</code>， <code>mtc0</code> 和 <code>syscall</code>，我们会发现在根据以上内容搭完框架之后，这几条指令都变成了普通的新指令，所以我们不做展开叙述。（如果说有什么新东西的话，那就是这会带来一个读写CP0的新通路，但是这个东西做起来比加乘除模块还好搞，想必大家都已经非常熟练了吧）</p>
+</blockquote>
+<p>首先需要强调的是，<code>reset</code>，<code>req</code>，<code>ID_EXLClr</code> 和 <code>stall</code> 是四种信号，各个模块在接收到这些信号的表现是有不同的，有些时候不能进行粗暴的合并，这一点我们马上就会感觉到。</p>
+<p>（这里我相对于教程加了一个 <code>ID_EXLClr</code> 信号，主要也是用来应对 <code>eret</code> 这个指令的特殊性的，毕竟这条指令没延迟槽，运行到 <code>eret</code> 的时候需要清空一下延迟槽，并且跳入的PC来源也会发生改变，所以需要引入一个信号）</p>
+<p>前者其实看起来是比较好搞的，貌似就是给所有流水寄存器（M级到W级也要清空）发一个清空信号即可……吗？</p>
+<p>这就不得不提到一种特殊情况了。当我们产生阻塞信号时，D级到E级的流水寄存器会被清空一次，导致下一周期的E级会产生一个空泡，再下一个周期这个空泡就到了M级。而如果有一个中断恰好在空泡进入M级的时候产生，那么CP0就会选择处理这个中断，而此时CP0记录下的返回地址会是什么呢？</p>
+<p>没错，如果你产生空泡的方式是完全的清空所有寄存器，包括传递PC的寄存器，那么此时你会把返回地址记录成 <code>0x00000000</code>（或者 <code>0x00003000</code>，或者什么别的你实现的东西），这显然不符合我们的期望。</p>
+<p>同理，判断一条指令是否为延迟槽内指令的的信号也不能在阻塞的时候被暴力清空。</p>
+<p>而这只是针对 <code>stall</code> 信号的特殊情况，对于 <code>reset</code> 后刚开始的几个周期，也有可能产生类似的错误。因此我们需要对这四种信号产生的时候流水寄存器的行为做一个规定。</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>PC流水寄存器行为</th>
+<th>BD流水寄存器行为</th>
+<th>其他流水寄存器行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reset</code></td>
+<td>复位至 <code>0x00003000</code></td>
+<td>复位至 <code>0</code></td>
+<td>清空</td>
+</tr>
+<tr>
+<td><code>req</code></td>
+<td>设置为 <code>0x00004180</code></td>
+<td>设置为 <code>0</code></td>
+<td>清空</td>
+</tr>
+<tr>
+<td><code>ID_EXLClr</code> （仅对F级到D级流水寄存器起作用，<strong>且此时stall信号为0</strong>）</td>
+<td>设置为当前周期的 <code>EPC</code> 的值</td>
+<td>不发生变化</td>
+<td>清空</td>
+</tr>
+<tr>
+<td><code>flush</code>（仅指对D级到E级流水寄存器起作用的阻塞信号）</td>
+<td>不发生变化</td>
+<td>不发生变化</td>
+<td>清空</td>
+</tr>
+</tbody>
+</table>
+<p>以及，当这些信号中的某几个同时出现时，我们按照从上至下的优先级依次处理。</p>
+<p>Update(2024/11/26)：除此之外，我们还需要考虑一个问题：<code>eret</code> 在D级时就会发挥作用，而此时可能会出现一条 <code>mtc0</code> 将要写入 <code>EPC</code> 但未写入的情况。此时，我们应该<strong>增加一种阻塞情况</strong>，即当D级指令为 <code>eret</code> ，且E级或M级存在向 <code>CP0</code> 写入 <code>EPC</code> 的指令时，我们选择进行阻塞。</p>
+<p>总之，如此连接之后，对流水寄存器的信号操作应该是完全正确了。</p>
+<p>最后，我们在产生 <code>req</code> 信号的时候向 <code>PC</code> 写入 <code>0x00004180</code>，否则在产生 <code>EXLClr</code> 信号的时候向 <code>PC</code> 写入 <code>EPC</code>，对异常中断的处理就基本结束了。</p>
+<h2 id="用桥连接外设">用桥连接外设</h2>
+<p>这一步相对于前面的东西来说，实际上没啥好说的，首先导入教程里给的 Timer，然后写一个Bridge，最后在 <code>mips.v</code> 里把线连一下，没了。</p>
+<p>（平心而论，这段教程给的信息其实足够了）</p>
+<p>我只在这里描述一下Bridge里有啥端口吧，当你知道有啥端口之后，实际实现真的很简单。</p>
+<p>我们需要的端口有：</p>
+<ul>
+<li>CPU对外设的读写地址，字节写入使能，读取数据端口；</li>
+<li>DM的读写地址，字节写入使能，读取数据端口；</li>
+<li>Timer0和Timer1的读写地址，写入使能，读取数据端口；</li>
+<li>中断发生器的写入地址，字节写入使能端口。</li>
+</ul>
+<p>没了（</p>
+<h1>课上考试题目简述与思路</h1>
+<h2 id="题目简述">题目简述</h2>
+<p>第一次P7的课上测试包含5道题，其中前4道题为对课下部分的强测（功能强测，异常强测，中断强测，冒险强测），最后一题为新增指令题，新增指令为 <code>withdraw</code>。</p>
+<p>关于 <code>withdraw</code>，其只有一种编码：<code>0x04000000</code>（<code>opcode</code> 为 <code>0b000001</code>），作用大致为撤销最后一次 <code>sw</code> 操作。</p>
+<p>具体来说，题目要求在CP0中添加 <code>18,19,20,21</code> 号寄存器，其中 <code>$18</code> 和 <code>$19</code> 分别存储当前 <code>withdraw</code> 指令可以撤销的写入地址的上界和下界（左闭右开），<code>$20</code> 存储上一次成功执行的 <code>sw</code> 指令的写入地址，<code>$21</code> 存储上一次成功执行的 <code>sw</code> 指令写入地址的原数值。这四个寄存器都允许通过 <code>mfc0</code> 进行读取，但仅 <code>$18</code> 和 <code>$19</code> 允许通过 <code>mtc0</code> 进行写入， <code>$20</code> 和 <code>$21</code> 仅能在 <code>sw</code> 指令被正确运行时被进行修改。</p>
+<p>当 <code>withdraw</code> 指令到达M级时，若 <code>CP0[$19] &lt;= CP0[$20] &lt; CP0[$18]</code>，则 <code>DM[CP0[$20]] &lt;= CP0[$21]</code>，否则报出 <code>AdES</code> 异常。</p>
+<p>若 <code>withdraw</code> 指令运行之前不存在任何一条 <code>sw</code> 被运行，则此次指令运行被忽略，即不进行任何操作。</p>
+<p>保证测试数据中不会出现使用 <code>mtc0</code> 写入CP0中  <code>$20</code> 和 <code>$21</code> 的指令。</p>
+<p>保证 <code>CP0[$18] &lt; CP0[$19]</code>，且 <code>CP0[$18],CP0[$19]</code> 均已对齐（可被4整除）且均在DM存储范围内。</p>
+<h2 id="实现思路">实现思路</h2>
+<p>内容很多，但是可以一点点来。</p>
+<p>首先，作为集成在CP0的寄存器，我们可以先把最基本的常规读写功能写好。</p>
+<p>然后我们注意到，整个题目实际上就是 <code>sw</code> 和 <code>withdraw</code> 进行各种交互，所以我们可以先添加 <code>sw</code> 指令对CP0的更多影响，再尝试加入 <code>withdraw</code> 本体。</p>
+<p>对于加入 <code>sw</code> 对CP0的影响，我们需要这样几个信息：当前指令是否是 <code>sw</code>，当前指令写入地址是多少，当前指令写入地址原数值是多少。如果当前 <strong><code>req</code> 为0</strong> 且指令为 <code>sw</code>，则对 <code>$20</code> 和 <code>$21</code> 进行更新即可。</p>
+<p>而对于 <code>withdraw</code> 本体来说，则需要对CP0内和CPU两段都进行修改（对CP0内修改是因为异常判断最好是在CP0内搞定，或者就需要把 <code>$18</code> 和 <code>$19</code> 引出CP0做判断再把结果引回来）。对CP0来说，我们需要一个新的1位寄存器信号（记为 <code>exist_sw</code>）记录一下在运行该指令前是否已经出现了正常运行的 <code>sw</code> 指令，将该信号和 <code>$20</code> 和 <code>$21</code> 暴露为三个输出，用于后续操作。此外，我们需要新增一种 <code>req</code> 为1的情况，即当前指令为 <code>withdraw</code>，且之前已经有过对 <code>sw</code> 的修改，且不满足 <code>CP0[$19] &lt;= CP0[$20] &lt; CP0[$18]</code> ，且 <code>EXL</code> 不为1的情况。</p>
+<p>而在整个CPU进行修改的话，我们主要是需要加入 <code>withdraw</code> 对内存的写入，即在M级当前运行指令为 <code>withdraw</code> 时，若 <code>exist_sw</code> 为1，则向DM写入，否则不做任何操作。（如果你之前实现“<code>req</code> 为1时不进行对DM的任何写入”这一步做的比较可扩展，那么你不需要再做任何操作，否则还需要考虑一下这个）</p>
+<p>然后？</p>
+<p>你做完了。</p>
+<p>恭喜AC！并且，恭喜AK！</p>
+<h1>在CO之前……</h1>
+<p>就像是我本想纪念，但是已经消失的回忆一样，这部分内容也莫名其妙的消失了。</p>
+<p>我想，你应该能用下面这一段，在我的博客设法找出来点什么。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">now, it&#x27;s time to Leave CO Behind.</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>计算机组成原理</tag>
+        <tag>Verilog</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>问好。</title>
     <url>/2024/08/25/hello/</url>
     <content><![CDATA[<h1>你好！</h1>
@@ -2717,6 +2657,74 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 ]]></content>
       <tags>
         <tag>hello world!</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>北航2024面向对象程序先导课程心得</title>
+    <url>/2024/10/31/BUAA-OOpre-2024/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第4篇文章！</p>
+<p>本文章即将作为该课程结课作业提交至CSDN！</p>
+<h1>北航2024面向对象程序先导课程心得</h1>
+<h2 id="前言">前言</h2>
+<p>在知道这课有博客作业之前，我是动过心思把这课内容写在博客上的，后来犯懒了没做，没想到现在不得不写了（</p>
+<p>既然作为作业，那就有作业必须要有的内容，从整体架构到各类心得体会，还有课程建议，这些都是必选项。不过在此之外，我觉得也应该在这里留一些给后人的提示，毕竟如果你是通过<a href="https://lazyfish-lc.github.io/">我的博客</a>看这个文章的话，那也许你是希望学到一点东西的。</p>
+<p>希望各位能通过这个课程和我的博客，能够对面向对象设计的模式有一点理解，至少最好摆脱可能会有的大一的抽象命名和混乱架构（</p>
+<h2 id="整体架构">整体架构</h2>
+<p><img src="AdventureGame.png" alt="整体架构图"></p>
+<p>由于这几次作业的迭代任务较为简单，以及最后一次作业实际上给了完成度较高的代码，所以实际上我所完成的结构比较简单扁平。大体上说，我的架构可以分为以下几部分：</p>
+<ul>
+<li>副本相关：由Shd，Flm，Stn，Wnd，Frz类管理副本内怪物信息，各怪物具有其Treasure类管理各怪物守卫的宝藏信息，TreasureFactory类作为宝藏工厂。以上内容由AdventureSideGame类统一管理，负责协助AdventureGame类处理冒险者挑战副本的请求。</li>
+<li>药水和装备：由Bottle类管理单个药水信息，Equipment类管理单个装备信息，二者均存在各个派生类管理不同类型的药水或装备信息。</li>
+<li>仓库和背包：由Repository类管理冒险者拥有的药水和装备信息，并让继承Repository类的Backpack类管理冒险者携带的药水和装备信息。</li>
+<li>冒险者：由Adventurer类管理单个冒险者信息，包含基本信息与状态，物品仓库与背包，持有碎片，雇佣关系。</li>
+<li>主要游戏：由AdventureGame类作为核心，管理所有冒险者的信息，处理来自AdventureGameCommand类解析出的各类请求，并记录最后一次操作产生的输出信息。</li>
+<li>IO与输入处理：由AdventureProgram类进行IO操作，读入数据经过AdventureGameCommand解析后发送给AdventureGame进行处理。</li>
+</ul>
+<p>可以看得出来，这个结构比较扁平，很好理清楚思路，所以迭代开发的时候几乎不需要费什么力气就能找到该在哪里加东西，该怎样对原有函数的某部分进行修改，学习起来的时候也能一下就捋清楚。</p>
+<p>但是其实迭代后期对于雇佣关系的处理还是略显混乱，对本应做成观察者模式的援助和解雇操作还是没有做的很好，文件结构上也没有很好的对各个类进行更细致的分门别类，总而言之就是，还能调。</p>
+<h2 id="迭代要点记录">迭代要点记录</h2>
+<h3 id="初次作业——准确的判断？">初次作业——准确的判断？</h3>
+<p>从第一次作业的结果来看，实际上当时我就意识到了层次化的重要性，把文件连续拆了好几层。当时的整体框架是，AdventureProgram作为IO和输入处理，然后AdventureGame管理各个冒险者，让冒险者管理各个药水和装备，这也算是为后续开发开了个层次化的好头吧。</p>
+<p>同时，从这次作业开始就经常有人把跟头栽在了for循环内删元素的操作，也算是对未来的一个警醒吧，一开始测试ArrayList玩，触发这个问题之后我应该是没有这么干过。</p>
+<p>不过和后续相比，没有仓库和背包也算是给自己留的第一个改进点，毕竟当时确实没法想到还有携带和非携带的区别。</p>
+<h3 id="迭代开始——一个可以打磨的细节">迭代开始——一个可以打磨的细节</h3>
+<p>第二次作业和第一次作业相比，主要是添加了三个概念：药水的使用，更多药水，战力和攻防。药水使用就是新添一个是否使用的属性和操作属性的方法（当时只需要从没用过到用过，做个use即可），更多药水主要是用继承来做好各类药水，战力主要是添加接口来约束类内的战力计算。顺便，我当时把仓库类提前做了出来，并且“跟着OIer的直觉”给很多ArrayList换成了HashMap，也算是为未来做了一个提前规划吧。</p>
+<p>以及，仓库类的出现也让我提早一周意识到了删除操作要同时对仓库和背包进行，未来看到许多人这么挂的时候，我倒是非常感谢自己了（</p>
+<p>但是当时设计的一个问题就是，我们在做可以饮用的更多药水瓶的时候，肯定是有饮用后要给冒险者加成的效果，这就要求所有药水都要有一个给冒险者加成的方法，然而我当时的做法是给Bottle类加个getEffect返回加成的值，然后其他子类都重载这个函数，再在Adventurer的饮用药水瓶方法里把加成加到冒险者身上。</p>
+<p>现在思考过来，既然从这次作业开始Bottle这个基类不会也不应该被创建出来，并且药水瓶产生加成的计算逻辑主要是在药水瓶身上，那还有另一种处理方法：给Adventurer类添加一些增加攻击力防御力血量的方法（这个方法是相对稳定不变的），饮用药水的时候调用药水的use方法，然后方法内使药水调用Adventurer的增加属性方法，这个处理是否更好呢？不过考虑到这个写法的耦合情况，我直到现在都是比较犹豫的。</p>
+<h3 id="继续迭代——失误，反思">继续迭代——失误，反思</h3>
+<p>这次迭代充分证明了当时对仓库和背包拆分的正确性，但是也因此产生了一个带走强测整整40分的bug，所以我也说不上好坏了。</p>
+<p>装备类型的细化很好说，类似上次迭代一样如法炮制即可，受击血量的计算我沿袭了之前对药水的处理，把对冒险者状态的操作写进了Adventure类，战斗功能就是在这个基础上对一个ArrayList里的防御者遍历两遍而已。碎片兑换也是一个比较好维护的东西，开个HashMap也可以快速解决。</p>
+<p>至于背包，重名问题很好解决，HashMap解君愁。然而先前的设计模式带给了我第二个问题：如何更新背包最大容量呢？这个问题其实和药水的饮用，装备的攻击差不了多少，但是最大的区别就是背包塞入物品的时候需要时刻获取冒险者的攻防和。那么在背包不知道自己的主人的情况下，这个“时刻”该怎么做呢？答案是：我当时不知道为啥，忘了这茬，压根就没更新过背包最大容量。于是，-40。</p>
+<p>来到bug修复，发现这个问题之后，我麻了。最后的解决方法比较草率，每次添加瓶子的时候多传一个参数表示最大可装同名瓶子数。现在再看的话，或许我会选择让背包记录一个主人？毕竟，一个背包还能有两个主人吗（x）</p>
+<h3 id="最后迭代">最后迭代</h3>
+<p>感觉这次迭代可说的就比较少了。雇佣与援助系统和观察者模式联系紧密，递归攻击纯粹考基本功（和HashSet的使用），秘境工厂副本考工厂模式（然而课程组直接给代码了）。没有什么特别可圈可点的迭代问题。</p>
+<h2 id="心得体会">心得体会</h2>
+<h3 id="关于JUnit的使用——相信，但是别偏信">关于JUnit的使用——相信，但是别偏信</h3>
+<p>这几次作业里，我经常听到很多同学有这么一句话：我JUnit写的挺敷衍的，要不你再看看有啥问题吧。很不幸的是，我写的不那么敷衍，但是还是被刀了40分。</p>
+<p>其实，JUnit确实是个很方便的东西，单元测试可以让你对某一个单元进行非常细致的尝试，而不需要考虑针对整个项目或者部分项目的极其难以构造（还不一定覆盖的全）的样例。然而……</p>
+<blockquote>
+<p>单元测试正确不意味着连接就正确。——AOSTL（</p>
+</blockquote>
+<p>然后我就对单元测试产生了标题里的态度了。JUnit该写全写全，一定能发现绝大多数问题，但是各类连接问题还是需要看原函数咋写的，有时候甚至得脑测几遍。</p>
+<p>单元样例的构造也是一个艺术。比如说对于递归攻击的样例构造，我当时选用的是一个深度为7的满二叉树，攻击其中一个靠底层的节点，一个根节点，然后这两个节点的雇佣关系有一点重叠，这样一次性也许就能测出一堆问题。还有诸如“A雇佣B，B攻击A，攻击用武器只有1点耐久”的离谱情况，这也是一个单元测试就能干的，但是……很离奇，需要一点智慧和对规则的理解（</p>
+<h2 id="关于面向对象——条理与简化条理">关于面向对象——条理与简化条理</h2>
+<p>面向对象相对于面向过程的最大区别就是，面向对象里什么东西都要作为对象处理，这也就疯狂引导你去思考如何优雅的把某个事务的某些特征打包成一整个类。从整体上来说，一级又一级的类替代了单纯打包数据的结构体，类内约束好的方法和属性替代了散落一地的函数和变量，整个项目在你眼前会一下就变得清晰而简单。</p>
+<p>继承，封装和多态则是从不同的方面去帮助你完成这个思考过程的特性。继承不用多说，一个是代码复用的想法，一个是提取共性的想法；封装则是希望你不去关注一个类的过多的细节，从而在类与类交互时不要搞出各类混乱的互相操作；多态则更像是一种“偷懒的艺术”，对不同对象做极为类似的操作时，不需要在调用方法的时候思考什么方法精准适配这个类，而是可以直接一股脑的丢进一组功能相似，内容不同的函数的某一个里进行处理。</p>
+<p>总体来说，面向对象像是在传达这样一个信息：顾全大局，做好框架之后，再去深入细节。</p>
+<h2 id="关于CheckStyle——约束与可维护">关于CheckStyle——约束与可维护</h2>
+<p>初学OOpre时，CheckStyle对很多人来说都是一个紧箍咒，我身边的朋友就曾跟我抱怨过这玩意让他变量命名做的非常……难受。后来他因为第一次迭代写的挺乱而第二次被迫重构了。然而，使用CheckStyle之后，我也没见过几个debug非常困难的朋友了，很多时候他们能快速捋清楚代码内容了（这和我上学期对数据结构课的debug形成鲜明对比）。所以，这玩意在大二初就出现，可以说是一种对6系学生的最大的收获了。很多时候，如果你不去痛苦的学习一个让自己受益终身的东西（或者工具方法，或者课程学业），你永远感觉不到这玩意的好处，我想这就是CheckStyle在课程里出现的意义所在吧。</p>
+<h2 id="对课程的建议">对课程的建议</h2>
+<p>嗯……老实说，OOpre算是我在大二上感觉非常舒服的一门课程，感觉确实能学到很多东西。但是，在迭代开发任务之外的各类debug和填充代码的任务，却总是让人感觉……如学，好像什么都没学到一样（也许可能学到了什么？），或许课程组可以尝试对这部分零散的作业再开发开发？</p>
+<h2 id="结语">结语</h2>
+<p>想说的也都说完了其实。未来的OO正课将会强度爆炸，但我仍然坚信每个人都有在这门课里拨云见日的时候。</p>
+<p>祝大家OO正课愉快！</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>OO</tag>
+        <tag>面向对象程序先导</tag>
+        <tag>OOpre</tag>
       </tags>
   </entry>
 </search>
