@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>北航2025面向对象设计与构造第二单元总结 | Lazyfish &amp; chilly_river</title><meta name="author" content="Lazyfish"><meta name="copyright" content="Lazyfish"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="你好！本文章为该博客的第十二篇文章！ 本文章包含北航2025面向对象设计与构造第二单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。 本文章已经投送至本单元博客作业！ 可能你已经发现了，本文章并未在完成后被及时投送至博客中，所以这其实是一个有点失去时效性的填坑投稿…… 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突">
+<meta property="og:type" content="article">
+<meta property="og:title" content="北航2025面向对象设计与构造第二单元总结">
+<meta property="og:url" content="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit2/index.html">
+<meta property="og:site_name" content="Lazyfish &amp; chilly_river">
+<meta property="og:description" content="你好！本文章为该博客的第十二篇文章！ 本文章包含北航2025面向对象设计与构造第二单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。 本文章已经投送至本单元博客作业！ 可能你已经发现了，本文章并未在完成后被及时投送至博客中，所以这其实是一个有点失去时效性的填坑投稿…… 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突">
+<meta property="og:locale">
+<meta property="og:image" content="http://lazyfish-lc.github.io/img/bg13.jpg">
+<meta property="article:published_time" content="2025-08-11T12:39:08.000Z">
+<meta property="article:modified_time" content="2025-08-11T12:56:34.168Z">
+<meta property="article:author" content="Lazyfish">
+<meta property="article:tag" content="BUAA">
+<meta property="article:tag" content="面向对象设计与构造">
+<meta property="article:tag" content="OO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lazyfish-lc.github.io/img/bg13.jpg"><link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/67375982"><link rel="canonical" href="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":3,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '北航2025面向对象设计与构造第二单元总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-11 20:56:34'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/bg13.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Lazyfish &amp; chilly_river"><img class="site-icon" src="https://avatars.githubusercontent.com/u/67375982"/><span class="site-name">Lazyfish &amp; chilly_river</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">北航2025面向对象设计与构造第二单元总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-08-11T12:39:08.000Z" title="Created 2025-08-11 20:39:08">2025-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-08-11T12:56:34.168Z" title="Updated 2025-08-11 20:56:34">2025-08-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>8mins</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title="北航2025面向对象设计与构造第二单元总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">Comments:</span><a href="/2025/08/11/BUAA-OO-Unit2/#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>你好！本文章为该博客的第十二篇文章！</p>
+<p>本文章包含北航2025面向对象设计与构造第二单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。</p>
+<p>本文章已经投送至本单元博客作业！</p>
+<p>可能你已经发现了，本文章<strong>并未在完成后被及时投送至博客中</strong>，所以这其实是一个有点失去时效性的填坑投稿……</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>北航2025面向对象设计与构造第二单元总结</h1>
+<h2 id="前言">前言</h2>
+<p>经过本单元的作业和反思之后，我所得出的最重要的经验是：解决问题的应该是好的设计，但好的设计来源于广泛持久的学习。</p>
+<h2 id="架构迭代过程与设计">架构迭代过程与设计</h2>
+<h3 id="架构迭代过程概述">架构迭代过程概述</h3>
+<h4 id="架构总体设计">架构总体设计</h4>
+<p>本单元作业整体架构如下：</p>
+<ol>
+<li>参考了“生产者——消费者模式”，将输入和主调度器通过独立的请求队列进行分离；</li>
+<li>主调度器下分设各个管理单电梯的调度器，将乘客选择电梯和乘客乘坐电梯分离；</li>
+<li>设置抽象的电梯控制类（或接口），通过子类实现具体方法，保证电梯内调度方式的可扩展性。</li>
+<li>分设电梯控制类和电梯资源类，由控制类负责资源类的资源调度，将电梯控制与电梯资源管理分离；</li>
+</ol>
+<h4 id="第一次迭代变化">第一次迭代变化</h4>
+<p>此时尚未进行输入和主调度器的分离，请求队列放在主调度器中。</p>
+<p>为比对ALS调度方法和LOOK调度方法的优劣，在初期就确定了给出抽象的电梯控制父类的设计。尽管后续设计中把ALS调度方法彻底抛弃了，但这个设计恰好同时解决了双轿厢电梯控制的问题，因此这是一个成功的设计。</p>
+<p>第一次迭代后，类图如下：</p>
+<p><img src="ClassDiagram1.svg" alt="第一次迭代类图"></p>
+<h4 id="第二次迭代变化">第二次迭代变化</h4>
+<p>此时需要将临时调度引发的未完成请求传回请求队列中，所以需要将请求队列和主调度器进行分离。</p>
+<p>由于临时调度的增加，一方面需要在请求队列中增加对临时调度请求，另一方面需要为电梯控制类加入处理该类请求的方法和调度过程，将其接入处理过程中。</p>
+<p>由于电梯间调度需要主控自行控制，需要对各个电梯评分，因此给电梯控制类加入了评分方法，并设置了相应的模拟电梯运行的类。（此时ALS调度方法接近于被弃用，未准备完整的计算评分的类）</p>
+<p>第二次迭代后，类图如下：</p>
+<p><img src="ClassDiagram2.svg" alt="第二次迭代"></p>
+<h4 id="第三次迭代变化">第三次迭代变化</h4>
+<p>第三次迭代中，在处理双轿厢电梯升级过程时，需要终止原有的电梯控制线程，因此，需要在原有的电梯控制类中加入由于电梯升级而终止线程的方法。</p>
+<p>同时，双轿厢电梯控制类的控制也值得讨论。由于其本身由两个互相独立运行而又有所约束的电梯组成，所以需要两个线程来管理电梯资源，这就意味着双轿厢电梯控制类本质上是在控制两个独立的电梯控制类，由双轿厢电梯控制类来进行乘客的分配控制，由子电梯控制类关注电梯资源调度本身和对换乘楼层的处理。</p>
+<p>（这里按理来说应该新开一个双轿厢电梯内的单轿厢电梯控制类，但是考虑到迭代需求相对简单，故在原LOOK电梯控制类进行了锁的扩展以同时完成原需求和新需求）</p>
+<p>一个相对简洁（甚至有点偷懒）的设计细节是，在完成双轿厢电梯控制类的创建之后，双轿厢电梯控制类不需要运行额外的线程，只需要在请求到来时决定分配给哪一部电梯即可。</p>
+<p>第三次迭代后，类图如下：</p>
+<p><img src="ClassDiagram3.svg" alt="第三次迭代类图"></p>
+<p>同时，UML协作图如下：</p>
+<p><img src="SequenceDiagram.jpg" alt="UML协作图"></p>
+<h3 id="锁与同步的运用">锁与同步的运用</h3>
+<p>考虑到本单元在使用多个锁时容易出现死锁问题，故在前两次迭代中仅选择使用 <code>synchronized</code> 块来进行同步互斥的保证。具体而言：</p>
+<ol>
+<li>对于 <code>MainCtrl</code> ，以及 <code>ElevatorCtrl</code> 的各子类的添加请求和发送停止输入的方法，使用 <code>synchronized</code> 进行修饰；</li>
+<li>对于各类中查询“是否存在未完成请求”与“是否可进入新请求”的方法，使用 <code>synchronized</code> 进行修饰；</li>
+<li>对于 <code>MainCtrl.run()</code> 中需要访问 <code>MainQueue</code> 的代码块，使用<code>synchronized</code> 块进行修饰；</li>
+<li>对于 <code>MainCtrl.run()</code> 和 <code>LookElevatorCtrl.run()</code> 中，不存在请求时需要等待的情况，使用 <code>synchronized</code> 块进行修饰。</li>
+</ol>
+<p>在第三次迭代中，由于涉及双轿厢电梯占用同一楼层的情况需要进行维护，故额外维护一个类型为 <code>Lock</code> 的 <code>floorLock</code> 属性，在 <code>LookElevatorCtrl.move()</code> 方法中采用 <code>floorLock</code> ，以及采取让权等待的原则，保证换乘楼层仅存在一个电梯且不被长时间占用。</p>
+<p>此外，对于非共享的各个变量，并未采用任何同步块，故锁的使用和同步块互不重合。</p>
+<h3 id="调度器设计">调度器设计</h3>
+<h4 id="第一次迭代">第一次迭代</h4>
+<p>由于此时乘客存在指定电梯的请求，故此时无需对电梯间调度做任何设计。</p>
+<p>对于电梯内调度乘客进出的请求，在ALS和LOOK两种策略间选择采用LOOK策略（即，电梯倾向于保持自己的运动方向，仅在当前运动方向上无可接收的乘客请求，且电梯内无需要向该方向运动的请求时，电梯才会尝试改变运动状态），该策略在请求较多时效率较为优秀。</p>
+<h4 id="第二次迭代">第二次迭代</h4>
+<p>此时对电梯内调度未进行任何修改。</p>
+<p>对于电梯间乘客请求的分配问题，遵循如下原则：</p>
+<ol>
+<li>尽量优先为优先级最高的乘客进行分配。</li>
+<li>宁可晚分配乘客请求，也不能把乘客分配到过于拥堵的电梯。</li>
+<li>期望所有电梯中最晚停止的电梯的停止时间最早。</li>
+</ol>
+<p>因此，对调度器进行了如下设计：</p>
+<ol>
+<li>每次尝试为优先级最高的乘客进行分配，若分配失败则停止分配一段时间；</li>
+<li>分配乘客时，对于每个电梯，首先判断该请求是否可分配给该电梯，若可行则给出一个评分，最后将乘客优先分配给分数最低的电梯。</li>
+<li>判断请求可以进入该电梯的要求为：
+<ol>
+<li>该电梯当前未处于临时调度中；</li>
+<li>该电梯当前已接收未解决请求个数在12个以内；</li>
+<li>该电梯在沿当前方向运动再折返一次之后，有机会使该请求进入电梯中。（即，该请求运动方向和电梯方向不一致，或者电梯尚未到达该请求当前所在楼层）</li>
+</ol>
+</li>
+<li>分数的计算方法为电梯从当前时刻开始，到完成所有请求的时间。</li>
+</ol>
+<p>一句话总结：一个限制人数，防止多次折返，不允许乘客中途下电梯的影子电梯。</p>
+<p>可以看得出来，这个调度思路实际上是最关注电梯运行时间的（直接的评价指标），其次是优先级带来的影响（优先取最高优先级的乘客），最后对耗电量实际上也有所关注（在不影响前述要求下，尽量使用最少的来回完成请求）。</p>
+<h4 id="第三次迭代">第三次迭代</h4>
+<p>第三次迭代在调度方法上延续了第二次迭代的思路，并未进行较大的改变。</p>
+<p>但是，由于双轿厢电梯的加入，使得一些情况下乘客不得不中途下电梯进行换乘。考虑到电梯开关门带来的时间开销，以及换乘电梯带来的耗电量开销，期望让乘客进行较少的换乘。</p>
+<p>给出的解决方案是，将上述分数的计算方法调整为“完成所有请求的时间除以该乘客在本次乘坐电梯中实际运动的路程”，可以在一定情况下解决多次跨电梯换乘的问题。</p>
+<h2 id="bug检测与成因分析">bug检测与成因分析</h2>
+<p>在前两次迭代的强测与互测中，均未被找出任何bug。但在此时通过中测的过程中确实出现了一些修复bug的过程（主要是解决死锁）。</p>
+<p>在第三次迭代中，我在互测找出他人一个bug，同时我的程序被找出了一个bug。我找出的他人的bug在于，在其程序短时间接收大量同时发送的请求时，会由于请求的丢失产生死锁。我产生的bug在于，在双轿厢电梯对换乘楼层的处理中，出现了“电梯此时停止，但电梯认为此时其仍在运动”的情况，导致其无法接收新的请求，当所有双轿厢电梯出现了这样的问题且不存在其他电梯时，便会产生无法接收请求的死锁。</p>
+<p>在三次迭代中，我的debug方法是通过向标准输出中增加一些运行信息，通过检查运行信息的确实来定位引发死锁的位置。</p>
+<p>此外，在三次迭代中，借助自行实现的评测机，我发现了大量手工构造样例难以解决的corner case，当然第三次迭代中的互测bug也证明了手工构造样例的重要性。</p>
+<h2 id="心得体会">心得体会</h2>
+<p>在三次迭代中，我时常担心自己的设计会出现严重且难以修复的死锁bug，所以对于相当多的同步互斥的优化（比如读写锁之类的），我都没有选择采用。事后回过头来分析，虽然我确实做到了没有大的bug出现，但是也少了一个锻炼多线程能力的机会（当然，后来在OS课上又锻炼了回来）。</p>
+<p>可能最大的一个冒险的决策就是，我选择采用了影子电梯的优化。</p>
+<p>很难说以上所有的决策是否正确，也很难说采用这些优化后我的性能分是否真的会有所提升，但是这个单元确实平稳结束了。</p>
+<h2 id="结语">结语</h2>
+<p>解决问题的应该是好的设计，但好的设计来源于广泛持久的学习。</p>
+<p>我的意思是，我们总是需要多尝试应用所学的知识，才能把设计做的更为优秀，而非避开应用知识带来的问题。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io">Lazyfish</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit2/">http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/BUAA/">BUAA</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%9E%84%E9%80%A0/">面向对象设计与构造</a><a class="post-meta__tags" href="/tags/OO/">OO</a></div><div class="post_share"><div class="social-share" data-image="/img/bg13.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结"><img class="cover" src="/img/bg5.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous</div><div class="prev_info">北航2025面向对象设计与构造第三单元总结</div></div></a></div><div class="next-post pull-right"><a href="/2025/06/16/BUAA-OS-shell-challenge/" title="北航2025 OS shell挑战性任务实现指导"><img class="cover" src="/img/deep_sea.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">北航2025 OS shell挑战性任务实现指导</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结"><img class="cover" src="/img/bg2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-15</div><div class="title">北航2025面向对象设计与构造第一单元总结</div></div></a></div><div><a href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结"><img class="cover" src="/img/bg5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">北航2025面向对象设计与构造第三单元总结</div></div></a></div><div><a href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结"><img class="cover" src="/img/bg4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">北航2025面向对象设计与构造第四单元&amp;全课程总结</div></div></a></div><div><a href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img class="cover" src="/img/bg-2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-01</div><div class="title">北航2025面向对象设计与构造第一次作业思路简述</div></div></a></div><div><a href="/2024/10/31/BUAA-OOpre-2024/" title="北航2024面向对象程序先导课程心得"><img class="cover" src="/img/bg10.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-31</div><div class="title">北航2024面向对象程序先导课程心得</div></div></a></div><div><a href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析"><img class="cover" src="/img/bg13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-28</div><div class="title">北航CO 2024 P3课上部分题目回忆与分析</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Lazyfish</div><div class="author-info__description">The way through past, present and future.</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lazyfish-lc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">你好！这里是懒鱼！有建议的话请务必在“关于”页中提出！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">北航2025面向对象设计与构造第二单元总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%BF%AD%E4%BB%A3%E8%BF%87%E7%A8%8B%E4%B8%8E%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.</span> <span class="toc-text">架构迭代过程与设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%BF%AD%E4%BB%A3%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">架构迭代过程概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">架构总体设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%AD%E4%BB%A3%E5%8F%98%E5%8C%96"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">第一次迭代变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%BF%AD%E4%BB%A3%E5%8F%98%E5%8C%96"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">第二次迭代变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E8%BF%AD%E4%BB%A3%E5%8F%98%E5%8C%96"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">第三次迭代变化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E4%B8%8E%E5%90%8C%E6%AD%A5%E7%9A%84%E8%BF%90%E7%94%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">锁与同步的运用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E5%99%A8%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.3.</span> <span class="toc-text">调度器设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">第一次迭代</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">第二次迭代</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">第三次迭代</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bug%E6%A3%80%E6%B5%8B%E4%B8%8E%E6%88%90%E5%9B%A0%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">bug检测与成因分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%83%E5%BE%97%E4%BD%93%E4%BC%9A"><span class="toc-number">1.4.</span> <span class="toc-text">心得体会</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结"><img src="/img/bg4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第四单元&amp;全课程总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结">北航2025面向对象设计与构造第四单元&amp;全课程总结</a><time datetime="2025-08-11T12:55:15.000Z" title="Created 2025-08-11 20:55:15">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结"><img src="/img/bg5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第三单元总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结">北航2025面向对象设计与构造第三单元总结</a><time datetime="2025-08-11T12:53:45.000Z" title="Created 2025-08-11 20:53:45">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结"><img src="/img/bg13.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第二单元总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结">北航2025面向对象设计与构造第二单元总结</a><time datetime="2025-08-11T12:39:08.000Z" title="Created 2025-08-11 20:39:08">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/16/BUAA-OS-shell-challenge/" title="北航2025 OS shell挑战性任务实现指导"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025 OS shell挑战性任务实现指导"/></a><div class="content"><a class="title" href="/2025/06/16/BUAA-OS-shell-challenge/" title="北航2025 OS shell挑战性任务实现指导">北航2025 OS shell挑战性任务实现指导</a><time datetime="2025-06-16T13:20:01.000Z" title="Created 2025-06-16 21:20:01">2025-06-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结"><img src="/img/bg2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第一单元总结"/></a><div class="content"><a class="title" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结">北航2025面向对象设计与构造第一单元总结</a><time datetime="2025-04-15T02:46:58.000Z" title="Created 2025-04-15 10:46:58">2025-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Lazyfish</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    GLOBAL_CONFIG_SITE.isPost && getCount()
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

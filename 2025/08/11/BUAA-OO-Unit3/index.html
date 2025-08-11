@@ -1,0 +1,349 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>北航2025面向对象设计与构造第三单元总结 | Lazyfish &amp; chilly_river</title><meta name="author" content="Lazyfish"><meta name="copyright" content="Lazyfish"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="你好！本文章为该博客的第十三篇文章！ 本文章包含北航2025面向对象设计与构造第三单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。 本文章已经投送至本单元博客作业！ 可能你已经发现了，本文章并未在完成后被及时投送至博客中，所以这其实是一个有点失去时效性的填坑投稿…… 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突">
+<meta property="og:type" content="article">
+<meta property="og:title" content="北航2025面向对象设计与构造第三单元总结">
+<meta property="og:url" content="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit3/index.html">
+<meta property="og:site_name" content="Lazyfish &amp; chilly_river">
+<meta property="og:description" content="你好！本文章为该博客的第十三篇文章！ 本文章包含北航2025面向对象设计与构造第三单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。 本文章已经投送至本单元博客作业！ 可能你已经发现了，本文章并未在完成后被及时投送至博客中，所以这其实是一个有点失去时效性的填坑投稿…… 需要注意的是，本文仅完全适用于北航2025OO课程，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突">
+<meta property="og:locale">
+<meta property="og:image" content="http://lazyfish-lc.github.io/img/bg5.jpg">
+<meta property="article:published_time" content="2025-08-11T12:53:45.000Z">
+<meta property="article:modified_time" content="2025-08-11T12:54:55.420Z">
+<meta property="article:author" content="Lazyfish">
+<meta property="article:tag" content="BUAA">
+<meta property="article:tag" content="面向对象设计与构造">
+<meta property="article:tag" content="OO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lazyfish-lc.github.io/img/bg5.jpg"><link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/67375982"><link rel="canonical" href="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":3,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '北航2025面向对象设计与构造第三单元总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-11 20:54:55'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/bg5.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Lazyfish &amp; chilly_river"><img class="site-icon" src="https://avatars.githubusercontent.com/u/67375982"/><span class="site-name">Lazyfish &amp; chilly_river</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">北航2025面向对象设计与构造第三单元总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-08-11T12:53:45.000Z" title="Created 2025-08-11 20:53:45">2025-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-08-11T12:54:55.420Z" title="Updated 2025-08-11 20:54:55">2025-08-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>12mins</span></span><span class="post-meta-separator">|</span><span id="" data-flag-title="北航2025面向对象设计与构造第三单元总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">Comments:</span><a href="/2025/08/11/BUAA-OO-Unit3/#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>你好！本文章为该博客的第十三篇文章！</p>
+<p>本文章包含北航2025面向对象设计与构造第三单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。</p>
+<p>本文章已经投送至本单元博客作业！</p>
+<p>可能你已经发现了，本文章<strong>并未在完成后被及时投送至博客中</strong>，所以这其实是一个有点失去时效性的填坑投稿……</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<p>（顺便，JML在现在真有用吗.jpg）</p>
+<h1>北航2025面向对象设计与构造第三单元总结</h1>
+<h2 id="前言">前言</h2>
+<p>本单元第一次强测出现错误。同时也做了第一次研讨课个人分享。</p>
+<p>总之，本单元最重要的经验是：把正确性托付给规格的<strong>严谨阅读</strong>，把性能托付给自己的<strong>复杂度识别</strong>。</p>
+<h2 id="大模型与规格化设计">大模型与规格化设计</h2>
+<p>一个显而易见的事情是，LLM的出现让写代码在某种意义上成了一种体力活。</p>
+<p>但是仍然存在一个问题：如何让LLM写出准确的代码。这个事情取代了写代码本身，成为了困扰我们的一个问题。</p>
+<p>当然，现在有许多通过改进LLM的方法解决这个问题。但是在这门课上，也许我们有了另一个强而有力的工具来诱导LLM生成准确的代码：规格化设计。</p>
+<p>在大多数时候，我们写代码时经常会选择直接根据需求给出实现，或者根据需求设计一个架构，然后直接在架构里填充各种实现。</p>
+<p>不过，不论是第六次实验课，还是这次作业的方方面面，似乎一切都在给我们一个强烈的引导：我们可以在“设计架构”和“完成实现”中间，插入一个“规格描述”。</p>
+<p>其虽然不能直接解决问题，但其提供了一种验证实现的方法，同时也是描述功能的手段。而其最大的问题在于，由于其是使用<strong>完整严谨</strong>的规格描述语言进行了描述，故会有不可避免的额外工作量。</p>
+<p>此时，我们可以让LLM出手。通过相对严谨的自然语言描述，我们可以使其给出更为准确的规格化描述。</p>
+<p>相反的，也可以选择通过JML翻译出其对应的语义，从而加速我们对代码的理解。实际上，本单元后半部分作业中我就采用了这样的做法。</p>
+<p>同时，有了JML的约束后，我们也可以通过类似OpenJML的工具反过来验证实现的正确性，降低了实现的验证难度。</p>
+<h2 id="人类智慧与性能优化">人类智慧与性能优化</h2>
+<p>尽管本单元中我并未产生性能问题，但是在规格实现与不断互测的过程中，仍然识别出了一些问题，诸如（如无特殊说明，以下符号中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 代表当前图中人数， <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 代表当前图中关系数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span> 代表询问数）：</p>
+<ul>
+<li>对于 <code>queryTripleSum</code> 方法：
+<ul>
+<li>朴素的二重循环实现的复杂度显然是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>3</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的，此时一定会引发超时。</li>
+<li>对于“将其按度数大小转化为有向图，在有向图上找环”的复杂度是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>m</mi><msqrt><mi>m</mi></msqrt><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(m\sqrt{m})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">m</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">m</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2397em;"><span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的，实际上也会引发超时。</li>
+<li>对于“在关系增删的同时维护’因为这个关系的变化而增加或删除的三元组个数‘”的做法，其做到了查询复杂度是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 的，代价是增删关系时复杂度会增至 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>，根据本次作业的要求，其实际上是合理的代价分担。</li>
+</ul>
+</li>
+<li>对于 <code>queryBestAcquaitance</code> 方法，尽管其在第九次作业中性能要求仍然为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>，但在第十次作业中，由于 <code>queryCoupleSum</code> 的出现，使得其要么进行类似dirty bit的标记，要么要求查询复杂度本身降至 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 甚至更低。</li>
+<li>对于 <code>queryTagAgeVar</code> 方法：
+<ul>
+<li>朴素的二重循环实现的复杂度显然是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的，此时一定会引发超时。</li>
+<li>对于“遍历所有 <code>Tag</code> 内的人所包含的所有关系” 的做法，其复杂度是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n+m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span></span></span></span> 的，尽管复杂度看起来正确了，但是由于小型完全图的存在，使得其在常数方面实际上是不过关的，仍然有超时的风险。</li>
+<li>一个更好的做法是，在维护关系的增删改的同时，对每个 <code>Tag</code> 都进行相应的动态维护，尽管看起来更复杂了，但复杂度反而降到了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span>。</li>
+</ul>
+</li>
+<li>对于 <code>deleteArticle</code> 方法：
+<ul>
+<li>其所带来的影响是会对 <code>Person.receivedArticles</code> 带来随机访问和删除的操作，从而在其实现为单纯的线性表时，单个人的 <code>removeArticle</code> 方法复杂度是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> 的。这似乎没有问题，但是当我们需要对一个 <code>OfficialAccount</code> 中的所有人删除某个文章时，整个方法的复杂度就来到了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>q</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(q^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，这就不可接受了。</li>
+<li>最正确的方法是弃用单纯的线性表，使用索引数据结构辅助链表，在删除文章时可以快速定位到待删除节点，再结合链表删除元素的高效性解决问题，复杂度可以降至 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>q</mi><mo>×</mo><mi>f</mi><mo stretchy="false">(</mo><mtext>find</mtext><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(q\times f(\text{find}))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">find</span></span><span class="mclose">))</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mtext>find</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(\text{find})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord text"><span class="mord">find</span></span><span class="mclose">)</span></span></span></span> 为使用的索引数据结构查询单次的时间复杂度。</li>
+<li>当然，由于Cache的存在，实际上单纯使用 <code>ArrayList</code> 也可以通过强测。</li>
+</ul>
+</li>
+</ul>
+<p>然而以上对性能问题的描述其实只是本单元对实现要求的表象，其真正内涵其实无外乎以下二句：</p>
+<ol>
+<li>不能完全复刻规格描述；</li>
+<li>任意一个单次操作复杂度应该在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>q</mi><mi>log</mi><mo>⁡</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(q\log q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span> 以内，且常数不能太大。</li>
+</ol>
+<p>对于前者，其需要对JML的本质有深刻理解（即，规格与实现分离）。具体来说，JML实际上只是对方法运行前后的对象状态进行了约束，至于这个状态变化是如何实现的，实际上不重要，JML也并不关心，这也就意味着“怕写错从而不对JML给出的实现进行修改”是一种非常错误的行为。当然，为了保证正确性，可以采用迭代开发的方式，先给出一个正确的实现，再进行逐步优化即可。</p>
+<p>对于后者，其需要我们（实现需求的人）对实现本身的复杂度有准确的了解。实际上，根据研讨课经验分享的问答反馈来看，许多同学并不清楚应该用复杂度来分析程序，当然不知道哪里会超时，这也许才是造成无数个性能问题的元凶。解决这个问题的方法……可能必须要课程引导和学生个人同时注意到了。</p>
+<h2 id="迭代开发与架构设计">迭代开发与架构设计</h2>
+<p>由于本单元的作业形式为“根据课程组给出的JML和框架约束实现完整程序”，故可能会有同学认为架构设计的作用在本单元实际上没有被考察，故无需关注架构设计带来的影响。</p>
+<p>然而，实际上课程组给出的规格约束可能存在一定的属性管理混乱的问题（如，<code>Network</code> 中的 <code>articleContributor</code> 本意是管理文章对应的发布者，但个人认为此信息丢给 <code>OfficialAccount</code> 管理更加妥当），且一部分查询方法实际上只依赖于 <code>Network</code> 的一部分性质（如 <code>queryTripleSum,queryShortestPath</code> 等方法只依赖图结构性质），故如何在适应这些问题的同时，尽量进行解耦，实际上仍然是一个值得关注的设计问题。</p>
+<p>具体而言，我在课程组给出的约束下做了如下调整，使之信息管理更加清晰：</p>
+<ol>
+<li>将关联较强的数据进行打包处理。如对于 <code>Person.acquaintances</code> 和 <code>Person.values</code> 而言，显然其管理的是所有好友及“伴随这个好友关系的值”，即好友本身和关系值的联系更深，因此我实现了 <code>AcquaintanceInfo</code> 类将此二类信息进行打包，保证查人和查关系值一定是一一绑定的。</li>
+<li>将与图结构性质关联较强的询问抽象为单独的类和方法。具体而言，我设计了 <code>Graph</code> 类型，将人和关系和关系值抽象为点和边和边权，放入 <code>Graph</code> 类中同步维护，同时给出 <code>GraphSolver</code> 类作为询问的处理方法类。当出现仅涉及图结构性质的询问时，我在 <code>GraphSolver</code> 中通过访问参数中 <code>Graph</code> 的各项属性对该问题进行求解，而仅将 <code>Network</code> 到 <code>Graph</code> 的部分交由 <code>Network</code> 进行处理。（事后证明，对于本单元作业而言，实际上 <code>GraphSolver</code> 类是多余的，合理的做法是将其合并至 <code>Graph</code> 中）</li>
+<li>尽可能把信息移至组合或聚合至 <code>Network</code> 的类中。如，对于 <code>articleContributor</code> 的维护，实际上我是在 <code>OfficialAccount</code> 内进行维护的。</li>
+</ol>
+<h2 id="测试与潜在问题查找">测试与潜在问题查找</h2>
+<h3 id="测试类型的适用场景">测试类型的适用场景</h3>
+<p>从过去到现在学过的有关“测试”的名词其实有很多，诸如单元测试、功能测试、集成测试、压力测试、回归测试等。但是在实际作业中，使用这些名词对应的测试方法进行测试是一个比较困难的事情。码量大和数据难以设计当然是一个问题，但是更主要的问题在于，我们什么时候该考虑怎样的测试呢？</p>
+<p>对于回归测试，其应用场景比较显而易见：</p>
+<ol>
+<li>每当我在bug修复时，需要验证此bug的修复会不会引入其他bug时；</li>
+<li>每当我进行了性能优化后，需要验证这种优化方法会不会出现bug时。</li>
+</ol>
+<p>对于压力测试其实同样好分析：在本单元作业的功能全部完成后，需要分析性能较差的部分时，往往需要压力测试才能发现需要优化的地方。</p>
+<p>但是对于单元测试、功能测试和集成测试，其功能其实有一定的相似之处：测试正确性。于是大家总是会有一种期望：只要对于某种测试过关了，其它测试就没有必要了。</p>
+<p>但是，这三种测试其实对于测试的粒度而言是不同的。从单元到功能到集成：</p>
+<ul>
+<li>对局部的正确性关注递减；</li>
+<li>对系统整体正确性的关注度递增；</li>
+<li>对测试数据要求的侧重点差异显著。</li>
+</ul>
+<p>我的经验是，需要进行单元测试获得对方法各个分支正确性的确认，再通过功能测试获得对连续一类方法执行的正确性的确认，最后再用集成测试确认对整个系统的正确性。</p>
+<h3 id="如何构造数据">如何构造数据</h3>
+<p>上文中提到了“对单元测试、功能测试和集成测试，其对测试数据要求的侧重点差异显著”，那么如何根据这种显著的差异来构造数据呢？以及，如何构造压力测试的数据呢？</p>
+<p>就我的经验而言，对本单元作业来说，单元测试实际上只需要把分支的覆盖率拉满其实就够了，基本上只要不是看漏了一个分支都不会出大问题的。</p>
+<p>而对于功能测试，其更需要把一段方法连续起来看，关注一下整套操作前后的效果即可。</p>
+<p>至于集成测试，其实在构造时都去寻找”阅读单个功能的JML时无法联想到问题“的部分构造就行。比如说对于 <code>sendMessage</code> 和 <code>deleteArticle</code> 两个功能的组合而言，其关键点是要想到”只要我转发了两次文章，<code>receivedArticles</code> 中就会出现两个相同的id，那么删除文章时两个id都要删“，而这一点在只测试 <code>sendMessage</code> 时或只测试 <code>deleteArticle</code> 时往往会被忽略。</p>
+<p>同时，压力测试和功能测试也有一定的相似之处，大部分成功的压力测试都来源于对某个功能的反复使用，比如说反复对所有人关注的 <code>OfficialAccount</code> 进行 <code>contributeArticle</code> 和 <code>deleteArticle</code> 操作就可以卡中维护 <code>receivedArcitles</code> 时性能较差的实现。</p>
+<h3 id="规格与单元测试">规格与单元测试</h3>
+<p>实际上，相信大家会注意到本单元作业的这样一个特性：只要我对各个规格的实现是正确的，那么整个作业应该就是正确的，那么似乎只需要单元测试就可以完成本单元作业的所有测试工作了。</p>
+<p>这话其实确实没错。本质上，规格确实是对每个方法的运行要求约束，只要实现正确，状态变化结果就一定正确，那么错误就只可能出现在规格里，而规格的正确性由课程组来保证，当然是正确的。</p>
+<p>（所以我们甚至可以认为，规格就是一种压缩后的单元测试）</p>
+<p>除了一个问题：我怎么知道我的单元测试一定能检查到规格的所有约束？或者说，Junit测试检验代码实现与规格的一致性的效果如何保证？</p>
+<p>这是一个很吃”实现技巧“的问题，我可以举出很多例子来保证不写漏：按规格给出的关键词拆分，为每个字段写一个检测运行前后不变的方法，尽量保证检测方法和JML实现一致……</p>
+<p>这也是一个很吃”数据构造能力“的问题，需要你把每个分支触发一遍不说，还要考虑一些”尽管JML只有一句话，但是实现很可能有分支控制/产生意料之外的异常“的情况（比如空图的构造和完全图的构造）。</p>
+<p>但是，归结下来其实也就一句话：手要稳，要死扣JML，还要自行思考出JML说了，但实现者很可能设计出的分支。</p>
+<h2 id="心得体会">心得体会</h2>
+<p>第九次作业的强测不通过还是给了我一个很大的教训的。正是在从本次作业的错误，诱导我去发掘如何不读错JML的方法，从而想到了LLM；也是本次错误让我找到了更加合适的测试数据，顺带着发现了一堆的性能优化的地方。（甚至因为反复阅读JML和指导书，指导书中的一个缺陷也因此被找到了）</p>
+<p>总之，一次错误带来的经验比八次成功还重要，这已经超越分数带来的意义了。</p>
+<h2 id="结语">结语</h2>
+<p>把正确性托付给规格的<strong>严谨阅读</strong>，把性能托付给自己的<strong>复杂度识别</strong>。</p>
+<p>现代工具的作用是严谨快速的阅读规格，而现代人类的作用则是在机器翻译出的规格上展现人类智慧的效能。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io">Lazyfish</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit3/">http://lazyfish-lc.github.io/2025/08/11/BUAA-OO-Unit3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/BUAA/">BUAA</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%9E%84%E9%80%A0/">面向对象设计与构造</a><a class="post-meta__tags" href="/tags/OO/">OO</a></div><div class="post_share"><div class="social-share" data-image="/img/bg5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结"><img class="cover" src="/img/bg4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous</div><div class="prev_info">北航2025面向对象设计与构造第四单元&amp;全课程总结</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结"><img class="cover" src="/img/bg13.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next</div><div class="next_info">北航2025面向对象设计与构造第二单元总结</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结"><img class="cover" src="/img/bg2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-15</div><div class="title">北航2025面向对象设计与构造第一单元总结</div></div></a></div><div><a href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结"><img class="cover" src="/img/bg13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">北航2025面向对象设计与构造第二单元总结</div></div></a></div><div><a href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结"><img class="cover" src="/img/bg4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">北航2025面向对象设计与构造第四单元&amp;全课程总结</div></div></a></div><div><a href="/2025/03/01/BUAA-OO-hw1/" title="北航2025面向对象设计与构造第一次作业思路简述"><img class="cover" src="/img/bg-2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-01</div><div class="title">北航2025面向对象设计与构造第一次作业思路简述</div></div></a></div><div><a href="/2024/10/31/BUAA-OOpre-2024/" title="北航2024面向对象程序先导课程心得"><img class="cover" src="/img/bg10.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-31</div><div class="title">北航2024面向对象程序先导课程心得</div></div></a></div><div><a href="/2024/10/28/BUAA-CO-P3-test/" title="北航CO 2024 P3课上部分题目回忆与分析"><img class="cover" src="/img/bg13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-28</div><div class="title">北航CO 2024 P3课上部分题目回忆与分析</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/67375982" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Lazyfish</div><div class="author-info__description">The way through past, present and future.</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lazyfish-lc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">你好！这里是懒鱼！有建议的话请务必在“关于”页中提出！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">北航2025面向对象设计与构造第三单元总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%E8%A7%84%E6%A0%BC%E5%8C%96%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.</span> <span class="toc-text">大模型与规格化设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%BA%E7%B1%BB%E6%99%BA%E6%85%A7%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">人类智慧与性能优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%BC%80%E5%8F%91%E4%B8%8E%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.4.</span> <span class="toc-text">迭代开发与架构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%BD%9C%E5%9C%A8%E9%97%AE%E9%A2%98%E6%9F%A5%E6%89%BE"><span class="toc-number">1.5.</span> <span class="toc-text">测试与潜在问题查找</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.5.1.</span> <span class="toc-text">测试类型的适用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9E%84%E9%80%A0%E6%95%B0%E6%8D%AE"><span class="toc-number">1.5.2.</span> <span class="toc-text">如何构造数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E6%A0%BC%E4%B8%8E%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="toc-number">1.5.3.</span> <span class="toc-text">规格与单元测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%83%E5%BE%97%E4%BD%93%E4%BC%9A"><span class="toc-number">1.6.</span> <span class="toc-text">心得体会</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.7.</span> <span class="toc-text">结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结"><img src="/img/bg4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第四单元&amp;全课程总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit4/" title="北航2025面向对象设计与构造第四单元&amp;全课程总结">北航2025面向对象设计与构造第四单元&amp;全课程总结</a><time datetime="2025-08-11T12:55:15.000Z" title="Created 2025-08-11 20:55:15">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结"><img src="/img/bg5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第三单元总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit3/" title="北航2025面向对象设计与构造第三单元总结">北航2025面向对象设计与构造第三单元总结</a><time datetime="2025-08-11T12:53:45.000Z" title="Created 2025-08-11 20:53:45">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结"><img src="/img/bg13.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第二单元总结"/></a><div class="content"><a class="title" href="/2025/08/11/BUAA-OO-Unit2/" title="北航2025面向对象设计与构造第二单元总结">北航2025面向对象设计与构造第二单元总结</a><time datetime="2025-08-11T12:39:08.000Z" title="Created 2025-08-11 20:39:08">2025-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/16/BUAA-OS-shell-challenge/" title="北航2025 OS shell挑战性任务实现指导"><img src="/img/deep_sea.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025 OS shell挑战性任务实现指导"/></a><div class="content"><a class="title" href="/2025/06/16/BUAA-OS-shell-challenge/" title="北航2025 OS shell挑战性任务实现指导">北航2025 OS shell挑战性任务实现指导</a><time datetime="2025-06-16T13:20:01.000Z" title="Created 2025-06-16 21:20:01">2025-06-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结"><img src="/img/bg2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="北航2025面向对象设计与构造第一单元总结"/></a><div class="content"><a class="title" href="/2025/04/15/BUAA-OO-Unit1/" title="北航2025面向对象设计与构造第一单元总结">北航2025面向对象设计与构造第一单元总结</a><time datetime="2025-04-15T02:46:58.000Z" title="Created 2025-04-15 10:46:58">2025-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Lazyfish</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://lazyfish-blog-comment.top/',
+      region: 'ap-shanghai',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    GLOBAL_CONFIG_SITE.isPost && getCount()
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
