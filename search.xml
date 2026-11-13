@@ -1605,6 +1605,61 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </tags>
   </entry>
   <entry>
+    <title>北航2025面向对象设计与构造第四单元&amp;全课程总结</title>
+    <url>/2025/08/11/BUAA-OO-Unit4/</url>
+    <content><![CDATA[<p>你好！本文章为该博客的第十四篇文章！</p>
+<p>本文章包含北航2025面向对象设计与构造第四单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。</p>
+<p>本文章已经投送至本单元博客作业！</p>
+<p>可能你已经发现了，本文章<strong>并未在完成后被及时投送至博客中</strong>，所以这其实是一个有点失去时效性的填坑投稿……</p>
+<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
+<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
+<h1>北航2025面向对象设计与构造第四单元&amp;全课程总结</h1>
+<h2 id="前言">前言</h2>
+<p>较为轻松的一个单元，正适合做一些回顾课程的工作。</p>
+<p>仔细想想，一个学期的OO学习，恰如在巨浪中学习游泳一样，危险、富有挑战，但学到的知识也终身难忘。</p>
+<h2 id="第四单元作业总结">第四单元作业总结</h2>
+<h3 id="UML与建模">UML与建模</h3>
+<p>简而言之，本单元我所采用的是建模与实现交替的方法，在完成UML类图的同时逐步完成实现。</p>
+<p>在架构设计之初，我通过对指导书中“图书馆”“用户”“书籍”“书架/xx处”等关键词的识别，得出了UML类图中所展现的各个类型，再通过书籍的转移过程识别出各类型需要管理的属性。</p>
+<p>到这一步开始，我就开始着手实现该部分代码，以及一小部分管理属性的方法了，在实现过程中会发现之前设计的不足或混乱之处，此时再对之前的UML类图进行调整。</p>
+<p>在完成属性的一部分管理方法之后，就可以通过指导书识别类间交互的方法，并在UML类图中提出了。最后实现之即可。</p>
+<p>至于状态图和时序图，由于其在一些复杂方法中体现更为明显，而本单元作业中并不涉及这样的方法，因此其起到的正向建模作用较小。</p>
+<h3 id="作业架构简述">作业架构简述</h3>
+<p>本单元采用的架构较为简单，大体上来说是“IO交互-图书馆管理-房间/用户-书籍”的模式。UML类图如下：</p>
+<p><img src="ClassDiagram.png" alt="UML类图"></p>
+<p>该设计的一个显著特点是，其提取了各图书馆内场合中的共性放入 <code>Room</code> 中进行统一管理，在处理请求时将书籍移动简化为了 <code>Room</code> 之间移动书籍的过程（见 <code>Library.transferBook()</code> 方法）和 <code>Room</code> 与 <code>User</code> 交换的过程（见借书取书还书方法）。这与一部分同学“每个房间都单开一个类”的管理方法相比，进行了较大的简化，也使得管理更加统一有效。</p>
+<p>然而，该架构未将预约处和阅读室的特别属性提取出来，而是统一放入 <code>Library</code> 中进行管理，这实际上是不太合理的。一个比较合理的修改方法是，仅设计 <code>AppointmentOffice</code> 类和 <code>ReadingRoom</code> 类，应在继承 <code>Room</code> 类之后，将原 <code>Library</code> 里的特殊属性迁移至新设计的类。这样既保证了原架构的简洁，也保证了属性管理的清晰，减少耦合。</p>
+<p>另外，对于用户预约书与获得已预约书流程的顺序图如下：</p>
+<p><img src="SequenceDiagram.png" alt="UML顺序图"></p>
+<p>其较为完整的描述了预约与取书的流程，也体现了设计中 <code>Library</code> 作为中心管理类的思想。</p>
+<h3 id="大模型与架构设计">大模型与架构设计</h3>
+<p>在使用大模型辅助正向建模的过程中，直接向其输入一整个指导书中的描述，向其直接求得一份可通过评测的代码，这样的做法往往得不到正确的结果。</p>
+<p>一个在之前的单元中我就注意到的现象是，在大体框架已经确定的情况下，大模型往往可以在具体方法的补足上获得极其准确的结果。这样的现象带来的经验指导我完成了先前单元评测机的搭建，但巨量的框架构建仍然带来了不小的压力。</p>
+<p>而第八次实验中给出的大模型辅助正向建模的过程，给了我一些启示。在本单元教学内容结束后，我尝试将最后一次作业指导书内作业要求喂给deepseek-r1，文末附注简单的“请设计程序架构，提取出上述场景中的各类，要求具体到类中存在的属性与方法”，其就给出了一个条理十分清晰，但稍显冗余的设计。因此我与其进行多轮对话，尝试简化其设计，并最终得到了一个相对满意的框架。</p>
+<p>由此可知，大模型并非无法完成本次作业要求，而是其未得到合适的引导。在“建模-优化建模-实现”的流程下，目前的大模型实际上足以完成单次迭代作业的任务。</p>
+<p>在更为复杂的情景下，可能一次性得到整个模型也是不现实的，这个时候也许需要先对整个场景进行一定程度的模块分割，再对模块内部进行建模，而该任务仍然可以交给大模型完成。</p>
+<h2 id="全课程总结与心得">全课程总结与心得</h2>
+<h3 id="无限迭代的设计能力">无限迭代的设计能力</h3>
+<p>在本课程开始前，实际上我已经有尝试使用C++写一些相对于程序设计基础课程稍长的程序，甚至其中有一个就是处理离散数学中命题逻辑表达式的程序（其与U1内容非常类似，仅仅是我在表达式树的构建上使用的是后缀表达式构建，而非递归下降）。</p>
+<p>然而当时我所设计的架构虽然架构相对清晰可维护，但是其常常会出现过度设计，再加上当时不太会拆类，导致其实现过于冗长。</p>
+<p>尽管在本学期的四个单元中该问题始终没有完全解决，导致我和别人比较代码行数之后仍然发出“为什么我的实现比你长这么多”的感叹，但是可以看到的是这个问题在逐步改善。从第一单元的超出别人一半的工作量，到第二第三单元的足够精简，虽然每周一次的迭代开发往往使我来不及思考（或者不得不放弃）一些好的设计，但是也因此限制了实现的复杂度，从而更好的和迭代场景贴紧（也就是避免过渡冗余）。</p>
+<p>此外，在之前的架构设计中我很少使用异常处理机制进行增强代码的鲁棒性和健壮性，而U3中的作业练习也使得我对其有了一定的了解。对异常处理的理解和应用将成为我接下来感兴趣的一个技能。</p>
+<h3 id="倒逼进步的测试能力">倒逼进步的测试能力</h3>
+<p>强测和互测的压力带来了对程序正确性的严格要求，这种严格要求又倒逼同学们要么实现一个不错的评测机，要么就不得不费心反复读代码查错。从结果来说，我在U2和U3选择和同学一同编写评测机，而在U1和U4放弃实现了评测机。</p>
+<p>显然，每周除了作业之外再去维护评测机是非常辛苦的。但是大多数时候你所要纠结的，并不是如何保证评测机的正确性（这件事情在有了大模型加持之后会比较舒服），而是如何生成一些强而有力的测试数据（这件事用LLM也很难做）。从一开始的随机生成，到后来的针对某些易错场景（如U2的密集询问，U3的反复增删文章）特别设计，总之这门课设计数据的体验和OI中静态查错和快速设计单组数据的感觉非常不一样。</p>
+<h3 id="此外的收获？">此外的收获？</h3>
+<p>实际上，从上个学期的OOpre开始，我才开始明确的接触到“使用git进行版本控制”这个想法。本学期中，其不仅帮助我标定了作业中每次提交所做的具体工作（从而理清了其迭代过程和之后要做的优化方向），也帮我在团队合作评测机搭建中做了较好的控制（一个小组四个人的提交是基本不乱的）。与我一同搭建评测机的人也在这个开发过程中逐渐意识到了版本管理的重要性，开始慢慢接纳起了这个工具，我想这个收获应该是不亚于课程本身的教学内容的。</p>
+<h2 id="结语">结语</h2>
+<p>OO的学习如在巨浪中学习游泳一样，危险、富有挑战，但学到的知识也终身难忘。</p>
+<p>愿这份设计构造的技能能够伴着每个计算机学院学子，辅助大家在未来的工作中设计出更为严谨坚实的架构。</p>
+]]></content>
+      <tags>
+        <tag>BUAA</tag>
+        <tag>面向对象设计与构造</tag>
+        <tag>OO</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北航2025面向对象设计与构造第一次作业思路简述</title>
     <url>/2025/03/01/BUAA-OO-hw1/</url>
     <content><![CDATA[<p>你好！本文章为该博客的第⑩篇文章！</p>
@@ -1707,61 +1762,6 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <h2 id="结语">结语</h2>
 <p>面向对象设计与构造不是数据结构与算法，也不是代码精简大赛。</p>
 <p>我的意思是，至少在这门课里，我认为作业的完成要求只有一条：用好的设计解决一切问题。</p>
-]]></content>
-      <tags>
-        <tag>BUAA</tag>
-        <tag>面向对象设计与构造</tag>
-        <tag>OO</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>北航2025面向对象设计与构造第四单元&amp;全课程总结</title>
-    <url>/2025/08/11/BUAA-OO-Unit4/</url>
-    <content><![CDATA[<p>你好！本文章为该博客的第十四篇文章！</p>
-<p>本文章包含北航2025面向对象设计与构造第四单元的博客作业内容，期望同学们通过本次博客作业对该单元内容有一定了解。</p>
-<p>本文章已经投送至本单元博客作业！</p>
-<p>可能你已经发现了，本文章<strong>并未在完成后被及时投送至博客中</strong>，所以这其实是一个有点失去时效性的填坑投稿……</p>
-<p>需要注意的是，本文<strong>仅完全适用于北航2025OO课程</strong>，对于之前和之后的课程，课程部分内容可能会发生变动，发生冲突时请以当前课程为准！</p>
-<p>以及，如果本文章涉及学术诚信问题，<strong>请第一时间和我联系，我将及时做出修改</strong>，谢谢支持！</p>
-<h1>北航2025面向对象设计与构造第四单元&amp;全课程总结</h1>
-<h2 id="前言">前言</h2>
-<p>较为轻松的一个单元，正适合做一些回顾课程的工作。</p>
-<p>仔细想想，一个学期的OO学习，恰如在巨浪中学习游泳一样，危险、富有挑战，但学到的知识也终身难忘。</p>
-<h2 id="第四单元作业总结">第四单元作业总结</h2>
-<h3 id="UML与建模">UML与建模</h3>
-<p>简而言之，本单元我所采用的是建模与实现交替的方法，在完成UML类图的同时逐步完成实现。</p>
-<p>在架构设计之初，我通过对指导书中“图书馆”“用户”“书籍”“书架/xx处”等关键词的识别，得出了UML类图中所展现的各个类型，再通过书籍的转移过程识别出各类型需要管理的属性。</p>
-<p>到这一步开始，我就开始着手实现该部分代码，以及一小部分管理属性的方法了，在实现过程中会发现之前设计的不足或混乱之处，此时再对之前的UML类图进行调整。</p>
-<p>在完成属性的一部分管理方法之后，就可以通过指导书识别类间交互的方法，并在UML类图中提出了。最后实现之即可。</p>
-<p>至于状态图和时序图，由于其在一些复杂方法中体现更为明显，而本单元作业中并不涉及这样的方法，因此其起到的正向建模作用较小。</p>
-<h3 id="作业架构简述">作业架构简述</h3>
-<p>本单元采用的架构较为简单，大体上来说是“IO交互-图书馆管理-房间/用户-书籍”的模式。UML类图如下：</p>
-<p><img src="ClassDiagram.png" alt="UML类图"></p>
-<p>该设计的一个显著特点是，其提取了各图书馆内场合中的共性放入 <code>Room</code> 中进行统一管理，在处理请求时将书籍移动简化为了 <code>Room</code> 之间移动书籍的过程（见 <code>Library.transferBook()</code> 方法）和 <code>Room</code> 与 <code>User</code> 交换的过程（见借书取书还书方法）。这与一部分同学“每个房间都单开一个类”的管理方法相比，进行了较大的简化，也使得管理更加统一有效。</p>
-<p>然而，该架构未将预约处和阅读室的特别属性提取出来，而是统一放入 <code>Library</code> 中进行管理，这实际上是不太合理的。一个比较合理的修改方法是，仅设计 <code>AppointmentOffice</code> 类和 <code>ReadingRoom</code> 类，应在继承 <code>Room</code> 类之后，将原 <code>Library</code> 里的特殊属性迁移至新设计的类。这样既保证了原架构的简洁，也保证了属性管理的清晰，减少耦合。</p>
-<p>另外，对于用户预约书与获得已预约书流程的顺序图如下：</p>
-<p><img src="SequenceDiagram.png" alt="UML顺序图"></p>
-<p>其较为完整的描述了预约与取书的流程，也体现了设计中 <code>Library</code> 作为中心管理类的思想。</p>
-<h3 id="大模型与架构设计">大模型与架构设计</h3>
-<p>在使用大模型辅助正向建模的过程中，直接向其输入一整个指导书中的描述，向其直接求得一份可通过评测的代码，这样的做法往往得不到正确的结果。</p>
-<p>一个在之前的单元中我就注意到的现象是，在大体框架已经确定的情况下，大模型往往可以在具体方法的补足上获得极其准确的结果。这样的现象带来的经验指导我完成了先前单元评测机的搭建，但巨量的框架构建仍然带来了不小的压力。</p>
-<p>而第八次实验中给出的大模型辅助正向建模的过程，给了我一些启示。在本单元教学内容结束后，我尝试将最后一次作业指导书内作业要求喂给deepseek-r1，文末附注简单的“请设计程序架构，提取出上述场景中的各类，要求具体到类中存在的属性与方法”，其就给出了一个条理十分清晰，但稍显冗余的设计。因此我与其进行多轮对话，尝试简化其设计，并最终得到了一个相对满意的框架。</p>
-<p>由此可知，大模型并非无法完成本次作业要求，而是其未得到合适的引导。在“建模-优化建模-实现”的流程下，目前的大模型实际上足以完成单次迭代作业的任务。</p>
-<p>在更为复杂的情景下，可能一次性得到整个模型也是不现实的，这个时候也许需要先对整个场景进行一定程度的模块分割，再对模块内部进行建模，而该任务仍然可以交给大模型完成。</p>
-<h2 id="全课程总结与心得">全课程总结与心得</h2>
-<h3 id="无限迭代的设计能力">无限迭代的设计能力</h3>
-<p>在本课程开始前，实际上我已经有尝试使用C++写一些相对于程序设计基础课程稍长的程序，甚至其中有一个就是处理离散数学中命题逻辑表达式的程序（其与U1内容非常类似，仅仅是我在表达式树的构建上使用的是后缀表达式构建，而非递归下降）。</p>
-<p>然而当时我所设计的架构虽然架构相对清晰可维护，但是其常常会出现过度设计，再加上当时不太会拆类，导致其实现过于冗长。</p>
-<p>尽管在本学期的四个单元中该问题始终没有完全解决，导致我和别人比较代码行数之后仍然发出“为什么我的实现比你长这么多”的感叹，但是可以看到的是这个问题在逐步改善。从第一单元的超出别人一半的工作量，到第二第三单元的足够精简，虽然每周一次的迭代开发往往使我来不及思考（或者不得不放弃）一些好的设计，但是也因此限制了实现的复杂度，从而更好的和迭代场景贴紧（也就是避免过渡冗余）。</p>
-<p>此外，在之前的架构设计中我很少使用异常处理机制进行增强代码的鲁棒性和健壮性，而U3中的作业练习也使得我对其有了一定的了解。对异常处理的理解和应用将成为我接下来感兴趣的一个技能。</p>
-<h3 id="倒逼进步的测试能力">倒逼进步的测试能力</h3>
-<p>强测和互测的压力带来了对程序正确性的严格要求，这种严格要求又倒逼同学们要么实现一个不错的评测机，要么就不得不费心反复读代码查错。从结果来说，我在U2和U3选择和同学一同编写评测机，而在U1和U4放弃实现了评测机。</p>
-<p>显然，每周除了作业之外再去维护评测机是非常辛苦的。但是大多数时候你所要纠结的，并不是如何保证评测机的正确性（这件事情在有了大模型加持之后会比较舒服），而是如何生成一些强而有力的测试数据（这件事用LLM也很难做）。从一开始的随机生成，到后来的针对某些易错场景（如U2的密集询问，U3的反复增删文章）特别设计，总之这门课设计数据的体验和OI中静态查错和快速设计单组数据的感觉非常不一样。</p>
-<h3 id="此外的收获？">此外的收获？</h3>
-<p>实际上，从上个学期的OOpre开始，我才开始明确的接触到“使用git进行版本控制”这个想法。本学期中，其不仅帮助我标定了作业中每次提交所做的具体工作（从而理清了其迭代过程和之后要做的优化方向），也帮我在团队合作评测机搭建中做了较好的控制（一个小组四个人的提交是基本不乱的）。与我一同搭建评测机的人也在这个开发过程中逐渐意识到了版本管理的重要性，开始慢慢接纳起了这个工具，我想这个收获应该是不亚于课程本身的教学内容的。</p>
-<h2 id="结语">结语</h2>
-<p>OO的学习如在巨浪中学习游泳一样，危险、富有挑战，但学到的知识也终身难忘。</p>
-<p>愿这份设计构造的技能能够伴着每个计算机学院学子，辅助大家在未来的工作中设计出更为严谨坚实的架构。</p>
 ]]></content>
       <tags>
         <tag>BUAA</tag>
@@ -2695,6 +2695,34 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </tags>
   </entry>
   <entry>
+    <title>问好。</title>
+    <url>/2024/08/25/hello/</url>
+    <content><![CDATA[<h1>你好！</h1>
+<p>这里是懒鱼，一个北航在读本科生，一个车万人，一个XCPCer。</p>
+<p>建立这个博客的时候，其实我还没有具体要写什么的打算。也许未来我会选择把学习时候的各类思考，以及搞XCPC过程中的各个题目/算法笔记/游记（如果能打上比赛的话）等等的都丢上来。也许如果未来还有什么值得记录的活动的话，也会留一些内容上来。</p>
+<p>毕竟是作为第一篇博客，而且脑袋空空不知道说些什么，那就随便测个功能就跑吧。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{bmatrix}
+	F_{n+1} \\
+    F_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+	1 &amp; 1 \\
+	1 &amp; 0 \\
+\end{bmatrix}
+\begin{bmatrix}
+	F_n \\
+	F_{n-1} \\
+\end{bmatrix}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
+<p>希望未来我们能一直见面！</p>
+<p>为了终会到来的那天。</p>
+]]></content>
+      <tags>
+        <tag>hello world!</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>单周期CPU搭建的细节记录</title>
     <url>/2024/09/03/Single-Cycle-CPU-Build-Notes/</url>
     <content><![CDATA[<h1>固定开场</h1>
@@ -2978,31 +3006,45 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </tags>
   </entry>
   <entry>
-    <title>问好。</title>
-    <url>/2024/08/25/hello/</url>
-    <content><![CDATA[<h1>你好！</h1>
-<p>这里是懒鱼，一个北航在读本科生，一个车万人，一个XCPCer。</p>
-<p>建立这个博客的时候，其实我还没有具体要写什么的打算。也许未来我会选择把学习时候的各类思考，以及搞XCPC过程中的各个题目/算法笔记/游记（如果能打上比赛的话）等等的都丢上来。也许如果未来还有什么值得记录的活动的话，也会留一些内容上来。</p>
-<p>毕竟是作为第一篇博客，而且脑袋空空不知道说些什么，那就随便测个功能就跑吧。</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mi>n</mi></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>F</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{bmatrix}
-	F_{n+1} \\
-    F_n
-\end{bmatrix}
-=
-\begin{bmatrix}
-	1 &amp; 1 \\
-	1 &amp; 0 \\
-\end{bmatrix}
-\begin{bmatrix}
-	F_n \\
-	F_{n-1} \\
-\end{bmatrix}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
-<p>希望未来我们能一直见面！</p>
-<p>为了终会到来的那天。</p>
+    <title>关于为什么现在什么都不写了</title>
+    <url>/2026/11/14/why-not-update/</url>
+    <content><![CDATA[<p>大约要省掉无聊的开场白了，在表达欲日趋下降的现在，每多写一段话，文章就多一丝被我整篇删掉（或者封死在本地）的风险。</p>
+<h1>关于为什么现在什么都不写了</h1>
+<p>想到什么写什么吧，不是很想纠结格式的事情了，反正也没人看这样。</p>
+<h2 id="这个博客原本的更新计划">这个博客原本的更新计划</h2>
+<p>实际上断更什么的完全是一个意料之外的事情，主观上来说我就是希望在三大课结束之后好好整理一下，一面把之前学习课程的时候没想清楚的，或者完全做的不好的地方修正一下，一方面是后来人能看到更加准确且高可读的内容，另一方面也是保证自己确实想明白了之前学过的东西。</p>
+<p>所以按照这个原则来说，我应该在暑假的时候把OS的全链路更新一下，再在后面边学编译的时候边写点笔记，尤其是做到语义分析的时候，那一块我印象里大家做的都很烂，甚至很多人都没完全搞明白自己在做什么。之后做计网啊软工的时候也是，应该同步一下什么。</p>
+<p>毕竟博客就是这样一个东西，所思所想所学就应该记录下来。</p>
+<h2 id="然而实际上没有这么做的原因">然而实际上没有这么做的原因</h2>
+<p>原因有很多。</p>
+<p>首先是我在大二结束的暑假时非常忙。我要是记得没错的话，当时手头在搞一堆竞赛和暑期课程相关的内容，每天就是独自窝在宿舍里做完这个做那个。具体忙了些什么已经忘了，我只记得什么都没搞成，于是多少有点道心破碎？总之就是身上落了很大的疲惫感。</p>
+<p>至于为什么我确信这个东西应该不止是疲惫感，而是道心破碎呢？因为这样的感觉随着新学期开始，最开始几周空闲的时候，非但没有休息过来，反而越休息越累了。当时的感觉大概就是“什么都不想做，忙下去也没什么意义”这样，总感觉自己好像忽视了很多过路的风景一样。</p>
+<p>后来也是这样，我无法逼迫自己去循规蹈矩的做一些事情，哪怕这个时间线上没有 AI，我也逐渐意识到了学校和企业想让我做的，和我一开始入学想做的完全不是一回事，而我又是那种喜欢随心做事情的人，于是……有一阵子我甚至没法调起来任何兴趣，有几天甚至连饭都不想吃，两天吃一顿，持续了一周差不多。</p>
+<p>其次的话，那时的 AI Agent 能干的事情已经十分多，连带着无论是工作还是科研，实际上所有人都在往这个方向上转，原有的对计算机系统的了解的知识也不再重要。当然对我来说，从现在回头看（尤其是实习了一阵子之后）这个结论很显然：很多时候你就是应该脑子里留一份对性能的敏感的意识，然后相信 AI 能找到一个不错的解法，再不济也是先让 AI 把功能做对，然后人类再去做 AI 目前可能还尚不擅长的优化——这一点上来说，其实人还是需要知道点专业课基础的。</p>
+<p>但是当时并不是这样，或者说，我当时没法确定还有哪些知识是未来的人所需要具备的，而哪些又是将要淘汰的。我在那会正处于还算热衷于当助教的阶段，正处在一个C程序设计基础的工作早已结束，计算机组成助教刚刚开始的时候，身边也有仍然在程序设计基础，或者软院算法课那里干活的朋友。好几次我和这些朋友一起吃饭聊天的时候，我就经常能听到一种……迷茫感。当然，助教这种东西本质上就是拿钱干活，至少对于无心课程的人肯定是这样的，问题是有心改变点什么的人好像都觉得……会有种失落感？</p>
+<p>一开始我只是觉得程序设计的基本功很可能不太需要了，顶多想办法把压力压在能用 AI 读懂代码就好，但是后来我发现这玩意完全是个伪命题：从功能实现的角度上来说，如果一个 Agent 什么都能写，写的功能还都是对的，那我为什么还要看代码？尤其是对于当时的课程设计，这种规模极小且对性能要求相对松散（对的，我认为所有的本科课程都是这样，无论是N大课还是基础课）的情况，实际上人类压根就不需要干任何事情。</p>
+<p>简言之就是：我们的上机内容早就烂完了。嗯……说点大家不知道的？</p>
+<p>当然，GPT-6 Astra出来之后，我甚至在质疑是不是只差并行程序相关的设计还没有被狂暴轰碎了（洛谷之前有篇帖子，大意就是 AI 刷新了好几道人类选手在算法竞赛题目中给出的人类最优解，甚至有些之前被认为没有多项式时间解的错题也被扔进多项式时间内了）。</p>
+<p>在这样的情况下，我得出了这样一个结论：不管我投稿什么内容上博客，这些内容只会起到两个作用，其一就是让本就失去了反哺理论的意义的实验课程更容易被水过去，其二就是让真觉得这些内容没过时的同学更加坚信自己的错误想法。</p>
+<h2 id="那为什么我也懒得写近况，比如游记或者-xx-经验分享之类的">那为什么我也懒得写近况，比如游记或者 xx 经验分享之类的</h2>
+<p>其一是……没什么值得说的，一切都很平淡。</p>
+<p>其二是，对于xx经验这种类型的话，和上文一样，我觉得自己在适应新的时代时候的很多经验其实是不适用于未来的，我没有办法放心把这些可能误导他人（或者露怯）的内容放出来——这样写出来的东西压根不是xx经验分享。</p>
+<p>其三，对于近况什么的……</p>
+<p>怎么说呢，我发现在上面的过程里，我开始讨厌和人沟通了。或者说，和一两年前不同，我讨厌自己的生活状态被人说三道四。那样的状态属实让人烦躁。</p>
+<p>千人千面，在一个信息高度流通的地方，无论你做什么，一百件事里总会有至少八十件事是让别人不爽的，而且原因各不相同。</p>
+<p>至于更细一点的说的话……我不知道该怎么展开，实际上这里其实没有任何一件事让我直接产生了这种想法，这更像是一种逐渐产生的，奇怪的心态，我也不知道该怎么解释。</p>
+<p>我想也许未来，如果我因为某种原因起一个账号的话，在运营这个账号的时候我肯定不会在意这八十件事情给别人带来的不爽，只要保证这样的事情别把账号掀翻就行。但是这个账号显然既不能是这个博客，也不能是我现在在用的任何社交帐号。</p>
+<p>如果真有那个时候，那个账号里所写所想的，也一定不是我认为有用的东西，而是“我的受众会认为这个东西在当下对自己有用”的东西。你看，现在的 AI 工作流已经可以批量生产科普视频了，我想包括我在内的很多人都会看的不亦乐乎吧。</p>
+<h2 id="所以这里之后该用来做些什么呢？">所以这里之后该用来做些什么呢？</h2>
+<p>我也不知道。之前我试着对这个博客做些改造，想搞点小游戏上去，但是搞了一下就放弃了，其一是被博客模板限制着不太舒服，其二就是我现在没什么好点子……</p>
+<p>也有想过记录一下自己拥抱 AI 的全过程，但是说实话，对我来说拥抱的方案就是拿这玩意搓一堆不明所以的小物件小工具，没有什么实用性也没有什么趣味性，所以也放弃了。</p>
+<p>我想在我产生一个好点子之前，停更的状态还会持续很久。</p>
+<p>我想试试看怎么产生那种批量生产的视频，或者在我电脑里那个专门用来存想法泡泡的文件夹里再搓几个工具。</p>
+<h2 id="结尾">结尾</h2>
+<p>最后，你看到的这个文章是我写完之后一点不审一点不再看，立马发到gh pages上的，以防这篇文章又和其它我写过的大部分碎碎念一样，还没出手机里的备忘录就被删干净了。</p>
 ]]></content>
       <tags>
-        <tag>hello world!</tag>
+        <tag>碎碎念</tag>
       </tags>
   </entry>
 </search>
